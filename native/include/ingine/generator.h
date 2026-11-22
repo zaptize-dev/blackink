@@ -58,10 +58,10 @@ struct GenerateStats {
 
 struct RuntimeOptions {
   std::filesystem::path model_dir, ablation;  // empty ablation: original model
-  int max_ctx = 131072;
-  // Tokens per prefill chunk. 512 keeps prefill scratch to ~185 MiB so 16 GB Blackwell GPUs have plenty of
-  // headroom for 128K Q4 KV cache + DSpark speculative decoding.
-  int prefill_chunk = 512;
+  int max_ctx = 98304;
+  // Tokens per prefill chunk. 256 keeps prefill scratch to ~110 MiB so 16 GB Blackwell GPUs have plenty of
+  // headroom for 96K Q4 KV cache + DSpark MTP speculative decoding.
+  int prefill_chunk = 256;
   bool dense_fp8 = true, kv_fp8 = false, kv_q4 = false, full_nvfp4 = false, spec = false;
   float spec_threshold = 0.8f;
   // Conversation parking: device memory (MiB) for the checkpoints of conversations displaced by another

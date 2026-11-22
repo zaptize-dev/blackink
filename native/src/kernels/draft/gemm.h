@@ -15,7 +15,7 @@ namespace ingine::kernels::draft {
 
 class Bf16Gemm {
  public:
-  explicit Bf16Gemm(std::size_t workspace_bytes = std::size_t(32) << 20);
+  explicit Bf16Gemm(std::size_t workspace_bytes = std::size_t(4) << 20);
   ~Bf16Gemm();
   Bf16Gemm(const Bf16Gemm&) = delete;
   Bf16Gemm& operator=(const Bf16Gemm&) = delete;

@@ -455,7 +455,7 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
         <span class="ink-dot"></span>
         <span>BlackInk</span>
       </div>
-      <span class="badge">NVFP4 · 128K Q4</span>
+      <span class="badge">NVFP4 · 96K Q4 · MTP</span>
     </div>
 
     <button class="btn" id="newChatBtn">+ New Conversation</button>
@@ -490,7 +490,7 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
         <label class="control-label">
           <span>Max New Tokens</span>
         </label>
-        <input type="number" id="maxTokensInput" value="8192" min="64" max="65536" step="256">
+        <input type="number" id="maxTokensInput" value="32768" min="64" max="98304" step="256">
       </div>
 
       <div class="control-group">
@@ -813,7 +813,7 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
         model: modelId,
         messages: apiMsgs,
         temperature: Number(elTemp.value),
-        max_tokens: Number(elMaxTokens.value) || 4096,
+        max_tokens: Number(elMaxTokens.value) || 32768,
         stream: true,
         stream_options: { include_usage: true }
       };

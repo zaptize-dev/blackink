@@ -79,12 +79,12 @@
   "serving": {
     "host": "0.0.0.0",
     "port": 8090,
-    "max_ctx": 131072,
+    "max_ctx": 98304,
     "dense_fp8": true,
     "full_nvfp4": true,
     "kv_fp8": false,
     "kv_q4": true,
-    "spec": false,
+    "spec": true,
     "spec_threshold": 0.8,
     "model_id": "inkling-2-mini-abliterated"
   },

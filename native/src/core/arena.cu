@@ -73,7 +73,7 @@ cudaError_t try_malloc(void** ptr, std::size_t bytes) {
         if (g_fail_next.compare_exchange_weak(left, left - 1)) return cudaErrorMemoryAllocation;
     if (bytes >= (164ull << 20)) {
         std::size_t free_b = 0, total_b = 0;
-        if (cudaMemGetInfo(&free_b, &total_b) == cudaSuccess && free_b < bytes + (384ull << 20)) {
+        if (cudaMemGetInfo(&free_b, &total_b) == cudaSuccess && free_b < bytes + (850ull << 20)) {
             return cudaErrorMemoryAllocation;
         }
     }

@@ -44,9 +44,9 @@ class Drafter {
  public:
   static constexpr int BLOCK = kernels::draft::BLOCK;  // 8 rows per drafted block
   static constexpr int GAMMA = kernels::draft::GAMMA;  // 7 drafts per round
-  static constexpr int DRAFT_CTX = 16384;              // global-layer ring slots (at most, 16 GB VRAM budget)
-  static constexpr int SHORTLIST_ROWS = 32768;         // ranked tokens in the shortlist head
-  static constexpr int CONTEXT_ROWS = 16384;           // context tokens added to it (until reset())
+  static constexpr int DRAFT_CTX = 8192;               // global-layer ring slots (at most, 16 GB VRAM budget)
+  static constexpr int SHORTLIST_ROWS = 16384;         // ranked tokens in the shortlist head
+  static constexpr int CONTEXT_ROWS = 4096;            // context tokens added to it (until reset())
 
   // Loads mtp.safetensors from model_dir; `w` supplies the embedding, its norm and the unembedding (the
   // base logits use w.unembed as stored: FP8 rows with dense_fp8). `w` must outlive the drafter.
