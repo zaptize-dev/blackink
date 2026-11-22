@@ -1,0 +1,146 @@
+{
+ "repo": "satellitedown/Inkling-2-Mini-abliterated-ingine",
+ "revision": "afd44de1d9cb5da68f1c251ca4f198e0517c72e0",
+ "files": {
+  "LICENSE": {
+   "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+   "size": 11357
+  },
+  "NOTICE": {
+   "sha256": "9239466ee07825a8449ad24eba94a3f1483725008770df9781ecfe5c79bb7329",
+   "size": 5144
+  },
+  "README.md": {
+   "sha256": "afa596023818ccab9eb87dfac06410a601153f518d8d77c67b6f3f16b7cbfd2e",
+   "size": 7455
+  },
+  "SHA256SUMS": {
+   "sha256": "1580d3006d1fe72fa95b8eba2497541ccb400bd111887f7a75b2da1c5d40abd1",
+   "size": 3283
+  },
+  "abliteration/ablate.py": {
+   "sha256": "3cbf96228303d89ee42817cb4e3b8026e1abe159374793df97a3630602586b17",
+   "size": 25585
+  },
+  "abliteration/capability_eval.py": {
+   "sha256": "af31afec0e0b517db1430e771caef83f7c3ff5ffc0d1388f902da7179159a24b",
+   "size": 11342
+  },
+  "abliteration/eval.sh": {
+   "sha256": "6b38dfec0224c954d5c60e228db0d4b0e6bd030545655852c3e84917079d63c3",
+   "size": 2927
+  },
+  "abliteration/inkling_ref.py": {
+   "sha256": "c1aaed1bb2773dde784f7c6d37cd716f0837088f3e177d5c49c657a861909832",
+   "size": 10310
+  },
+  "abliteration/reasoning_eval.py": {
+   "sha256": "3cfcdc33e7568a94169ca69e6fafb9fd2de6e5e58dd18476107f8fca1bef6b62",
+   "size": 7842
+  },
+  "abliteration/refusal_eval.py": {
+   "sha256": "1bf36ffc8d5334b4ff345e153c3304be7589a0f464b3607386ecbd876bfd44d7",
+   "size": 9117
+  },
+  "abliteration/requirements.txt": {
+   "sha256": "b952f7caba76619837063b343eba701205f60211b71babd5ddbdf684da23bdaa",
+   "size": 252
+  },
+  "abliteration/results/capability-abliterated.json": {
+   "sha256": "cf10afe708378f1526a41572e4bcad9e47535f2352581dba4e4b3f07c1345bfc",
+   "size": 7066
+  },
+  "abliteration/results/capability-original.json": {
+   "sha256": "0884277e1d3029316b95135d9c9f392e1c817eac7feedc2b7d2664d60757a8a9",
+   "size": 7061
+  },
+  "abliteration/results/reasoning-abliterated.json": {
+   "sha256": "54a71731af5dd596dfcf57146a207641128726f392fdc788465cc72c5b9ad15f",
+   "size": 28325
+  },
+  "abliteration/results/reasoning-original.json": {
+   "sha256": "2ca2244f09d1632263d23d513d265f60640a09b2e45efd16e1b794002fff515a",
+   "size": 28319
+  },
+  "abliteration/results/refusals-abliterated-thinking.json": {
+   "sha256": "35488082fcc594e9d714cbe5c857d7073fd10c52325213f1115f939d08c0ba72",
+   "size": 59027
+  },
+  "abliteration/results/refusals-abliterated.json": {
+   "sha256": "6d7f0359ae59ffaea7a29239e1cfa2c32808aff3caa71e6c964fe36abdd208ec",
+   "size": 38782
+  },
+  "abliteration/results/refusals-original-thinking.json": {
+   "sha256": "c612028adf88a4c2ab8a0ef9e2772f7f4e693ea4ecb7b6e4f33305b33ab8f41b",
+   "size": 51173
+  },
+  "abliteration/results/refusals-original.json": {
+   "sha256": "e652ee2b5ea22eb709f48c719d7850f08055766cfaf374a182f74b3bbaabd4c4",
+   "size": 38199
+  },
+  "abliteration/results/verify-abliterated.json": {
+   "sha256": "f478f62433e9e94f3d32db9f2e77eacb91dbdfb1ba8b7950fad94aef775db1ef",
+   "size": 6392
+  },
+  "abliteration/results/verify-alt-t37.json": {
+   "sha256": "7171e7a4a363d6adf7475ba98157c75057c6f605f78a017bcce6512af04fd117",
+   "size": 6384
+  },
+  "abliteration/results/verify-nothink-t44.json": {
+   "sha256": "9ed9ef3240239f21558edb5155ced91c1e93662d3ec440e51c6698ae9a6610b1",
+   "size": 4302
+  },
+  "chat_template.jinja": {
+   "sha256": "53a9035f3255945704b5857657cfb00c1165090c0641c4f782a0cbf268cc16dc",
+   "size": 6868
+  },
+  "config.json": {
+   "sha256": "8216dd43157f5474cfff88f486a1e433fef703c674f694e485a86a761c412b1e",
+   "size": 2699
+  },
+  "generation_config.json": {
+   "sha256": "a08737c07a65a8fdf69f7cf086576210e5aad4b241437090b26d7b0c4f7905f7",
+   "size": 98
+  },
+  "hf_quant_config.json": {
+   "sha256": "7c656207d3ce37879c7be209a036b0dde43bf01f78159bff06880b868ed57143",
+   "size": 67924
+  },
+  "inkling-2-mini-abliterated.safetensors": {
+   "sha256": "9467240bdbcd4737a3496bf167525989d79196dbeec582361880ad4d8cbe4d73",
+   "size": 885848
+  },
+  "model-00001-of-00001.safetensors": {
+   "sha256": "65e60f51aa1284d4fb022584908c315270334d991828bb774af60584523539d1",
+   "size": 19526019168
+  },
+  "model.safetensors.index.json": {
+   "sha256": "c1631065b7b00787993522dddc66a68b3abee869192977fb3dcb796e63bc5838",
+   "size": 109300
+  },
+  "mtp.safetensors": {
+   "sha256": "7c3b651317f01f73bcf4e1dceba66ef8b7e1a1eac6bc171e882e690a4b10a1d2",
+   "size": 635801416
+  },
+  "processor_config.json": {
+   "sha256": "d7350adce18c8be4b607f261c8f0f7eabbf720bb7aaf648a43d4f8372bbacc2d",
+   "size": 461
+  },
+  "special_tokens_map.json": {
+   "sha256": "c16f44b3594563d82743ddb0417a2be1bfe3e2000dfad2da4b8f32554593e1a0",
+   "size": 529
+  },
+  "tiktoken/tokenizer.model": {
+   "sha256": "f170372dd655728909228220d77cf6b8104a59f38a91262a7d2c4027906ec0d8",
+   "size": 3386494
+  },
+  "tokenizer.json": {
+   "sha256": "7f332727f9a3f093dd452a39cc978e6757627e5dad1b0673aa4e75174f236dd6",
+   "size": 26178678
+  },
+  "tokenizer_config.json": {
+   "sha256": "bf09342d285139fd37ce10c70878af1d52cb390e9901e10248654293a80ee636",
+   "size": 13235
+  }
+ }
+}

@@ -1,0 +1,331 @@
+{
+ "label": "original",
+ "math": [
+  {
+   "q": "A shop sells pens at 3 for $4. How many dollars do 27 pens cost?",
+   "want": 36,
+   "got": 36,
+   "ok": true,
+   "tokens": 127,
+   "seconds": 0.4420202389883343
+  },
+  {
+   "q": "A train travels 240 km in 3 hours, then 150 km in 2 hours. What is its average speed in km/h over the whole trip?",
+   "want": 78,
+   "got": 78,
+   "ok": true,
+   "tokens": 147,
+   "seconds": 0.5074062530184165
+  },
+  {
+   "q": "Maria has 5 times as many marbles as Leo. Together they have 84 marbles. How many marbles does Maria have?",
+   "want": 70,
+   "got": 70,
+   "ok": true,
+   "tokens": 157,
+   "seconds": 0.5379888089955784
+  },
+  {
+   "q": "A rectangle has a perimeter of 54 cm and its length is twice its width. What is its area in square cm?",
+   "want": 162,
+   "got": 162,
+   "ok": true,
+   "tokens": 169,
+   "seconds": 0.5751898729940876
+  },
+  {
+   "q": "What is the sum of all integers from 1 to 200 that are divisible by 7?",
+   "want": 2842,
+   "got": 2842,
+   "ok": true,
+   "tokens": 226,
+   "seconds": 0.7585170849924907
+  },
+  {
+   "q": "A tank fills at 12 litres per minute and drains at 5 litres per minute. Starting empty, how many minutes until it holds 147 litres?",
+   "want": 21,
+   "got": 21,
+   "ok": true,
+   "tokens": 119,
+   "seconds": 0.4138295429875143
+  },
+  {
+   "q": "Three consecutive even numbers sum to 138. What is the largest of them?",
+   "want": 48,
+   "got": 48,
+   "ok": true,
+   "tokens": 185,
+   "seconds": 0.6243522730073892
+  },
+  {
+   "q": "A jacket costs $80. It is discounted by 25%, then the discounted price is raised by 10%. What is the final price in dollars?",
+   "want": 66,
+   "got": 66,
+   "ok": true,
+   "tokens": 160,
+   "seconds": 0.5455360850028228
+  },
+  {
+   "q": "How many minutes are there between 9:47 and 13:12 on the same day?",
+   "want": 205,
+   "got": 205,
+   "ok": true,
+   "tokens": 235,
+   "seconds": 0.7875482460076455
+  },
+  {
+   "q": "If 6 workers build a wall in 10 days, how many days would 15 workers take at the same rate?",
+   "want": 4,
+   "got": 4,
+   "ok": true,
+   "tokens": 125,
+   "seconds": 0.4325454559875652
+  },
+  {
+   "q": "A number is multiplied by 7, then 15 is subtracted, giving 104. What is the number?",
+   "want": 17,
+   "got": 17,
+   "ok": true,
+   "tokens": 130,
+   "seconds": 0.45064476199331693
+  },
+  {
+   "q": "What is the remainder when 2 to the power 20 is divided by 7?",
+   "want": 4,
+   "got": 4,
+   "ok": true,
+   "tokens": 199,
+   "seconds": 0.6711186210159212
+  },
+  {
+   "q": "A recipe needs 3 eggs per 8 pancakes. How many eggs are needed for 56 pancakes?",
+   "want": 21,
+   "got": 21,
+   "ok": true,
+   "tokens": 127,
+   "seconds": 0.4377782660012599
+  },
+  {
+   "q": "The ages of a father and son sum to 64. In 4 years the father will be three times as old as the son. How old is the son now?",
+   "want": 14,
+   "got": 14,
+   "ok": true,
+   "tokens": 234,
+   "seconds": 0.7862934900040273
+  },
+  {
+   "q": "How many positive divisors does 360 have?",
+   "want": 24,
+   "got": 24,
+   "ok": true,
+   "tokens": 193,
+   "seconds": 0.6501503359759226
+  },
+  {
+   "q": "A car uses 6.5 litres of fuel per 100 km. How many litres does it use for 840 km? Give the answer times 10 as an integer.",
+   "want": 546,
+   "got": 546,
+   "ok": true,
+   "tokens": 214,
+   "seconds": 0.7230666049872525
+  },
+  {
+   "q": "What is the least common multiple of 18, 24 and 30?",
+   "want": 360,
+   "got": 360,
+   "ok": true,
+   "tokens": 160,
+   "seconds": 0.5444780710095074
+  },
+  {
+   "q": "A bag has 4 red, 6 blue and 10 green balls. How many balls must be added, all red, so that red makes up half the bag?",
+   "want": 12,
+   "got": 12,
+   "ok": true,
+   "tokens": 237,
+   "seconds": 0.7972652960161213
+  },
+  {
+   "q": "Compute 1234 * 56 - 7890.",
+   "want": 61214,
+   "got": 61214,
+   "ok": true,
+   "tokens": 194,
+   "seconds": 0.651442805014085
+  },
+  {
+   "q": "A clock shows 3:00. What is the smaller angle, in degrees, between the hour and minute hands at 3:30?",
+   "want": 75,
+   "got": 75,
+   "ok": true,
+   "tokens": 226,
+   "seconds": 0.7585697660106234
+  }
+ ],
+ "code": [
+  {
+   "sig": "is_palindrome(s)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.19169193398556672
+  },
+  {
+   "sig": "fib(n)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.18861134399776347
+  },
+  {
+   "sig": "merge_sorted(a, b)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.46489880100125447
+  },
+  {
+   "sig": "word_freq(text)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.24574708100408316
+  },
+  {
+   "sig": "flatten(xs)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.23869572600233369
+  },
+  {
+   "sig": "primes_below(n)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.45852902199840173
+  },
+  {
+   "sig": "rle(s)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.4559668700094335
+  },
+  {
+   "sig": "balanced(s)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.39791019799304195
+  },
+  {
+   "sig": "two_sum(nums, target)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.2575609179912135
+  },
+  {
+   "sig": "roman(n)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.7262992280011531
+  },
+  {
+   "sig": "matrix_mult(a, b)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.675646460003918
+  },
+  {
+   "sig": "anagrams(words)",
+   "ok": true,
+   "error": "",
+   "seconds": 0.3113907380029559
+  }
+ ],
+ "mcq": [
+  {
+   "q": "Which planet has the most known moons as of 2024?",
+   "want": "C",
+   "got": "C",
+   "ok": true,
+   "text": "C"
+  },
+  {
+   "q": "What is the time complexity of binary search on a sorted array?",
+   "want": "B",
+   "got": "B",
+   "ok": true,
+   "text": "B"
+  },
+  {
+   "q": "Which gas makes up most of Earth's atmosphere?",
+   "want": "D",
+   "got": "D",
+   "ok": true,
+   "text": "D"
+  },
+  {
+   "q": "In TCP, what does the three-way handshake begin with?",
+   "want": "C",
+   "got": "C",
+   "ok": true,
+   "text": "C"
+  },
+  {
+   "q": "Who proposed the theory of general relativity?",
+   "want": "B",
+   "got": "B",
+   "ok": true,
+   "text": "B"
+  },
+  {
+   "q": "Which data structure gives O(1) average-time lookup by key?",
+   "want": "B",
+   "got": "B",
+   "ok": true,
+   "text": "B"
+  },
+  {
+   "q": "What is the derivative of sin(x)?",
+   "want": "A",
+   "got": "A",
+   "ok": true,
+   "text": "A"
+  },
+  {
+   "q": "Which language's borrow checker enforces memory safety at compile time?",
+   "want": "B",
+   "got": "B",
+   "ok": true,
+   "text": "BB"
+  },
+  {
+   "q": "Which organelle produces most of a cell's ATP?",
+   "want": "C",
+   "got": "C",
+   "ok": true,
+   "text": "C"
+  },
+  {
+   "q": "What is the chemical symbol for gold?",
+   "want": "C",
+   "got": "C",
+   "ok": true,
+   "text": "C"
+  },
+  {
+   "q": "Which sorting algorithm has worst-case O(n log n) and is in-place?",
+   "want": "A",
+   "got": "A",
+   "ok": true,
+   "text": "AA"
+  },
+  {
+   "q": "What is 0.1 + 0.2 == 0.3 in IEEE-754 double precision?",
+   "want": "B",
+   "got": "B",
+   "ok": true,
+   "text": "B"
+  }
+ ],
+ "summary": {
+  "math": "20/20",
+  "code": "12/12",
+  "mcq": "12/12",
+  "math_tokens_mean": 178.2
+ }
+}

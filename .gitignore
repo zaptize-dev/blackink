@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+tools/.venv/
+# left behind by installs from before the C++ engine (the installer prints the command that deletes them)
+/engine
+results/serve-*.log
+# created by the installer (setup.sh / scripts/install.sh) and scripts/ingine; no trailing slash, so a symlinked
+# .venv or models also stays untracked (.venv: Python environment of installs from before the C++ engine)
+/.tools
+/.venv
+/.cuda-toolkit
+/models
+/.run
+# tools/publish_hf.py staging (default)
+/work
+# native (C++) build trees
+/native/build*

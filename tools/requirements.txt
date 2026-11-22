@@ -1,0 +1,13 @@
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.14.0
+transformers @ git+https://github.com/huggingface/transformers@6173a2f679ff4ed393afc499aefc569da7e68bc1
+safetensors
+numpy
+jinja2
+tqdm
+pytest
+datasets
+optuna
+pillow
+ninja
+accelerate

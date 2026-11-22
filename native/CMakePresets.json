@@ -1,0 +1,50 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 28, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "Release binaries",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CUDA_ARCHITECTURES": "120a",
+        "INGINE_BUILD_APPS": "ON",
+        "INGINE_BUILD_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "dev",
+      "displayName": "Release binaries and tests",
+      "inherits": "release",
+      "cacheVariables": {
+        "INGINE_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "install",
+      "displayName": "ingine-serve for scripts/install.sh: private CUDA toolkit in ../.cuda-toolkit, RPATH into it",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build-install",
+      "cacheVariables": {
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/../.cuda-toolkit/nvidia/cu13/bin/nvcc",
+        "CUDAToolkit_ROOT": "${sourceDir}/../.cuda-toolkit/nvidia/cu13",
+        "CMAKE_BUILD_WITH_INSTALL_RPATH": "ON",
+        "CMAKE_INSTALL_RPATH": "$ORIGIN/../../../../.cuda-toolkit/nvidia/cu13/lib"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "release", "configurePreset": "release" },
+    { "name": "dev", "configurePreset": "dev" },
+    { "name": "install", "configurePreset": "install" }
+  ],
+  "testPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "output": { "outputOnFailure": true }
+    }
+  ]
+}

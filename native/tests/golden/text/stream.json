@@ -1,0 +1,10661 @@
+[
+ {
+  "note": "thinking then text",
+  "tokens": [
+   200001,
+   200008,
+   2918,
+   149991,
+   150634,
+   150081,
+   149928,
+   164966,
+   13,
+   220,
+   17,
+   10,
+   17,
+   28,
+   19,
+   13,
+   200010,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "Let",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " me",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " think",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " about",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " this",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " carefully",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " ",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "+",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "=",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "4",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 27,
+  "finished": true,
+  "result": {
+   "reasoning_content": "Let me think about this carefully. 2+2=4.",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "Let me think about this carefully. 2+2=4.",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "text only",
+  "tokens": [
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 10,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "text only, no end_message",
+  "tokens": [
+   200001,
+   200004,
+   32269,
+   150102,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "Hello",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " there",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 5,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "Hello there",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "Hello there",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "prefill no-thinking",
+  "tokens": [
+   4847,
+   150893,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [
+   200001,
+   200004
+  ],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "Direct",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 5,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "Direct answer.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "Direct answer.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "prefill then stop string",
+  "tokens": [
+   729,
+   150103,
+   150396,
+   150792,
+   200010,
+   200006
+  ],
+  "prefill": [
+   200001,
+   200004
+  ],
+  "stop": [
+   "three"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "one",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " two ",
+      "tool_call": null
+     }
+    ],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 3,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "one two ",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "one two ",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "tool call",
+  "tokens": [
+   200001,
+   832,
+   62,
+   30847,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   832,
+   62,
+   30847,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   2958,
+   1,
+   25,
+   1,
+   3967,
+   1,
+   11,
+   1,
+   2095,
+   1,
+   25,
+   1,
+   66,
+   1,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "get_weather",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "city"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "Paris"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ","
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "unit"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "c"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 40,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "get_weather",
+     "arguments": "{\"city\":\"Paris\",\"unit\":\"c\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "get_weather",
+     "arguments": "{\"city\":\"Paris\",\"unit\":\"c\"}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "thinking + tool call",
+  "tokens": [
+   200001,
+   200008,
+   2918,
+   149991,
+   150634,
+   150081,
+   149928,
+   164966,
+   13,
+   220,
+   17,
+   10,
+   17,
+   28,
+   19,
+   13,
+   200010,
+   200001,
+   1404,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   1404,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   80,
+   1,
+   25,
+   1,
+   30847,
+   151841,
+   1,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "Let",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " me",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " think",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " about",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " this",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " carefully",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " ",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "+",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "=",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "4",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "search",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "q"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "weather"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " today"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 46,
+  "finished": true,
+  "result": {
+   "reasoning_content": "Let me think about this carefully. 2+2=4.",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "search",
+     "arguments": "{\"q\":\"weather today\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "Let me think about this carefully. 2+2=4.",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "search",
+     "arguments": "{\"q\":\"weather today\"}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "two tool calls",
+  "tokens": [
+   200001,
+   64,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   64,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   87,
+   1,
+   25,
+   16,
+   92,
+   92,
+   200010,
+   200001,
+   65,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   65,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   88,
+   1,
+   25,
+   58,
+   16,
+   11,
+   17,
+   11,
+   90,
+   1,
+   89,
+   1,
+   25,
+   1,
+   92,
+   1,
+   92,
+   60,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "a",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "x"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": "call_1",
+       "name": "b",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "y"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "["
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": ","
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "2"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": ","
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "z"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "}\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "}]"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 1,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 65,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "a",
+     "arguments": "{\"x\":1}"
+    },
+    {
+     "id": "call_1",
+     "name": "b",
+     "arguments": "{\"y\":[1,2,{\"z\":\"}\"}]}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "a",
+     "arguments": "{\"x\":1}"
+    }
+   },
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 1,
+     "id": "call_1",
+     "name": "b",
+     "arguments": "{\"y\":[1,2,{\"z\":\"}\"}]}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call args bytewise",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   77,
+   64,
+   76,
+   68,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   64,
+   81,
+   70,
+   82,
+   1,
+   25,
+   90,
+   1,
+   74,
+   1,
+   25,
+   1,
+   85,
+   127,
+   97,
+   81,
+   67,
+   68,
+   220,
+   172,
+   253,
+   246,
+   222,
+   1,
+   11,
+   1,
+   77,
+   1,
+   25,
+   12,
+   16,
+   13,
+   20,
+   68,
+   18,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "k"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "v"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "ä"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "r"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "d"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "e"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " 😀"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ","
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "n"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "-"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "."
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "5"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "e"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "3"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 55,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"k\":\"värde 😀\",\"n\":-1.5e3}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"k\":\"värde 😀\",\"n\":-1.5e3}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call spaced JSON",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   196983,
+   196980,
+   930,
+   1,
+   196985,
+   196980,
+   69,
+   1,
+   196988,
+   196980,
+   70747,
+   1,
+   196985,
+   196983,
+   196980,
+   64,
+   1,
+   196985,
+   220,
+   16,
+   196991,
+   196991,
+   220,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " {"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " \""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " :"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " 1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": " "
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "} "
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 28,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": " { \"a\" : 1 } "
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": " { \"a\" : 1 } "
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call header fallback (empty name)",
+  "tokens": [
+   200001,
+   40239,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   68723,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   16,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "hdr",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 24,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "hdr",
+     "arguments": "{\"a\":1}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "hdr",
+     "arguments": "{\"a\":1}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call noncanonical body",
+  "tokens": [
+   200001,
+   40239,
+   200049,
+   90,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   16,
+   92,
+   11,
+   1,
+   930,
+   1,
+   25,
+   1,
+   1440,
+   1,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "real",
+       "arguments": ""
+      }
+     },
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{\"a\":1}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 26,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "real",
+     "arguments": "{\"a\":1}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "real",
+     "arguments": "{\"a\":1}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call noncanonical args list",
+  "tokens": [
+   200001,
+   40239,
+   200049,
+   90,
+   1,
+   70747,
+   1,
+   25,
+   58,
+   16,
+   11,
+   220,
+   17,
+   13,
+   68154,
+   11,
+   220,
+   16,
+   68,
+   69708,
+   60,
+   11,
+   1,
+   930,
+   1,
+   25,
+   1,
+   1440,
+   1,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "real",
+       "arguments": ""
+      }
+     },
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "[1,2.5,Infinity]"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 32,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "real",
+     "arguments": "[1,2.5,Infinity]"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "real",
+     "arguments": "[1,2.5,Infinity]"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call invalid JSON body",
+  "tokens": [
+   200001,
+   40239,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   164354,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "hdr",
+       "arguments": ""
+      }
+     },
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{\"name\": broken"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 11,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "hdr",
+     "arguments": "{\"name\": broken"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "hdr",
+     "arguments": "{\"name\": broken"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call invalid JSON, no header",
+  "tokens": [
+   200001,
+   200049,
+   799,
+   152811,
+   149922,
+   149971,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 8,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": []
+ },
+ {
+  "note": "tool call name escape",
+  "tokens": [
+   200001,
+   87,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   363,
+   59,
+   84,
+   68018,
+   68,
+   145689,
+   59,
+   1,
+   77,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   70044,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "weïrd\"n",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 28,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "weïrd\"n",
+     "arguments": "{}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "weïrd\"n",
+     "arguments": "{}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call bad name escape",
+  "tokens": [
+   200001,
+   40239,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   3738,
+   59,
+   80,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   17,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "hdr",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "2"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 28,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "hdr",
+     "arguments": "{\"a\":2}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "hdr",
+     "arguments": "{\"a\":2}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call truncated (length)",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   2958,
+   1,
+   25,
+   1,
+   1726
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "city"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "Par"
+      }
+     }
+    ],
+    "finished": false
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 23,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"city\":\"Par"
+    }
+   ],
+   "finish_reason": "length"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"city\":\"Par"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call, missing end_message",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   16,
+   92,
+   92,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 25,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":1}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":1}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool args trailing whitespace",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   16,
+   92,
+   220,
+   196991,
+   149865,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}  "
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 28,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":1}  "
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":1}  "
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool then text",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   70044,
+   92,
+   200010,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 29,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{}"
+    }
+   },
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "text then tool",
+  "tokens": [
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   80,
+   1,
+   25,
+   1,
+   87,
+   1,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "q"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "x"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 37,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"q\":\"x\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"q\":\"x\"}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "stop string in content",
+  "tokens": [
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "is 4"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The ans",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "wer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 7,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer ",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer ",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "stop string not in thinking",
+  "tokens": [
+   200001,
+   200008,
+   2918,
+   149991,
+   150634,
+   150081,
+   149928,
+   164966,
+   13,
+   220,
+   17,
+   10,
+   17,
+   28,
+   19,
+   13,
+   200010,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "think"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "Let",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " me",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " think",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " about",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " this",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " carefully",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " ",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "+",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "=",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "4",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The an",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "swe",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "r",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "i",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "s 4.",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 27,
+  "finished": true,
+  "result": {
+   "reasoning_content": "Let me think about this carefully. 2+2=4.",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "Let me think about this carefully. 2+2=4.",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "stop string across tokens",
+  "tokens": [
+   200001,
+   200004,
+   64,
+   65,
+   66,
+   67,
+   68,
+   69,
+   70,
+   71,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "cdef"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "b",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 8,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "ab",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "ab",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "multiple stop strings, earliest wins",
+  "tokens": [
+   200001,
+   200004,
+   1928,
+   155351,
+   161124,
+   159501,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "gamma",
+   "beta",
+   ""
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "lpha ",
+      "tool_call": null
+     }
+    ],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 4,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "alpha ",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "alpha ",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "stop string never hit (held tail flushed)",
+  "tokens": [
+   200001,
+   200004,
+   2569,
+   150311,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "xyz123"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "short",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " text",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 6,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "short text",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "short text",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "stop string never hit, length cut",
+  "tokens": [
+   200001,
+   200004,
+   2569,
+   150311
+  ],
+  "prefill": [],
+  "stop": [
+   "textual"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "shor",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   }
+  ],
+  "finish": [
+   {
+    "reasoning_content": "",
+    "content": "t text",
+    "tool_call": null
+   }
+  ],
+  "finish_again": [],
+  "num_tokens": 4,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "short text",
+   "tool_calls": [],
+   "finish_reason": "length"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "short text",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "unicode stop string",
+  "tokens": [
+   200001,
+   200004,
+   77,
+   64,
+   127,
+   107,
+   85,
+   68,
+   220,
+   66,
+   64,
+   69,
+   127,
+   102,
+   220,
+   172,
+   253,
+   246,
+   222,
+   220,
+   68,
+   77,
+   67,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "😀"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "n",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "ï",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "v",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "e",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "c",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "f",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "é",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 19,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "naïve café ",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "naïve café ",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "stop string at very start",
+  "tokens": [
+   200001,
+   200004,
+   148033,
+   150522,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "STOP"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 3,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": []
+ },
+ {
+  "note": "max length cut mid thinking",
+  "tokens": [
+   200001,
+   200008,
+   78168,
+   150471,
+   150255
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "thinking",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " without",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " end",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 5,
+  "finished": true,
+  "result": {
+   "reasoning_content": "thinking without end",
+   "content": "",
+   "tool_calls": [],
+   "finish_reason": "length"
+  },
+  "merged": [
+   {
+    "reasoning_content": "thinking without end",
+    "content": "",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "max length cut mid text",
+  "tokens": [
+   200001,
+   200008,
+   2918,
+   149991,
+   150634,
+   150081,
+   149928,
+   164966,
+   13,
+   220,
+   17,
+   10,
+   17,
+   28,
+   19,
+   13,
+   200010,
+   200001,
+   200004,
+   70678,
+   151266,
+   86
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "Let",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " me",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " think",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " about",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " this",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " carefully",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": " ",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "+",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "2",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "=",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "4",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": ".",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "partial",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ans",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "w",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 22,
+  "finished": true,
+  "result": {
+   "reasoning_content": "Let me think about this carefully. 2+2=4.",
+   "content": "partial answ",
+   "tool_calls": [],
+   "finish_reason": "length"
+  },
+  "merged": [
+   {
+    "reasoning_content": "Let me think about this carefully. 2+2=4.",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "partial answ",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "partial UTF-8 bytewise text",
+  "tokens": [
+   200001,
+   200004,
+   127,
+   102,
+   160,
+   116,
+   255,
+   172,
+   253,
+   246,
+   222,
+   172,
+   253,
+   239,
+   235,
+   172,
+   253,
+   237,
+   121,
+   220,
+   67,
+   78,
+   77,
+   68,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "é",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "中",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "😀",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "👍",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "🏽",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "d",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "o",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "n",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "e",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 26,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "é中😀👍🏽 done",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "é中😀👍🏽 done",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "partial UTF-8 cut",
+  "tokens": [
+   200001,
+   200004,
+   78,
+   74,
+   220,
+   172,
+   253
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "o",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "k",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   }
+  ],
+  "finish": [
+   {
+    "reasoning_content": "",
+    "content": "�",
+    "tool_call": null
+   }
+  ],
+  "finish_again": [],
+  "num_tokens": 7,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "ok �",
+   "tool_calls": [],
+   "finish_reason": "length"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "ok �",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "invalid UTF-8 bytes",
+  "tokens": [
+   200001,
+   200004,
+   187,
+   32,
+   160,
+   116,
+   87,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "�A",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "�x",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 9,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "�A�x",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "�A�x",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "lone continuation byte mid text",
+  "tokens": [
+   200001,
+   200004,
+   64,
+   222,
+   65,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "�b",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 7,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "a�b",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "a�b",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "tool_error and invoke_tool_text bodies",
+  "tokens": [
+   200001,
+   200022,
+   65039,
+   150955,
+   200010,
+   200001,
+   200057,
+   2251,
+   150311,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "error",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " body",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "tool",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " text",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 11,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "error bodytool text",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "error bodytool text",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "xml and image bodies dropped",
+  "tokens": [
+   200001,
+   200024,
+   27,
+   87,
+   14,
+   29,
+   200010,
+   200001,
+   200005,
+   3247,
+   200010,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 21,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "text outside message ignored",
+  "tokens": [
+   39581,
+   150311,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 12,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "header text before content",
+  "tokens": [
+   200001,
+   220,
+   150513,
+   149859,
+   200004,
+   2148,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "body",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 8,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "body",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "body",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "missing end_message between bodies",
+  "tokens": [
+   200001,
+   200008,
+   83,
+   16,
+   200004,
+   64,
+   16,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "t",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "1",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "1",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 9,
+  "finished": true,
+  "result": {
+   "reasoning_content": "t1",
+   "content": "a1",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "t1",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "a1",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "new message_model mid body",
+  "tokens": [
+   200001,
+   200004,
+   1276,
+   200001,
+   200004,
+   1604,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "first",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "second",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 8,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "firstsecond",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "firstsecond",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "user token stops",
+  "tokens": [
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200000,
+   1089
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 10,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "endoftext stops",
+  "tokens": [
+   200001,
+   200004,
+   33782,
+   199999
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "abc",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 4,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "abc",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "abc",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "system token stops mid body",
+  "tokens": [
+   200001,
+   200004,
+   33782,
+   200002,
+   87,
+   200010
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "abc",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 4,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "abc",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "abc",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "tool token stops",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   16,
+   92,
+   92,
+   200010,
+   200003
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "1"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 26,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":1}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":1}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "unused special ignored",
+  "tokens": [
+   200001,
+   200004,
+   64,
+   200007,
+   65,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "b",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 7,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "ab",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "ab",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "unknown ids",
+  "tokens": [
+   200001,
+   200004,
+   64,
+   200060,
+   210000,
+   65,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "a",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "b",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 8,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "ab",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "ab",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "empty generation",
+  "tokens": [],
+  "prefill": [],
+  "stop": null,
+  "steps": [],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 0,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [],
+   "finish_reason": "length"
+  },
+  "merged": []
+ },
+ {
+  "note": "immediate end",
+  "tokens": [
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 1,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": []
+ },
+ {
+  "note": "empty bodies",
+  "tokens": [
+   200001,
+   200004,
+   200010,
+   200001,
+   200008,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 7,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": []
+ },
+ {
+  "note": "thinking repeated",
+  "tokens": [
+   200001,
+   200008,
+   64,
+   200010,
+   200001,
+   200008,
+   65,
+   200010,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "a",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "b",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 18,
+  "finished": true,
+  "result": {
+   "reasoning_content": "ab",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "ab",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "tokens after end ignored",
+  "tokens": [
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 10,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "tool args with nested braces split",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   77,
+   64,
+   76,
+   68,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   64,
+   81,
+   70,
+   82,
+   1,
+   25,
+   90,
+   1,
+   78,
+   1,
+   25,
+   90,
+   1,
+   79,
+   1,
+   25,
+   1,
+   92,
+   1,
+   92,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "o"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "p"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 40,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"o\":{\"p\":\"}\"}}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"o\":{\"p\":\"}\"}}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool name only header, json no name",
+  "tokens": [
+   200001,
+   40239,
+   930,
+   200049,
+   90,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   16,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "hdrname",
+       "arguments": ""
+      }
+     },
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{\"a\":1}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 19,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "hdrname",
+     "arguments": "{\"a\":1}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "hdrname",
+     "arguments": "{\"a\":1}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "tool call body with leading ws before prefix",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   198,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   64,
+   1,
+   25,
+   1,
+   65,
+   1,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "a"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "b"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 29,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":\"b\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"a\":\"b\"}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "stop string inside tool args ignored",
+  "tokens": [
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   90,
+   1,
+   82,
+   1,
+   25,
+   1,
+   148033,
+   1,
+   92,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "STOP"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": "call_0",
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "{"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "s"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": ":"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "STOP"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "\""
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "",
+      "tool_call": {
+       "index": 0,
+       "id": null,
+       "name": null,
+       "arguments": "}"
+      }
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 28,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "",
+   "tool_calls": [
+    {
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"s\":\"STOP\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "",
+    "tool_call": {
+     "index": 0,
+     "id": "call_0",
+     "name": "f",
+     "arguments": "{\"s\":\"STOP\"}"
+    }
+   }
+  ]
+ },
+ {
+  "note": "stop then tool not emitted",
+  "tokens": [
+   200001,
+   200004,
+   87,
+   199181,
+   149889,
+   200010,
+   200001,
+   69,
+   200049,
+   90,
+   1,
+   930,
+   1,
+   25,
+   1,
+   69,
+   1,
+   11,
+   1,
+   70747,
+   1,
+   25,
+   70044,
+   92,
+   200010,
+   200006
+  ],
+  "prefill": [],
+  "stop": [
+   "STOP"
+  ],
+  "steps": [
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "x ",
+      "tool_call": null
+     }
+    ],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 4,
+  "finished": true,
+  "result": {
+   "reasoning_content": "",
+   "content": "x ",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "",
+    "content": "x ",
+    "tool_call": null
+   }
+  ]
+ },
+ {
+  "note": "prefill thinking",
+  "tokens": [
+   482,
+   12,
+   2688,
+   200010,
+   200001,
+   200004,
+   371,
+   150893,
+   149884,
+   220,
+   19,
+   13,
+   200010,
+   200006
+  ],
+  "prefill": [
+   200001,
+   200008
+  ],
+  "stop": null,
+  "steps": [
+   {
+    "deltas": [
+     {
+      "reasoning_content": "pre",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "-",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "thought",
+      "content": "",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "The",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " answer",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " is",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": " ",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": "4",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [
+     {
+      "reasoning_content": "",
+      "content": ".",
+      "tool_call": null
+     }
+    ],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": false
+   },
+   {
+    "deltas": [],
+    "finished": true
+   }
+  ],
+  "finish": [],
+  "finish_again": [],
+  "num_tokens": 14,
+  "finished": true,
+  "result": {
+   "reasoning_content": "pre-thought",
+   "content": "The answer is 4.",
+   "tool_calls": [],
+   "finish_reason": "stop"
+  },
+  "merged": [
+   {
+    "reasoning_content": "pre-thought",
+    "content": "",
+    "tool_call": null
+   },
+   {
+    "reasoning_content": "",
+    "content": "The answer is 4.",
+    "tool_call": null
+   }
+  ]
+ }
+]

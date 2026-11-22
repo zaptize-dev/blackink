@@ -1,0 +1,98 @@
+Inkling-2-Mini abliterated - ingine
+Copyright 2026 satellitedown
+
+This repository contains ingine (a C++/CUDA inference engine for
+Inkling-2-Mini, in native/), the abliteration tools, the abliteration file
+ablation/inkling-2-mini-abliterated.safetensors, and an installer. All of it
+is licensed under the Apache License, Version 2.0 (see LICENSE), except the
+vendored dependencies listed below, which keep their own licenses.
+
+The model weights are not part of the GitHub repository; they are
+redistributed unchanged in the Hugging Face repository named below. This
+license does not replace the licenses of downloaded software or model
+artifacts.
+
+Installer recipe
+----------------
+Adapted from the Qwen3.8-Flash-Next heretic - fngine installer:
+https://github.com/satellitedown/flash-next-abliterated-fngine
+The recipe has been changed to build ingine's C++/CUDA server from this
+repository on the installing machine (CMake, Ninja and a private CUDA toolkit
+with cuBLAS from NVIDIA's pip packages), and to download the pinned
+satellitedown/Inkling-2-Mini-abliterated-ingine revision from Hugging Face.
+
+ingine's C++ engine
+-------------------
+Its device, memory, weight-loading, CUDA-graph and tracing infrastructure, the
+OpenAI-compatible HTTP server and the tokenizer and chat-template pipeline are
+adapted from fngine (Apache License 2.0):
+https://github.com/satellitedown/fngine
+fngine is derived in part from Cinference (commit 383e5db,
+https://github.com/satellitedown/cinference), which is derived from NInfer by
+Neroued and its contributors (https://github.com/Neroued/ninfer), all under
+the Apache License, Version 2.0. Adapted files carry a header of the form
+"Adapted from fngine (github.com/satellitedown/fngine, Apache-2.0) for
+ingine.", and files fngine took from Cinference keep their "Modified for
+fngine from cinference:<path> @ 383e5db. See NOTICE." header. The model
+kernels, the prefill, the DSpark drafter and the speculative decoding loop are
+written for Inkling-2-Mini; the decode kernels are ports of ingine's earlier
+PyTorch extension kernels.
+
+Vendored dependencies in native/third_party retain their original copyright
+and license notices:
+- cpp-httplib: native/third_party/cpp-httplib/LICENSE
+  Copyright (c) 2017 yhirose; MIT License.
+- llama-jinja (llama.cpp's common/jinja, via fngine):
+  native/third_party/llama-jinja/LICENSE
+  Copyright (c) 2023-2026 The ggml authors; MIT License. Unicode data under
+  native/third_party/llama-jinja/UNICODE-LICENSE.
+- nlohmann/json: native/third_party/nlohmann/LICENSE.MIT
+  Copyright (c) 2013-2025 Niels Lohmann; MIT License.
+- spdlog: native/third_party/spdlog/LICENSE
+  Copyright (c) 2016 - present, Gabi Melman and spdlog contributors; MIT
+  License. Its bundled fmt code also retains its own copyright and MIT license
+  notices.
+- utf8proc: native/third_party/utf8proc/LICENSE.md
+  Includes the original Public Software Group and subsequent contributor
+  notices, along with the Unicode data notices reproduced in that file.
+
+Model
+-----
+Inkling-2-Mini: https://huggingface.co/thinkingmachines/Inkling-2-Mini
+Thinking Machines, Apache License 2.0, revision
+6e7c8248f75265bdd4fbab5273304243b5d8c2cb. Its files, including the DSpark
+drafter (mtp.safetensors), are redistributed without alteration together with
+the abliteration file in:
+https://huggingface.co/satellitedown/Inkling-2-Mini-abliterated-ingine
+The installer downloads that repository at the immutable revision and with
+the per-file sizes and SHA-256 recorded in runtime-manifest.json. The
+abliteration is applied by ingine at run time; no weights were retrained or
+modified.
+
+Method and references
+---------------------
+- Heretic (p-e-w): https://github.com/p-e-w/heretic. The search (Optuna TPE
+  over a per-layer weight kernel, refusals against KL divergence) and the
+  borderline-prompt and capability evaluations in tools/ follow Heretic's
+  approach and eval tools; no Heretic code is included.
+- Abliteration literature: refusal directions as a difference of means and
+  directional ablation (Arditi et al., "Refusal in Language Models Is
+  Mediated by a Single Direction", 2024), and projected abliteration
+  (directions made orthogonal to the harmless mean).
+- Datasets used for directions and evaluation: mlabonne/harmful_behaviors,
+  mlabonne/harmless_alpaca, JailbreakBench (JBB-Behaviors), under their own
+  licenses; they are downloaded by the tools, not redistributed.
+- Hugging Face transformers (Apache-2.0), pull request
+  https://github.com/huggingface/transformers/pull/51050 (Inkling2Loop): the
+  reference model in tools/inkling_ref.py is built on it, and ingine's model
+  was checked against it.
+- PyTorch (BSD-3-Clause): the abliteration tools in tools/ run on PyTorch;
+  ingine does not use it.
+- vLLM (Apache-2.0): ingine's DSpark speculative decoding follows vLLM's
+  implementation of the drafter.
+- NVIDIA: CUDA components downloaded by the installer (compiler, runtime,
+  cuBLAS) retain NVIDIA's license terms.
+
+This is an unofficial community project, not an endorsement by or affiliation
+with Thinking Machines, the Heretic authors, Hugging Face, NVIDIA, or the vLLM
+project.

@@ -1,0 +1,107 @@
+{
+  "name": "BlackInk - Inkling-2-Mini abliterated (16 GB Blackwell Edition)",
+  "model": {
+    "repo_id": "satellitedown/Inkling-2-Mini-abliterated-ingine",
+    "revision": "afd44de1d9cb5da68f1c251ca4f198e0517c72e0",
+    "directory": "Inkling-2-Mini",
+    "files": {
+      "LICENSE": {
+        "size": 11357,
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      },
+      "NOTICE": {
+        "size": 5144,
+        "sha256": "9239466ee07825a8449ad24eba94a3f1483725008770df9781ecfe5c79bb7329"
+      },
+      "README.md": {
+        "size": 7455,
+        "sha256": "afa596023818ccab9eb87dfac06410a601153f518d8d77c67b6f3f16b7cbfd2e"
+      },
+      "SHA256SUMS": {
+        "size": 3283,
+        "sha256": "1580d3006d1fe72fa95b8eba2497541ccb400bd111887f7a75b2da1c5d40abd1"
+      },
+      "chat_template.jinja": {
+        "size": 6868,
+        "sha256": "53a9035f3255945704b5857657cfb00c1165090c0641c4f782a0cbf268cc16dc"
+      },
+      "config.json": {
+        "size": 2699,
+        "sha256": "8216dd43157f5474cfff88f486a1e433fef703c674f694e485a86a761c412b1e"
+      },
+      "generation_config.json": {
+        "size": 98,
+        "sha256": "a08737c07a65a8fdf69f7cf086576210e5aad4b241437090b26d7b0c4f7905f7"
+      },
+      "hf_quant_config.json": {
+        "size": 67924,
+        "sha256": "7c656207d3ce37879c7be209a036b0dde43bf01f78159bff06880b868ed57143"
+      },
+      "inkling-2-mini-abliterated.safetensors": {
+        "size": 885848,
+        "sha256": "9467240bdbcd4737a3496bf167525989d79196dbeec582361880ad4d8cbe4d73"
+      },
+      "model-00001-of-00001.safetensors": {
+        "size": 19526019168,
+        "sha256": "65e60f51aa1284d4fb022584908c315270334d991828bb774af60584523539d1"
+      },
+      "model.safetensors.index.json": {
+        "size": 109300,
+        "sha256": "c1631065b7b00787993522dddc66a68b3abee869192977fb3dcb796e63bc5838"
+      },
+      "mtp.safetensors": {
+        "size": 635801416,
+        "sha256": "7c3b651317f01f73bcf4e1dceba66ef8b7e1a1eac6bc171e882e690a4b10a1d2"
+      },
+      "processor_config.json": {
+        "size": 461,
+        "sha256": "d7350adce18c8be4b607f261c8f0f7eabbf720bb7aaf648a43d4f8372bbacc2d"
+      },
+      "special_tokens_map.json": {
+        "size": 529,
+        "sha256": "c16f44b3594563d82743ddb0417a2be1bfe3e2000dfad2da4b8f32554593e1a0"
+      },
+      "tiktoken/tokenizer.model": {
+        "size": 3386494,
+        "sha256": "f170372dd655728909228220d77cf6b8104a59f38a91262a7d2c4027906ec0d8"
+      },
+      "tokenizer.json": {
+        "size": 26178678,
+        "sha256": "7f332727f9a3f093dd452a39cc978e6757627e5dad1b0673aa4e75174f236dd6"
+      },
+      "tokenizer_config.json": {
+        "size": 13235,
+        "sha256": "bf09342d285139fd37ce10c70878af1d52cb390e9901e10248654293a80ee636"
+      }
+    }
+  },
+  "ablation": "inkling-2-mini-abliterated.safetensors",
+  "serving": {
+    "host": "0.0.0.0",
+    "port": 8003,
+    "max_ctx": 131072,
+    "dense_fp8": true,
+    "full_nvfp4": true,
+    "kv_fp8": false,
+    "kv_q4": true,
+    "spec": true,
+    "spec_threshold": 0.8,
+    "model_id": "inkling-2-mini-abliterated"
+  },
+  "runtime": {
+    "cuda": "13.4.92",
+    "cuda_packages": [
+      "nvidia-cuda-nvcc==13.4.92",
+      "nvidia-cuda-crt==13.4.92",
+      "nvidia-nvvm==13.4.92",
+      "nvidia-cuda-runtime==13.4.92",
+      "nvidia-cuda-cccl==13.3.4.3.1",
+      "nvidia-nvtx==13.4.92",
+      "nvidia-cublas==13.8.0.4"
+    ],
+    "build_tools": [
+      "cmake==4.4.4",
+      "ninja==1.13.2"
+    ]
+  }
+}

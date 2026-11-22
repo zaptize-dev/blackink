@@ -1,0 +1,3 @@
+add_library(ingine_kernels_common INTERFACE)
+target_include_directories(ingine_kernels_common INTERFACE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(ingine_kernels_common INTERFACE CUDA::cudart)

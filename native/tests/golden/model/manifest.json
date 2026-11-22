@@ -1,0 +1,80 @@
+{
+ "topk": 256,
+ "steps": 32,
+ "max_ctx": 8192,
+ "prefill_chunk": 2048,
+ "dense_fp8": true,
+ "model_dir": "/mnt/data/inkling/hf",
+ "cases": [
+  {
+   "name": "abl_kv16_chat",
+   "file": "abl_kv16_chat.json",
+   "ablated": true,
+   "kv_fp8": false,
+   "prompt_tokens": 30
+  },
+  {
+   "name": "abl_kv16_t300",
+   "file": "abl_kv16_t300.json",
+   "ablated": true,
+   "kv_fp8": false,
+   "prompt_tokens": 300
+  },
+  {
+   "name": "abl_kv16_t2100",
+   "file": "abl_kv16_t2100.json",
+   "ablated": true,
+   "kv_fp8": false,
+   "prompt_tokens": 2100
+  },
+  {
+   "name": "abl_kv16_t5000",
+   "file": "abl_kv16_t5000.json",
+   "ablated": true,
+   "kv_fp8": false,
+   "prompt_tokens": 5000
+  },
+  {
+   "name": "abl_kv8_chat",
+   "file": "abl_kv8_chat.json",
+   "ablated": true,
+   "kv_fp8": true,
+   "prompt_tokens": 30
+  },
+  {
+   "name": "abl_kv8_t300",
+   "file": "abl_kv8_t300.json",
+   "ablated": true,
+   "kv_fp8": true,
+   "prompt_tokens": 300
+  },
+  {
+   "name": "abl_kv8_t2100",
+   "file": "abl_kv8_t2100.json",
+   "ablated": true,
+   "kv_fp8": true,
+   "prompt_tokens": 2100
+  },
+  {
+   "name": "abl_kv8_t5000",
+   "file": "abl_kv8_t5000.json",
+   "ablated": true,
+   "kv_fp8": true,
+   "prompt_tokens": 5000
+  },
+  {
+   "name": "orig_kv16_chat",
+   "file": "orig_kv16_chat.json",
+   "ablated": false,
+   "kv_fp8": false,
+   "prompt_tokens": 30
+  },
+  {
+   "name": "orig_kv16_t2100",
+   "file": "orig_kv16_t2100.json",
+   "ablated": false,
+   "kv_fp8": false,
+   "prompt_tokens": 2100
+  }
+ ]
+}

@@ -1,0 +1,353 @@
+#!/usr/bin/env bash
+# ingine: run Inkling-2-Mini abliterated on ingine as an OpenAI-compatible server. `ingine help` for usage.
+set -euo pipefail
+
+SELF="$(readlink -f -- "${BASH_SOURCE[0]}")"
+ROOT="$(cd -- "$(dirname -- "$SELF")/.." && pwd -P)"
+UNIT=inkling-ingine
+CONFIG="$HOME/.config/ingine/env"
+RUN="$ROOT/.run"
+BUILD="$ROOT/native/build-install"  # built by scripts/install.sh
+SERVER="$BUILD/apps/serve/ingine-serve"
+PROFILE="$BUILD/profile.env"
+NOTIFY=0
+MODE=systemd
+
+usage() {
+  cat <<HELP
+Usage: ingine <command> [arguments]
+
+Commands
+  serve [args...]  Run the server in the foreground (Ctrl-C stops it). Arguments are passed to
+                   ingine-serve after the profile, so later flags win (e.g. --max-ctx 131072).
+  start [args...]  Start the server in the background as the systemd user unit $UNIT (or, without a
+                   systemd user session, as a nohup process logging to .run/ingine.log), wait until
+                   /health answers, then print the API URL and model id. Returns at once if it already
+                   runs; exits 1 if the server fails or is not ready within INGINE_START_TIMEOUT seconds
+                   (it keeps starting then).
+  stop             Stop the server and wait until the port is free.
+  status           Server state, /health, /v1/models and GPU memory. Exit 0 ready, 1 starting, 3 stopped.
+  logs [-f]        Server log (journalctl --user -u $UNIT, or .run/ingine.log); -f follows it.
+  update           Update the code, rebuild the server and update the model: bash setup.sh --update.
+  help             This text.
+start and stop never prompt and send desktop notifications (notify-send), so they can be bound to keys.
+
+Settings: environment variables, or shell assignments in $CONFIG (the environment wins).
+  INGINE_MODEL_DIR      model folder (default \$ROOT/models/Inkling-2-Mini)
+  INGINE_ABLATION       ablation file (default <model folder>/inkling-2-mini-abliterated.safetensors, downloaded
+                        with the model); set it empty (INGINE_ABLATION=) to serve the original model as inkling-2-mini
+  HOST, PORT            bind address (default 127.0.0.1, 8003)
+  INGINE_CTX            context length in tokens (default 262144)
+  INGINE_EXTRA_ARGS     extra server flags, split on whitespace (e.g. "--spec-threshold 0.7")
+  INGINE_START_TIMEOUT  seconds start waits for /health (default 300)
+Relative paths are relative to \$ROOT ($ROOT).
+Profile: \$ROOT/runtime-manifest.json "serving" (FP8 dense weights, FP8 KV cache, speculative decoding), as
+written by the installer to \$ROOT/native/build-install/profile.env next to the server binary.
+
+The API has no authentication; keep it on loopback.
+Endpoints: http://HOST:PORT/v1/chat/completions, /v1/models, /health.
+HELP
+}
+
+say() { printf '%s\n' "$*"; }
+
+notify() {  # urgency summary body
+  if (( NOTIFY )) && command -v notify-send >/dev/null 2>&1; then
+    timeout 5 notify-send -a ingine -u "$1" "$2" "$3" >/dev/null 2>&1 || true
+  fi
+}
+
+die() {
+  printf 'ingine: %s\n' "$*" >&2
+  notify critical "Inkling ingine" "$*"
+  exit 1
+}
+
+case "${1:-help}" in
+  help|-h|--help) usage; exit 0 ;;
+  update)
+    [[ -f "$ROOT/setup.sh" ]] || die "$ROOT/setup.sh is missing; reinstall with the curl command from the README."
+    shift
+    exec bash "$ROOT/setup.sh" --update "$@"
+    ;;
+esac
+
+# ---- settings: config file, then the environment on top ----------------------------------------------
+VARS=(INGINE_MODEL_DIR INGINE_ABLATION HOST PORT INGINE_CTX INGINE_EXTRA_ARGS INGINE_START_TIMEOUT)
+declare -A explicit=()
+for name in "${VARS[@]}"; do
+  if [[ -v $name ]]; then explicit[$name]="${!name}"; fi
+done
+if [[ -r "$CONFIG" ]]; then
+  set +u
+  # shellcheck source=/dev/null
+  source "$CONFIG"
+  set -u
+fi
+for name in "${!explicit[@]}"; do printf -v "$name" '%s' "${explicit[$name]}"; done
+
+# The serving profile (runtime-manifest.json "serving"), written by the installer with the server binary.
+[[ -x "$SERVER" && -r "$PROFILE" ]] \
+  || die "ingine is not installed (no server build in $BUILD). Run: bash $ROOT/setup.sh and choose 1 (install everything)."
+profile_host='' profile_port='' profile_max_ctx='' profile_model_id='' profile_ablation='' profile_directory=''
+profile_flags=() profile_required=()
+# shellcheck source=/dev/null
+source "$PROFILE"
+[[ -n "$profile_port" && -n "$profile_directory" ]] || die "Cannot read the serving profile $PROFILE. Run: bash $ROOT/setup.sh and choose 1."
+
+absolute() { if [[ -z "$1" || "$1" == /* ]]; then say "$1"; else say "$ROOT/$1"; fi; }
+HOST="${HOST:-$profile_host}"
+PORT="${PORT:-$profile_port}"
+INGINE_CTX="${INGINE_CTX:-$profile_max_ctx}"
+INGINE_MODEL_DIR="$(absolute "${INGINE_MODEL_DIR:-models/$profile_directory}")"
+if [[ -v INGINE_ABLATION ]]; then
+  INGINE_ABLATION="$(absolute "$INGINE_ABLATION")"  # set but empty: original model
+else
+  INGINE_ABLATION="$INGINE_MODEL_DIR/$profile_ablation"
+fi
+INGINE_EXTRA_ARGS="${INGINE_EXTRA_ARGS-}"
+INGINE_START_TIMEOUT="${INGINE_START_TIMEOUT:-300}"
+export HOST PORT INGINE_CTX INGINE_MODEL_DIR INGINE_ABLATION INGINE_EXTRA_ARGS INGINE_START_TIMEOUT
+
+# ---- helpers --------------------------------------------------------------------------------------
+case "$HOST" in
+  0.0.0.0|'') PROBE=127.0.0.1 URL_HOST=127.0.0.1 ;;
+  ::|'[::]') PROBE=::1 URL_HOST='[::1]' ;;
+  \[*\]) PROBE="${HOST:1:-1}" URL_HOST="$HOST" ;;
+  *:*) PROBE="$HOST" URL_HOST="[$HOST]" ;;
+  *) PROBE="$HOST" URL_HOST="$HOST" ;;
+esac
+BASE="http://$URL_HOST:$PORT"
+
+http_get() { curl -fsS --max-time 3 "$BASE$1" 2>/dev/null; }
+
+port_open() { timeout 2 bash -c 'exec 3<>"/dev/tcp/$1/$2"' _ "$PROBE" "$PORT" 2>/dev/null; }
+
+# Value of a top-level key ($1) in the server's compact JSON ($2), strings without quotes.
+json_field() {
+  local re="\"$1\":(\"([^\"]*)\"|[^,}]*)"
+  [[ "$2" =~ $re ]] || return 0
+  if [[ "${BASH_REMATCH[1]}" == \"* ]]; then say "${BASH_REMATCH[2]}"; else say "${BASH_REMATCH[1]}"; fi
+}
+
+have_systemd() { command -v systemd-run >/dev/null 2>&1 && systemctl --user show-environment >/dev/null 2>&1; }
+
+unit_state() { systemctl --user show -p ActiveState --value "$UNIT" 2>/dev/null || true; }
+
+unit_running() { have_systemd && [[ "$(unit_state)" =~ ^(active|activating|reloading|deactivating)$ ]]; }
+
+fallback_pid() {  # pid of a server started without systemd, if it still runs
+  local pid
+  [[ -r "$RUN/ingine.pid" ]] || return 1
+  pid="$(<"$RUN/ingine.pid")"
+  [[ "$pid" =~ ^[0-9]+$ ]] && kill -0 "$pid" 2>/dev/null && grep -qa ingine "/proc/$pid/cmdline" 2>/dev/null \
+    && say "$pid"
+}
+
+is_running() { unit_running || fallback_pid >/dev/null; }
+
+recent_log() {  # last server log lines since epoch $1
+  if [[ "$MODE" == fallback ]]; then
+    tail -n 40 "$RUN/ingine.log"
+  else
+    journalctl --user -u "$UNIT" --since "@$1" -n 40 --no-pager -o cat 2>/dev/null || true
+  fi
+}
+
+require_curl() { command -v curl >/dev/null 2>&1 || die "curl is required (install it with your package manager)."; }
+
+check_install() {
+  local missing=() name
+  for name in "${profile_required[@]}"; do [[ -f "$INGINE_MODEL_DIR/$name" ]] || missing+=("$name"); done
+  (( ${#missing[@]} == 0 )) || die "The model is missing or incomplete in $INGINE_MODEL_DIR (missing: ${missing[*]}). \
+Run: bash $ROOT/setup.sh and choose 2 (download/resume the model), or set INGINE_MODEL_DIR to an existing download."
+  [[ -z "$INGINE_ABLATION" || -f "$INGINE_ABLATION" ]] || die "Ablation file not found: $INGINE_ABLATION. \
+Run: bash $ROOT/setup.sh and choose 2 (download/resume the model), set INGINE_ABLATION to the file, \
+or set INGINE_ABLATION= (empty) to serve the original model."
+}
+
+# ---- commands -------------------------------------------------------------------------------------
+cmd_serve() {
+  check_install
+  local args=(--engine --model-dir "$INGINE_MODEL_DIR" --host "$HOST" --port "$PORT" --max-ctx "$INGINE_CTX"
+              "${profile_flags[@]}")
+  if [[ -n "$INGINE_ABLATION" ]]; then args+=(--ablation "$INGINE_ABLATION" --model-id "$profile_model_id"); fi
+  local extra=()
+  read -r -a extra <<< "$INGINE_EXTRA_ARGS"
+  cd "$ROOT"
+  exec "$SERVER" "${args[@]}" "${extra[@]}" "$@"
+}
+
+cmd_start() {
+  NOTIFY=1
+  require_curl
+  check_install
+  mkdir -p "$RUN"
+  exec 9>"$RUN/start.lock"
+  flock -n 9 || die "Another 'ingine start' is already waiting for the server."
+  local since body model
+  since="$(date +%s)"
+  if body="$(http_get /health)"; then
+    model="$(json_field model "$body")"
+    say "Already running: $BASE/v1 (model $model)"
+    notify normal "Inkling ingine" "Already running: $BASE/v1 (model $model)"
+    return 0
+  fi
+  have_systemd || MODE=fallback
+  if is_running; then
+    if fallback_pid >/dev/null; then MODE=fallback; fi
+    say "The server is already starting; waiting for it."
+  elif port_open; then
+    die "Port $PORT on $HOST is used by another program (see: ss -ltnp 'sport = :$PORT'). Stop it or set PORT."
+  elif [[ "$MODE" == systemd ]]; then
+    systemctl --user reset-failed "$UNIT" >/dev/null 2>&1 || true
+    local env=() name
+    for name in "${VARS[@]}"; do
+      if [[ -v $name ]]; then env+=("--setenv=$name=${!name}"); fi
+    done
+    systemd-run --user --quiet --unit="$UNIT" --collect --service-type=exec \
+      --description="Inkling-2-Mini abliterated (ingine) on $HOST:$PORT" \
+      --working-directory="$ROOT" --property=TimeoutStopSec=30 \
+      "${env[@]}" "$SELF" serve "$@" \
+      || unit_running || die "systemd-run could not start the user unit $UNIT."
+    say "Started the user unit $UNIT; loading the model..."
+  else
+    say "--- start $(date '+%F %T') ---" >> "$RUN/ingine.log"
+    nohup setsid "$SELF" serve "$@" >> "$RUN/ingine.log" 2>&1 < /dev/null 9>&- &
+    say "$!" > "$RUN/ingine.pid"
+    say "Started process $! (no systemd user session; log: $RUN/ingine.log); loading the model..."
+  fi
+
+  local start=$SECONDS next=0 elapsed
+  while :; do
+    if body="$(http_get /health)"; then
+      model="$(json_field model "$body")"
+      say "Ready after $((SECONDS - start)) s: $BASE/v1 (model $model)"
+      notify normal "Inkling ingine ready" "$BASE/v1 (model $model)"
+      return 0
+    fi
+    if ! is_running; then
+      say "The server exited during startup. Last log lines:" >&2
+      recent_log "$since" >&2
+      die "The server failed to start; see: ingine logs"
+    fi
+    elapsed=$((SECONDS - start))
+    if (( elapsed >= INGINE_START_TIMEOUT )); then
+      say "Last log lines:" >&2
+      recent_log "$since" >&2
+      die "Not ready after $elapsed s; it keeps starting. Check: ingine status, ingine logs -f; stop: ingine stop"
+    fi
+    if (( elapsed >= next )); then
+      say "Waiting for $BASE/health (${elapsed} s)..."
+      next=$((next + 15))
+    fi
+    sleep 2
+  done
+}
+
+cmd_stop() {
+  NOTIFY=1
+  local stopped=0 pid
+  if unit_running; then
+    systemctl --user stop "$UNIT" || die "systemctl --user stop $UNIT failed."
+    stopped=1
+  fi
+  if pid="$(fallback_pid)"; then
+    kill -TERM "$pid" 2>/dev/null || true
+    for _ in $(seq 60); do kill -0 "$pid" 2>/dev/null || break; sleep 0.5; done
+    kill -KILL "$pid" 2>/dev/null || true
+    stopped=1
+  fi
+  rm -f "$RUN/ingine.pid"
+  if (( ! stopped )); then
+    if port_open; then
+      die "Not started by ingine, but port $PORT on $HOST is in use (see: ss -ltnp 'sport = :$PORT')."
+    fi
+    say "Not running."
+    return 0
+  fi
+  for _ in $(seq 30); do port_open || break; sleep 0.5; done
+  if port_open; then die "Stopped, but port $PORT is still in use (see: ss -ltnp 'sport = :$PORT')."; fi
+  say "Stopped."
+  notify normal "Inkling ingine" "Stopped; GPU memory released."
+}
+
+cmd_status() {
+  require_curl
+  local state='stopped' code=3 health models pid rest key value status='' stats=() cards=() re
+  if pid="$(fallback_pid)"; then
+    state="process $pid (log $RUN/ingine.log)"
+  elif have_systemd && [[ "$(unit_state)" != inactive ]]; then
+    state="unit $UNIT: $(unit_state)"
+  fi
+  say "Server:  $state"
+  say "Model:   $INGINE_MODEL_DIR${INGINE_ABLATION:+ + $INGINE_ABLATION}"
+  if health="$(http_get /health)"; then
+    models="$(http_get /v1/models || true)"
+    # /health: {"status":"ok","model":...,"waiting":0,...}; every key but status and model is a statistic.
+    rest="$health" re='"([A-Za-z_]+)":("[^"]*"|[^,}]*)(.*)'
+    while [[ "$rest" =~ $re ]]; do
+      key="${BASH_REMATCH[1]}" value="${BASH_REMATCH[2]}" rest="${BASH_REMATCH[3]}"
+      value="${value#\"}" value="${value%\"}"
+      case "$key" in status) status="$value" ;; model) ;; *) stats+=("$key $value") ;; esac
+    done
+    value="$(IFS=,; say "${stats[*]}")"
+    say "Health:  $status${value:+ (${value//,/, })}"
+    # /v1/models: {"object":"list","data":[{"id":...,"max_model_len":...},...]}
+    rest="$models" re='\{([^{}]*)\}(.*)'
+    while [[ "$rest" =~ $re ]]; do
+      value="${BASH_REMATCH[1]}" rest="${BASH_REMATCH[2]}"
+      key="$(json_field id "$value")"
+      [[ -z "$key" ]] || cards+=("$key ($(json_field max_model_len "$value") tokens)")
+    done
+    if (( ${#cards[@]} )); then
+      value="$(IFS=,; say "${cards[*]}")"
+      say "API:     $BASE/v1  ${value//,/, }"
+    else
+      say "API:     $BASE/v1 (no /v1/models answer)"
+    fi
+    code=0
+  elif is_running; then
+    say "Health:  not answering yet (starting; see: ingine logs -f)"
+    code=1
+  elif port_open; then
+    say "Health:  port $PORT is used by another program"
+  fi
+  if command -v nvidia-smi >/dev/null 2>&1; then
+    nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader 2>/dev/null \
+      | sed 's/^/GPU:     /' || true
+  fi
+  return "$code"
+}
+
+cmd_logs() {
+  local follow=0 rest=() arg
+  for arg in "$@"; do
+    case "$arg" in -f|--follow) follow=1 ;; *) rest+=("$arg") ;; esac
+  done
+  if fallback_pid >/dev/null || ! have_systemd; then
+    [[ -r "$RUN/ingine.log" ]] || die "No log yet ($RUN/ingine.log)."
+    if (( follow )); then exec tail -n 200 -F "$RUN/ingine.log"; fi
+    exec tail -n 200 "$RUN/ingine.log"
+  fi
+  if (( follow )); then rest+=(-f); fi
+  exec journalctl --user -u "$UNIT" -n 200 --no-pager "${rest[@]}"
+}
+
+cmd_update() {
+  [[ -f "$ROOT/setup.sh" ]] || die "$ROOT/setup.sh is missing; reinstall with the curl command from the README."
+  exec bash "$ROOT/setup.sh" --update "$@"
+}
+
+command="${1:-help}"
+if (( $# )); then shift; fi
+case "$command" in
+  serve) cmd_serve "$@" ;;
+  start) cmd_start "$@" ;;
+  stop) cmd_stop ;;
+  status) cmd_status ;;
+  logs) cmd_logs "$@" ;;
+  update) cmd_update "$@" ;;
+  help|-h|--help) usage ;;
+  *) usage >&2; exit 2 ;;
+esac

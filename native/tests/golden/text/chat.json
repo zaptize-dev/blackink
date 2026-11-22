@@ -1,0 +1,6045 @@
+[
+ {
+  "note": "single user",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Hello!"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    32269,
+    0,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Hello!<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "system + user",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You are helpful."
+   },
+   {
+    "role": "user",
+    "content": "Hi"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    1735,
+    149914,
+    160385,
+    13,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    4896,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>You are helpful.<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Hi<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "developer -> system",
+  "messages": [
+   {
+    "role": "developer",
+    "content": "Be terse."
+   },
+   {
+    "role": "user",
+    "content": "Hi"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    1618,
+    172044,
+    13,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    4896,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Be terse.<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Hi<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "no thinking prefill",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Hi"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": false,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    4896,
+    200010,
+    200001,
+    200004
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Hi<|end_message|><|message_model|><|content_text|>",
+   "prefill_ids": [
+    200001,
+    200004
+   ]
+  }
+ },
+ {
+  "note": "effort none",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "none",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort minimal",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "minimal",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    16,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.1<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort low",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "low",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    17,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.2<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort medium",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "medium",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    22,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.7<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort high",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "high",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort xhigh",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "xhigh",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68436,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.99<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort max",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Explain gravity."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "max",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68436,
+    200010,
+    200000,
+    200004,
+    100887,
+    170127,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.99<|end_message|><|message_user|><|content_text|>Explain gravity.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort string normalisation",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": " HIGH ",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort string normalisation",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "Max",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68436,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.99<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort string normalisation",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "\tlow\n",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    17,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.2<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.0",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.0,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.5",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.5,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    20,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.5<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.99",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.99,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68436,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.99<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.25",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.25,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68105,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.25<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 1e-05",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 1e-05,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    16,
+    68,
+    12,
+    68435,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 1e-05<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.0001",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.0001,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68128,
+    16,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.0001<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.3",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.3,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    18,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.3<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 0.30000000000000004",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 0.30000000000000004,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    69395,
+    68128,
+    68128,
+    68128,
+    68128,
+    68486,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.30000000000000004<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric 1",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 1,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got 1",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort numeric '0.5'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "0.5",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    20,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.5<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric ' 0.75 '",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": " 0.75 ",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    68523,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.75<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric '1e-3'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "1e-3",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    69463,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.001<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort numeric '0'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Compute."
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "0",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    200010,
+    200000,
+    200004,
+    97600,
+    13,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0<|end_message|><|message_user|><|content_text|>Compute.<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "effort invalid 1.5",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 1.5,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got 1.5",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid -0.1",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": -0.1,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got -0.1",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid 'extreme'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "extreme",
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "invalid reasoning_effort 'extreme': expected one of none, minimal, low, medium, high, xhigh, max or a number in [0, 0.99]",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid True",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": true,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "invalid reasoning_effort: True",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid False",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": false,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "invalid reasoning_effort: False",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid 'nan'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "nan",
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got nan",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid 'inf'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "inf",
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got inf",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid ''",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "",
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "invalid reasoning_effort '': expected one of none, minimal, low, medium, high, xhigh, max or a number in [0, 0.99]",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid []",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": [],
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got []",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid {'a': 1}",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": {
+   "a": 1
+  },
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got {'a': 1}",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid 2",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": 2,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got 2",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid '1.0'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "1.0",
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "reasoning_effort must be in [0.0, 0.99], got 1.0",
+   "param": "reasoning_effort"
+  }
+ },
+ {
+  "note": "effort invalid '-0.0'",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "-0.0",
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "two system messages",
+  "messages": [
+   {
+    "role": "system",
+    "content": "sys"
+   },
+   {
+    "role": "system",
+    "content": "sys2"
+   },
+   {
+    "role": "user",
+    "content": "q"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    4496,
+    200010,
+    200002,
+    200004,
+    4496,
+    17,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    80,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>sys<|end_message|><|message_system|><|content_text|>sys2<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>q<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "system only: effort at end",
+  "messages": [
+   {
+    "role": "system",
+    "content": "only system"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    65026,
+    150200,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>only system<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "multi-turn",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": "A1"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   },
+   {
+    "role": "assistant",
+    "content": "A2"
+   },
+   {
+    "role": "user",
+    "content": "Q3"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200004,
+    32,
+    16,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010,
+    200001,
+    200004,
+    32,
+    17,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    18,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_text|>A1<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|><|message_model|><|content_text|>A2<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q3<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "assistant reasoning_content",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": "A1",
+    "reasoning_content": "thought 1"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200008,
+    2688,
+    220,
+    16,
+    200010,
+    200001,
+    200004,
+    32,
+    16,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_thinking|>thought 1<|end_message|><|message_model|><|content_text|>A1<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "assistant reasoning alias",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": "A1",
+    "reasoning": "via alias"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200008,
+    2237,
+    166703,
+    200010,
+    200001,
+    200004,
+    32,
+    16,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_thinking|>via alias<|end_message|><|message_model|><|content_text|>A1<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "empty rc + alias",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": "A1",
+    "reasoning_content": "",
+    "reasoning": "alias wins over empty"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200008,
+    32338,
+    185149,
+    150053,
+    153436,
+    200010,
+    200001,
+    200004,
+    32,
+    16,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_thinking|>alias wins over empty<|end_message|><|message_model|><|content_text|>A1<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "thinking field alias (transformers)",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": "A1",
+    "thinking": "thinking field"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200008,
+    78168,
+    150646,
+    200010,
+    200001,
+    200004,
+    32,
+    16,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_thinking|>thinking field<|end_message|><|message_model|><|content_text|>A1<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "empty content with reasoning",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": "",
+    "reasoning_content": "only thoughts"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200008,
+    65026,
+    166417,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_thinking|>only thoughts<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "no content with reasoning",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "reasoning_content": "only thoughts"
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200008,
+    65026,
+    166417,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_thinking|>only thoughts<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "empty assistant content",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Q1"
+   },
+   {
+    "role": "assistant",
+    "content": ""
+   },
+   {
+    "role": "user",
+    "content": "Q2"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    48,
+    16,
+    200010,
+    200001,
+    200004,
+    200010,
+    200006,
+    200000,
+    200004,
+    48,
+    17,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Q1<|end_message|><|message_model|><|content_text|><|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>Q2<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool round trip, string args",
+  "messages": [
+   {
+    "role": "user",
+    "content": "What's the weather in Paris?"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "arguments": "{\"city\": \"Paris\", \"unit\": \"c\"}"
+      }
+     }
+    ]
+   },
+   {
+    "role": "tool",
+    "tool_call_id": "call_1",
+    "content": "{\"temp\": 21}"
+   },
+   {
+    "role": "assistant",
+    "content": "It is 21C."
+   }
+  ],
+  "tools": [
+   {
+    "type": "function",
+    "function": {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string",
+        "description": "City name"
+       },
+       "unit": {
+        "type": "string",
+        "enum": [
+         "c",
+         "f"
+        ]
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    2131,
+    149876,
+    150517,
+    154046,
+    149887,
+    149878,
+    152652,
+    13,
+    1,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    832,
+    62,
+    30847,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    90,
+    1,
+    71961,
+    1,
+    25,
+    90,
+    1,
+    2958,
+    1,
+    25,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    3278,
+    150231,
+    1,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    11,
+    1,
+    2095,
+    1,
+    25,
+    90,
+    1,
+    32529,
+    1,
+    25,
+    58,
+    1,
+    66,
+    1,
+    11,
+    1,
+    69,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    92,
+    11,
+    1,
+    69812,
+    1,
+    25,
+    58,
+    1,
+    2958,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    3156,
+    1,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    1775,
+    6,
+    82,
+    149876,
+    154046,
+    149881,
+    152717,
+    30,
+    200010,
+    200001,
+    832,
+    62,
+    30847,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    832,
+    62,
+    30847,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    2958,
+    1,
+    25,
+    1,
+    3967,
+    1,
+    11,
+    1,
+    2095,
+    1,
+    25,
+    1,
+    66,
+    1,
+    92,
+    92,
+    200010,
+    200006,
+    200003,
+    832,
+    62,
+    30847,
+    200004,
+    90,
+    1,
+    3286,
+    1,
+    25,
+    220,
+    68251,
+    92,
+    200010,
+    200001,
+    200004,
+    1256,
+    149884,
+    220,
+    68251,
+    34,
+    13,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"Get the current weather for a city.\",\"name\":\"get_weather\",\"parameters\":{\"properties\":{\"city\":{\"description\":\"City name\",\"type\":\"string\"},\"unit\":{\"enum\":[\"c\",\"f\"],\"type\":\"string\"}},\"required\":[\"city\"],\"type\":\"object\"},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>What's the weather in Paris?<|end_message|><|message_model|>get_weather<|content_invoke_tool_json|>{\"name\":\"get_weather\",\"args\":{\"city\":\"Paris\",\"unit\":\"c\"}}<|end_message|><|content_model_end_sampling|><|message_tool|>get_weather<|content_text|>{\"temp\": 21}<|end_message|><|message_model|><|content_text|>It is 21C.<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "dict args, nested, sorted top-level",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Search"
+   },
+   {
+    "role": "assistant",
+    "content": "",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "search",
+       "arguments": {
+        "q": "ünïcödé",
+        "n": 3,
+        "z_score": -0.5,
+        "nested": {
+         "b": 1,
+         "a": [
+          1,
+          2.5,
+          null,
+          true
+         ]
+        }
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "tools": [
+   {
+    "type": "function",
+    "function": {
+     "name": "search",
+     "description": "Search the web — returns snippets.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "q": {
+        "type": "string"
+       },
+       "n": {
+        "type": "integer",
+        "default": 5
+       },
+       "z_score": {
+        "type": "number",
+        "minimum": -1.5
+       }
+      },
+      "required": [
+       "q"
+      ]
+     }
+    }
+   },
+   {
+    "type": "function",
+    "function": {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string",
+        "description": "City name"
+       },
+       "unit": {
+        "type": "string",
+        "enum": [
+         "c",
+         "f"
+        ]
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    4245,
+    149876,
+    150630,
+    150220,
+    153939,
+    185392,
+    82,
+    13,
+    1,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    1404,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    90,
+    1,
+    71961,
+    1,
+    25,
+    90,
+    1,
+    77,
+    1,
+    25,
+    90,
+    1,
+    57622,
+    1,
+    25,
+    20,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    4252,
+    1,
+    92,
+    11,
+    1,
+    80,
+    1,
+    25,
+    90,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    11,
+    1,
+    89,
+    62,
+    2104,
+    1,
+    25,
+    90,
+    1,
+    74452,
+    1,
+    25,
+    12,
+    16,
+    13,
+    20,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1158,
+    1,
+    92,
+    92,
+    11,
+    1,
+    69812,
+    1,
+    25,
+    58,
+    1,
+    80,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    3156,
+    1,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    11,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    2131,
+    149876,
+    150517,
+    154046,
+    149887,
+    149878,
+    152652,
+    13,
+    1,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    832,
+    62,
+    30847,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    90,
+    1,
+    71961,
+    1,
+    25,
+    90,
+    1,
+    2958,
+    1,
+    25,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    3278,
+    150231,
+    1,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    11,
+    1,
+    2095,
+    1,
+    25,
+    90,
+    1,
+    32529,
+    1,
+    25,
+    58,
+    1,
+    66,
+    1,
+    11,
+    1,
+    69,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    92,
+    11,
+    1,
+    69812,
+    1,
+    25,
+    58,
+    1,
+    2958,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    3156,
+    1,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    4245,
+    200010,
+    200001,
+    1404,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    1404,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    77,
+    1,
+    25,
+    18,
+    11,
+    1,
+    112324,
+    1,
+    25,
+    90,
+    1,
+    65,
+    1,
+    25,
+    16,
+    11,
+    1,
+    64,
+    1,
+    25,
+    58,
+    16,
+    11,
+    17,
+    13,
+    20,
+    11,
+    2451,
+    11,
+    1750,
+    60,
+    92,
+    11,
+    1,
+    80,
+    1,
+    25,
+    1,
+    68375,
+    138472,
+    5176,
+    68096,
+    1,
+    11,
+    1,
+    89,
+    62,
+    2104,
+    1,
+    25,
+    12,
+    15,
+    13,
+    20,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"Search the web — returns snippets.\",\"name\":\"search\",\"parameters\":{\"properties\":{\"n\":{\"default\":5,\"type\":\"integer\"},\"q\":{\"type\":\"string\"},\"z_score\":{\"minimum\":-1.5,\"type\":\"number\"}},\"required\":[\"q\"],\"type\":\"object\"},\"type\":\"function\"},{\"description\":\"Get the current weather for a city.\",\"name\":\"get_weather\",\"parameters\":{\"properties\":{\"city\":{\"description\":\"City name\",\"type\":\"string\"},\"unit\":{\"enum\":[\"c\",\"f\"],\"type\":\"string\"}},\"required\":[\"city\"],\"type\":\"object\"},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Search<|end_message|><|message_model|>search<|content_invoke_tool_json|>{\"name\":\"search\",\"args\":{\"n\":3,\"nested\":{\"b\":1,\"a\":[1,2.5,null,true]},\"q\":\"ünïcödé\",\"z_score\":-0.5}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "parallel tool calls, tool name by id and by name",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "content": "Let me check.",
+    "reasoning_content": "need tool",
+    "tool_calls": [
+     {
+      "id": "c1",
+      "type": "function",
+      "function": {
+       "name": "search",
+       "arguments": "{\"q\":\"a\"}"
+      }
+     },
+     {
+      "id": "c2",
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "arguments": "{\"city\":\"B\"}"
+      }
+     }
+    ]
+   },
+   {
+    "role": "tool",
+    "tool_call_id": "c2",
+    "content": "sunny"
+   },
+   {
+    "role": "tool",
+    "name": "search",
+    "content": "results"
+   }
+  ],
+  "tools": [
+   {
+    "type": "function",
+    "function": {
+     "name": "search",
+     "description": "Search the web — returns snippets.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "q": {
+        "type": "string"
+       },
+       "n": {
+        "type": "integer",
+        "default": 5
+       },
+       "z_score": {
+        "type": "number",
+        "minimum": -1.5
+       }
+      },
+      "required": [
+       "q"
+      ]
+     }
+    }
+   },
+   {
+    "type": "function",
+    "function": {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string",
+        "description": "City name"
+       },
+       "unit": {
+        "type": "string",
+        "enum": [
+         "c",
+         "f"
+        ]
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    4245,
+    149876,
+    150630,
+    150220,
+    153939,
+    185392,
+    82,
+    13,
+    1,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    1404,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    90,
+    1,
+    71961,
+    1,
+    25,
+    90,
+    1,
+    77,
+    1,
+    25,
+    90,
+    1,
+    57622,
+    1,
+    25,
+    20,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    4252,
+    1,
+    92,
+    11,
+    1,
+    80,
+    1,
+    25,
+    90,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    11,
+    1,
+    89,
+    62,
+    2104,
+    1,
+    25,
+    90,
+    1,
+    74452,
+    1,
+    25,
+    12,
+    16,
+    13,
+    20,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1158,
+    1,
+    92,
+    92,
+    11,
+    1,
+    69812,
+    1,
+    25,
+    58,
+    1,
+    80,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    3156,
+    1,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    11,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    2131,
+    149876,
+    150517,
+    154046,
+    149887,
+    149878,
+    152652,
+    13,
+    1,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    832,
+    62,
+    30847,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    90,
+    1,
+    71961,
+    1,
+    25,
+    90,
+    1,
+    2958,
+    1,
+    25,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    3278,
+    150231,
+    1,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    11,
+    1,
+    2095,
+    1,
+    25,
+    90,
+    1,
+    32529,
+    1,
+    25,
+    58,
+    1,
+    66,
+    1,
+    11,
+    1,
+    69,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1485,
+    1,
+    92,
+    92,
+    11,
+    1,
+    69812,
+    1,
+    25,
+    58,
+    1,
+    2958,
+    1,
+    60,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    3156,
+    1,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200008,
+    1281,
+    151955,
+    200010,
+    200001,
+    200004,
+    2918,
+    149991,
+    150918,
+    13,
+    200010,
+    200001,
+    1404,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    1404,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    80,
+    1,
+    25,
+    1,
+    64,
+    1,
+    92,
+    92,
+    200010,
+    200001,
+    832,
+    62,
+    30847,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    832,
+    62,
+    30847,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    2958,
+    1,
+    25,
+    1,
+    33,
+    1,
+    92,
+    92,
+    200010,
+    200006,
+    200003,
+    832,
+    62,
+    30847,
+    200004,
+    3705,
+    3900,
+    200010,
+    200003,
+    1404,
+    200004,
+    69287,
+    200010
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"Search the web — returns snippets.\",\"name\":\"search\",\"parameters\":{\"properties\":{\"n\":{\"default\":5,\"type\":\"integer\"},\"q\":{\"type\":\"string\"},\"z_score\":{\"minimum\":-1.5,\"type\":\"number\"}},\"required\":[\"q\"],\"type\":\"object\"},\"type\":\"function\"},{\"description\":\"Get the current weather for a city.\",\"name\":\"get_weather\",\"parameters\":{\"properties\":{\"city\":{\"description\":\"City name\",\"type\":\"string\"},\"unit\":{\"enum\":[\"c\",\"f\"],\"type\":\"string\"}},\"required\":[\"city\"],\"type\":\"object\"},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_thinking|>need tool<|end_message|><|message_model|><|content_text|>Let me check.<|end_message|><|message_model|>search<|content_invoke_tool_json|>{\"name\":\"search\",\"args\":{\"q\":\"a\"}}<|end_message|><|message_model|>get_weather<|content_invoke_tool_json|>{\"name\":\"get_weather\",\"args\":{\"city\":\"B\"}}<|end_message|><|content_model_end_sampling|><|message_tool|>get_weather<|content_text|>sunny<|end_message|><|message_tool|>search<|content_text|>results<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "empty string args -> {}",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": ""
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    70044,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "null args -> {}",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": null
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    70044,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "dictsort case sensitive",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"b\": 1, \"a\": 2, \"B\": 3, \"_\": 4}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    33,
+    1,
+    25,
+    18,
+    11,
+    1,
+    62,
+    1,
+    25,
+    19,
+    11,
+    1,
+    64,
+    1,
+    25,
+    17,
+    11,
+    1,
+    65,
+    1,
+    25,
+    16,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"B\":3,\"_\":4,\"a\":2,\"b\":1}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "numeric args formatting",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"x\": 1.0, \"y\": 1e20, \"z\": -0.0, \"w\": 12345678901234, \"v\": 1.5e-7}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    85,
+    1,
+    25,
+    16,
+    13,
+    20,
+    68,
+    12,
+    68620,
+    11,
+    1,
+    86,
+    1,
+    25,
+    70904,
+    81554,
+    91927,
+    77863,
+    68402,
+    11,
+    1,
+    87,
+    1,
+    25,
+    16,
+    13,
+    15,
+    11,
+    1,
+    88,
+    1,
+    25,
+    16,
+    68,
+    10,
+    68020,
+    11,
+    1,
+    89,
+    1,
+    25,
+    12,
+    15,
+    13,
+    15,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"v\":1.5e-07,\"w\":12345678901234,\"x\":1.0,\"y\":1e+20,\"z\":-0.0}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "duplicate keys",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"a\": 1, \"a\": 2}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    64,
+    1,
+    25,
+    17,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"a\":2}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "string escapes in args",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"s\": \"quote\\\" backslash\\\\ nl\\n tab\\t ctrl\\u0001 é 😀 \\u00e9\"}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    82,
+    1,
+    25,
+    1,
+    31000,
+    59,
+    1,
+    220,
+    114220,
+    68566,
+    177010,
+    59,
+    77,
+    152376,
+    59,
+    83,
+    220,
+    36958,
+    59,
+    84,
+    68128,
+    16,
+    150005,
+    220,
+    110689,
+    150005,
+    1,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"s\":\"quote\\\" backslash\\\\ nl\\n tab\\t ctrl\\u0001 é 😀 é\"}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "NaN/Infinity args",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"a\": NaN, \"b\": Infinity}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    64,
+    1,
+    25,
+    32571,
+    45,
+    11,
+    1,
+    65,
+    1,
+    25,
+    368,
+    133724,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"a\":NaN,\"b\":Infinity}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "assistant name mismatch -> error",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "name": "f",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "g",
+       "arguments": "{}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "chat template error: assistant name f does not match its tool call g",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "assistant name in header",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "content": "hi",
+    "name": "bot"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    2138,
+    200004,
+    1910,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>bot<|content_text|>hi<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool without name or id",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "tool",
+    "content": "r"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200003,
+    200004,
+    81,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_tool|><|content_text|>r<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "content as parts",
+  "messages": [
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "text",
+      "text": "part one"
+     },
+     {
+      "type": "input_text",
+      "text": "part two"
+     },
+     "raw string part",
+     {
+      "text": "no type"
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    863,
+    150011,
+    200010,
+    200000,
+    200004,
+    863,
+    150103,
+    200010,
+    200000,
+    200004,
+    2978,
+    150379,
+    150162,
+    200010,
+    200000,
+    200004,
+    316,
+    150227,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>part one<|end_message|><|message_user|><|content_text|>part two<|end_message|><|message_user|><|content_text|>raw string part<|end_message|><|message_user|><|content_text|>no type<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "text part without text",
+  "messages": [
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "text"
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|><|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "non-string text part",
+  "messages": [
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "text",
+      "text": 5
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|><|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "empty parts list",
+  "messages": [
+   {
+    "role": "user",
+    "content": []
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "part type null -> template error",
+  "messages": [
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": null,
+      "text": "t"
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "chat template error: Unsupported content part type: None",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "image part -> ChatError",
+  "messages": [
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "image_url",
+      "image_url": {
+       "url": "x"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "unsupported content part type 'image_url' (text only)",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "non-object part",
+  "messages": [
+   {
+    "role": "user",
+    "content": [
+     "a",
+     5
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "content parts must be strings or objects",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "numeric content",
+  "messages": [
+   {
+    "role": "user",
+    "content": 5
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "message content must be a string, a list of parts, or null",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "object content",
+  "messages": [
+   {
+    "role": "user",
+    "content": {
+     "a": 1
+    }
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "message content must be a string, a list of parts, or null",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "no content",
+  "messages": [
+   {
+    "role": "user"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "null content",
+  "messages": [
+   {
+    "role": "user",
+    "content": null
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "bad role",
+  "messages": [
+   {
+    "role": "narrator",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "unsupported message role 'narrator'",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "non-string role",
+  "messages": [
+   {
+    "role": 5,
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "each message must be an object with a string 'role'",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "missing role",
+  "messages": [
+   {
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "each message must be an object with a string 'role'",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "message not object",
+  "messages": [
+   "hello"
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "each message must be an object with a string 'role'",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "empty messages",
+  "messages": [],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "'messages' must be a non-empty list",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "null messages",
+  "messages": null,
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "'messages' must be a non-empty list",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "messages object",
+  "messages": {
+   "role": "user",
+   "content": "x"
+  },
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "'messages' must be a non-empty list",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "tool_calls not a list",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": {
+     "id": "c"
+    }
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "'tool_calls' must be a list",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "empty tool_calls dropped",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": []
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool call not object",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     "c"
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool_calls entries must be objects with a 'function' object",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "function not object",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "c",
+      "function": "f"
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool_calls entries must be objects with a 'function' object",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "name not string",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "c",
+      "function": {
+       "name": 5
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call function name must be a string",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "args invalid JSON",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{bad json"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call arguments for 'f' are not valid JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "args JSON not object",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "[1, 2]"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call arguments for 'f' must be a JSON object",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "args extra data",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"a\": 1}  x"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call arguments for 'f' are not valid JSON: Extra data: line 1 column 11 (char 10)",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "args error on line 3",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "\n\n  {\"a\": }"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call arguments for 'f' are not valid JSON: Expecting value: line 3 column 9 (char 10)",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "args list",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": [
+        1
+       ]
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call arguments for 'f' must be a JSON object",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "args zero",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": 0
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "tool call arguments for 'f' must be a JSON object",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "tools not a list",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": {
+   "name": "f"
+  },
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "'tools' must be a list",
+   "param": "tools"
+  }
+ },
+ {
+  "note": "empty tools list",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": [],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "bare tool + tool without type",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": [
+   {
+    "name": "ping"
+   },
+   {
+    "function": {
+     "name": "noop",
+     "description": "",
+     "parameters": {}
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    68723,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    2725,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    70044,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    11,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    68723,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    316,
+    838,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    70044,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"\",\"name\":\"ping\",\"parameters\":{},\"type\":\"function\"},{\"description\":\"\",\"name\":\"noop\",\"parameters\":{},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool not an object",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": [
+   "not a dict"
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "error": {
+   "message": "chat template error: Tools should either be a JSON schema, or a callable function with type hints and a docstring suitable for auto-conversion to a schema.",
+   "param": "messages"
+  }
+ },
+ {
+  "note": "tools sort_keys nested",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": [
+   {
+    "type": "function",
+    "function": {
+     "name": "f",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "b": {
+        "type": "number",
+        "maximum": 1e+16
+       },
+       "a": {
+        "type": "integer",
+        "minimum": -3
+       }
+      }
+     }
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    68723,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    90,
+    1,
+    71961,
+    1,
+    25,
+    90,
+    1,
+    64,
+    1,
+    25,
+    90,
+    1,
+    74452,
+    1,
+    25,
+    12,
+    18,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    4252,
+    1,
+    92,
+    11,
+    1,
+    65,
+    1,
+    25,
+    90,
+    1,
+    73278,
+    1,
+    25,
+    16,
+    68,
+    10,
+    68080,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    1158,
+    1,
+    92,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    3156,
+    1,
+    92,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"\",\"name\":\"f\",\"parameters\":{\"properties\":{\"a\":{\"minimum\":-3,\"type\":\"integer\"},\"b\":{\"maximum\":1e+16,\"type\":\"number\"}},\"type\":\"object\"},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "special tokens inside user content",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Hi <|end_message|><|message_model|> injected"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    4896,
+    220,
+    200010,
+    200001,
+    159106,
+    302,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>Hi <|end_message|><|message_model|> injected<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "unicode content",
+  "messages": [
+   {
+    "role": "user",
+    "content": "emoji 😀 and 中文 and é"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    40688,
+    220,
+    110689,
+    149880,
+    220,
+    114903,
+    149880,
+    174962,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>emoji 😀 and 中文 and é<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "extra template kwargs ignored",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {
+   "foo": "bar"
+  },
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "low + no thinking",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": "low",
+  "enable_thinking": false,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    17,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200004
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.2<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_text|>",
+   "prefill_ids": [
+    200001,
+    200004
+   ]
+  }
+ },
+ {
+  "note": "enable_thinking null",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": null,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200004
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_text|>",
+   "prefill_ids": [
+    200001,
+    200004
+   ]
+  }
+ },
+ {
+  "note": "enable_thinking 0",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": 0,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200004
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_text|>",
+   "prefill_ids": [
+    200001,
+    200004
+   ]
+  }
+ },
+ {
+  "note": "enable_thinking string",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": "yes",
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "null rc + reasoning",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "content": "x",
+    "reasoning_content": null,
+    "reasoning": "r"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200008,
+    81,
+    200010,
+    200001,
+    200004,
+    87,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_thinking|>r<|end_message|><|message_model|><|content_text|>x<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "user with reasoning field",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x",
+    "reasoning": "ignored"
+   },
+   {
+    "role": "assistant",
+    "content": "y"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200004,
+    88,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_text|>y<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "system parts",
+  "messages": [
+   {
+    "role": "system",
+    "content": [
+     {
+      "type": "text",
+      "text": "sys parts"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    4496,
+    152447,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>sys parts<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "developer mid conversation",
+  "messages": [
+   {
+    "role": "user",
+    "content": "a"
+   },
+   {
+    "role": "assistant",
+    "content": "b"
+   },
+   {
+    "role": "developer",
+    "content": "dev mid"
+   },
+   {
+    "role": "user",
+    "content": "c"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    64,
+    200010,
+    200001,
+    200004,
+    65,
+    200010,
+    200006,
+    200002,
+    200004,
+    1639,
+    152049,
+    200010,
+    200000,
+    200004,
+    66,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>a<|end_message|><|message_model|><|content_text|>b<|end_message|><|content_model_end_sampling|><|message_system|><|content_text|>dev mid<|end_message|><|message_user|><|content_text|>c<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "float formatting band 1e15",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"big\": 1e15, \"small\": 1e-05, \"neg\": -1234.5, \"i\": -42}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    3197,
+    1,
+    25,
+    68189,
+    68128,
+    68128,
+    68128,
+    68128,
+    15,
+    13,
+    15,
+    11,
+    1,
+    72,
+    1,
+    25,
+    12,
+    68872,
+    11,
+    1,
+    3101,
+    1,
+    25,
+    12,
+    70904,
+    19,
+    13,
+    20,
+    11,
+    1,
+    1916,
+    1,
+    25,
+    16,
+    68,
+    12,
+    68435,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"big\":1000000000000000.0,\"i\":-42,\"neg\":-1234.5,\"small\":1e-05}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "dictsort non-ASCII keys, nested order kept",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"é\": 1, \"z\": 2, \"Z\": 3, \"中\": 4, \"a\": {\"y\": 1, \"b\": 2}}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    57,
+    1,
+    25,
+    18,
+    11,
+    1,
+    64,
+    1,
+    25,
+    90,
+    1,
+    88,
+    1,
+    25,
+    16,
+    11,
+    1,
+    65,
+    1,
+    25,
+    17,
+    92,
+    11,
+    1,
+    89,
+    1,
+    25,
+    17,
+    11,
+    1,
+    5164,
+    1,
+    25,
+    16,
+    11,
+    1,
+    14798,
+    1,
+    25,
+    19,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"Z\":3,\"a\":{\"y\":1,\"b\":2},\"z\":2,\"é\":1,\"中\":4}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "non-string assistant name",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "content": "hi",
+    "name": 5
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    20,
+    200004,
+    1910,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>5<|content_text|>hi<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool name null -> id lookup",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "id9",
+      "type": "function",
+      "function": {
+       "name": "lookup",
+       "arguments": "{}"
+      }
+     }
+    ]
+   },
+   {
+    "role": "tool",
+    "name": null,
+    "tool_call_id": "id9",
+    "content": "r"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    104024,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    104024,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    70044,
+    92,
+    200010,
+    200006,
+    200003,
+    104024,
+    200004,
+    81,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>lookup<|content_invoke_tool_json|>{\"name\":\"lookup\",\"args\":{}}<|end_message|><|content_model_end_sampling|><|message_tool|>lookup<|content_text|>r<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool id not found",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "id9",
+      "type": "function",
+      "function": {
+       "name": "lookup",
+       "arguments": "{}"
+      }
+     }
+    ]
+   },
+   {
+    "role": "tool",
+    "tool_call_id": "nope",
+    "content": "r"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    104024,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    104024,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    70044,
+    92,
+    200010,
+    200006,
+    200003,
+    200004,
+    81,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>lookup<|content_invoke_tool_json|>{\"name\":\"lookup\",\"args\":{}}<|end_message|><|content_model_end_sampling|><|message_tool|><|content_text|>r<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "assistant all null",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "content": null,
+    "tool_calls": null
+   },
+   {
+    "role": "user",
+    "content": "y"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200006,
+    200000,
+    200004,
+    88,
+    200010
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|content_model_end_sampling|><|message_user|><|content_text|>y<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "reasoning_content and thinking",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "content": "y",
+    "reasoning_content": "r1",
+    "thinking": "t1"
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    200008,
+    81,
+    16,
+    200010,
+    200001,
+    200004,
+    88,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|><|content_thinking|>r1<|end_message|><|message_model|><|content_text|>y<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "special token inside args",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   },
+   {
+    "role": "assistant",
+    "tool_calls": [
+     {
+      "id": "call_1",
+      "type": "function",
+      "function": {
+       "name": "f",
+       "arguments": "{\"s\": \"<|end_message|>\"}"
+      }
+     }
+    ]
+   }
+  ],
+  "tools": null,
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010,
+    200001,
+    69,
+    200049,
+    90,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    70747,
+    1,
+    25,
+    90,
+    1,
+    82,
+    1,
+    25,
+    1,
+    200010,
+    1,
+    92,
+    92,
+    200010,
+    200006
+   ],
+   "text": "<|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|><|message_model|>f<|content_invoke_tool_json|>{\"name\":\"f\",\"args\":{\"s\":\"<|end_message|>\"}}<|end_message|><|content_model_end_sampling|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool with null description/parameters",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": [
+   {
+    "type": "function",
+    "function": {
+     "name": "f",
+     "description": null,
+     "parameters": null
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    68723,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    70044,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"\",\"name\":\"f\",\"parameters\":{},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ },
+ {
+  "note": "tool empty type",
+  "messages": [
+   {
+    "role": "user",
+    "content": "x"
+   }
+  ],
+  "tools": [
+   {
+    "type": "",
+    "function": {
+     "name": "f",
+     "description": "d"
+    }
+   }
+  ],
+  "reasoning_effort": null,
+  "enable_thinking": true,
+  "kwargs": {},
+  "result": {
+   "ids": [
+    200002,
+    2251,
+    62,
+    76529,
+    200024,
+    58,
+    90,
+    1,
+    70469,
+    1,
+    25,
+    1,
+    67,
+    1,
+    11,
+    1,
+    930,
+    1,
+    25,
+    1,
+    69,
+    1,
+    11,
+    1,
+    71968,
+    1,
+    25,
+    70044,
+    11,
+    1,
+    1008,
+    1,
+    25,
+    1,
+    36404,
+    1,
+    92,
+    60,
+    200010,
+    200002,
+    200004,
+    34182,
+    279,
+    154554,
+    150628,
+    25,
+    220,
+    15,
+    13,
+    24,
+    200010,
+    200000,
+    200004,
+    87,
+    200010
+   ],
+   "text": "<|message_system|>tool_declare<|content_xml|>[{\"description\":\"d\",\"name\":\"f\",\"parameters\":{},\"type\":\"function\"}]<|end_message|><|message_system|><|content_text|>Thinking effort level: 0.9<|end_message|><|message_user|><|content_text|>x<|end_message|>",
+   "prefill_ids": []
+  }
+ }
+]
