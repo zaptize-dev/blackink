@@ -19,7 +19,7 @@ namespace attn = kernels::attn;
 namespace {
 
 dense::Matrix matrix(const Dense& d) {
-  return dense::Matrix{d.w.data, static_cast<const float*>(d.scale.data), d.rows()};
+  return dense::Matrix{d.w.data, static_cast<const float*>(d.scale.data), d.rows(), d.bscale.data};
 }
 
 const float* f32p(const Tensor& t) { return static_cast<const float*>(t.data); }

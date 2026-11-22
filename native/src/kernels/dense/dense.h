@@ -14,11 +14,13 @@
 
 namespace ingine::kernels::dense {
 
-// A weight matrix [rows, K]: BF16 rows (scale == nullptr) or float8_e4m3fn rows with fp32 per-row scales.
+// A weight matrix [rows, K]: BF16 rows (scale == nullptr), float8_e4m3fn rows with fp32 per-row scales,
+// or NVFP4 rows (w = E2M1 codes [rows, K/2], bscale = E4M3 block scales [rows, K/16], scale = fp32 row factor [rows]).
 struct Matrix {
   const void* w = nullptr;
   const float* scale = nullptr;
   int rows = 0;
+  const void* bscale = nullptr;
 };
 
 // proj: multi-segment GEMV. xin bf16 [3, M, H]; segments int32 device [nseg, 3] = (row_begin, row_end,
@@ -42,8 +44,12 @@ void gemv(const __nv_bfloat16* x, int M, int K, Matrix w, float* out, bool pdl, 
 // fp8_rows: bf16 [rows, K] -> float8_e4m3fn [rows, K] (q) + fp32 scale [rows] = amax / 448.
 void fp8_rows(const __nv_bfloat16* w, int rows, int K, void* q, float* scale, cudaStream_t stream);
 
-// dequant_rows: weights.dequant: out = bf16(float(q) * scale[row]) for FP8 rows [rows, K].
-void dequant_rows(const void* q, const float* scale, int rows, int K, __nv_bfloat16* out, cudaStream_t stream);
+// nvfp4_rows: bf16 [rows, K] -> E2M1 [rows, K/2] (q) + E4M3 block scale [rows, K/16] (bscale) + fp32 factor [rows] (scale).
+void nvfp4_rows(const __nv_bfloat16* w, int rows, int K, void* q, void* bscale, float* scale, cudaStream_t stream);
+
+// dequant_rows: weights.dequant: out = bf16(float(q) * scale[row]) for FP8 or NVFP4 rows [rows, K].
+void dequant_rows(const void* q, const float* scale, int rows, int K, __nv_bfloat16* out, cudaStream_t stream,
+                  const void* bscale = nullptr);
 
 // router: x bf16 [M, H]; w [128, H] fp32 (w_fp32) or bf16 holding BF16 values; bias fp32 [128];
 // idx int32 [M, 8] (descending score), wts fp32 [M, 8] = 8 s / (sum s + 1e-20).

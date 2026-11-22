@@ -135,10 +135,10 @@ void Prefiller::run(State& st, const std::int32_t* tokens, int T, int pos0, floa
     p.M = T;
     dense::mix(p, false, s);
   };
-  // B rows of a Dense matrix as BF16: the matrix itself, or its FP8 rows dequantized (weights.dequant)
+  // B rows of a Dense matrix as BF16: the matrix itself, or its FP8/NVFP4 rows dequantized (weights.dequant)
   auto bf16_rows = [&](const Dense& d) -> const __nv_bfloat16* {
-    if (!d.fp8()) return bf16p(d.w);
-    dense::dequant_rows(d.w.data, f32p(d.scale), d.rows(), d.cols(), wscratch_, s);
+    if (!d.fp8() && !d.nvfp4()) return bf16p(d.w);
+    dense::dequant_rows(d.w.data, f32p(d.scale), d.rows(), d.cols(), wscratch_, s, d.bscale.data);
     return wscratch_;
   };
   // message_gate for G gates: h_g, msg_g fp32 [T, H] -> out bf16 [G, T, H] = bf16(rms_norm(gated) * norm_w[g])
@@ -322,7 +322,13 @@ void Prefiller::run(State& st, const std::int32_t* tokens, int T, int pos0, floa
   if (tap_out)
     CUDA_CHECK(cudaMemcpy2DAsync(tap_out + std::size_t(NUM_TAPS - 1) * H, std::size_t(NUM_TAPS) * H * 2, xf_,
                                  std::size_t(H) * 2, std::size_t(H) * 2, T, cudaMemcpyDeviceToDevice, s));
-  pk::head_logits(xf_ + std::size_t(T - 1) * H, w.unembed.w.data, f32p(w.unembed.scale), UNPADDED_VOCAB, logits, s);
+  if (w.unembed.nvfp4()) {
+    dense::head(xf_ + std::size_t(T - 1) * H, 1,
+                dense::Matrix{w.unembed.w.data, f32p(w.unembed.scale), UNPADDED_VOCAB, w.unembed.bscale.data}, logits,
+                false, s);
+  } else {
+    pk::head_logits(xf_ + std::size_t(T - 1) * H, w.unembed.w.data, f32p(w.unembed.scale), UNPADDED_VOCAB, logits, s);
+  }
   CUDA_CHECK(cudaGetLastError());
   st.length = pos0 + T;
 }

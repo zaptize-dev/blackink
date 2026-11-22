@@ -120,14 +120,16 @@ inline T* ptr(const Tensor& t) {
 
 // ----------------------------------------------------------------------------------------------- weights
 
-// A dense matrix as the decoder stores it: BF16 rows, or float8_e4m3fn rows with FP32 per-row scales
-// (`scale.data != nullptr`; value = fp8 * scale, see weights.dequant / dense fp8_rows).
+// A dense matrix as the decoder stores it: BF16 rows, float8_e4m3fn rows with FP32 per-row scales,
+// or NVFP4 rows (w = E2M1 codes [rows, cols/2], bscale = E4M3 block scales [rows, cols/16], scale = FP32 factor [rows]).
 struct Dense {
-  Tensor w;      // [rows, cols] bf16 or fp8
-  Tensor scale;  // [rows] fp32, or empty (data == nullptr) for BF16
-  bool fp8() const { return scale.data != nullptr; }
+  Tensor w;       // [rows, cols] bf16/fp8, or [rows, cols/2] u8
+  Tensor scale;   // [rows] fp32, or empty (data == nullptr) for BF16
+  Tensor bscale;  // [rows, cols/16] fp8_e4m3fn, or empty unless NVFP4
+  bool fp8() const { return scale.data != nullptr && bscale.data == nullptr; }
+  bool nvfp4() const { return bscale.data != nullptr; }
   int rows() const { return w.ne[1]; }
-  int cols() const { return w.ne[0]; }
+  int cols() const { return bscale.data != nullptr ? w.ne[0] * 2 : w.ne[0]; }
 };
 
 enum class ExpertFormat : int { NVFP4 = 0, MXFP8 = 1 };  // the moe kernels' `fmt`

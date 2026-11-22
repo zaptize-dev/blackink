@@ -156,14 +156,14 @@ struct ConvEpi {
 
 // ---- M = 1: CUDA cores --------------------------------------------------------------------------------
 
-template <bool FP8, int K, int LANES, int BLOCK, class Epi>
+template <bool FP8, int K, int LANES, int BLOCK, class Epi, bool Q4 = false>
 __global__ void __launch_bounds__(BLOCK) gemv_kernel(const uint8_t* __restrict__ w,
-                                                     const float* __restrict__ w_scale, int rows, uint32_t zero,
+                                                     const float* __restrict__ w_scale,
+                                                     const uint8_t* __restrict__ w_bscale, int rows, uint32_t zero,
                                                      Epi epi) {
-  constexpr int EPC = FP8 ? 16 : 8;  // elements per 16-byte chunk
+  constexpr int EPC = (FP8 || Q4) ? 16 : 8;  // elements per chunk
   constexpr int CH = K / (EPC * LANES);
   static_assert(K % (EPC * LANES) == 0, "row must split evenly over the lane group");
-  constexpr size_t ROW_BYTES = size_t(K) * (FP8 ? 1 : 2);
 
   const int gl = threadIdx.x % LANES;
   const int row = (blockIdx.x * BLOCK + threadIdx.x) / LANES;
@@ -173,6 +173,41 @@ __global__ void __launch_bounds__(BLOCK) gemv_kernel(const uint8_t* __restrict__
   if (in < 0) return;
   const __nv_bfloat16* x = epi.x_of(in);  // pointer arithmetic only: the segment table is a constant
 
+  if constexpr (Q4) {
+    const uint2* wr = reinterpret_cast<const uint2*>(w + size_t(row) * (K / 2));
+    const uint8_t* bsr = w_bscale + size_t(row) * (K / 16);
+    uint2 wv[CH];
+    uint8_t bsv[CH];
+#pragma unroll
+    for (int i = 0; i < CH; ++i) {
+      const int b = i * LANES + gl;
+      wv[i] = __ldg(wr + b);
+      bsv[i] = __ldg(bsr + b);
+    }
+    pdl_wait_fenced(zero);
+    pdl_trigger();
+
+    float acc = 0.f;
+#pragma unroll
+    for (int i = 0; i < CH; ++i) {
+      const int col = (i * LANES + gl) * 16;
+      float wf[16], xf[16];
+      unpack_nvfp4x16(wv[i], bsv[i], wf);
+      unpack_bf16x8(ld_act(x + col), xf);
+      unpack_bf16x8(ld_act(x + col + 8), xf + 8);
+#pragma unroll
+      for (int j = 0; j < 16; ++j) acc = fmaf(wf[j], xf[j], acc);
+    }
+    float v[1] = {group_sum<LANES>(acc) * __ldg(w_scale + row)};
+    if constexpr (Epi::kScatter) {
+      if (gl == 0) epi.store1(row, 0, v[0]);
+    } else {
+      epi.store(row, v, gl, group_mask<LANES>());
+    }
+    return;
+  }
+
+  constexpr size_t ROW_BYTES = size_t(K) * (FP8 ? 1 : 2);
   const uint8_t* wr = w + size_t(row) * ROW_BYTES;
   const std::uint64_t wpol = l2::policy<WEIGHT_L2>();
   uint4 wv[CH];
@@ -230,16 +265,22 @@ __device__ __forceinline__ uint32_t e4m3x2_to_bf16x2(uint32_t u) {
 // (xor of all the batch's loads) & zero, so ptxas cannot interleave the mma with the batch's loads and
 // all U steps' loads of a warp are in flight together (otherwise it issues one step's loads at a time,
 // ~1 KB per warp, and scattered 64-byte requests from 16 rows run at ~40% of DRAM bandwidth).
-template <bool FP8, int K, int M, int SPLITK, int U, class Epi>
+__device__ __forceinline__ uint32_t pack_bf16x2(float a, float b) {
+  __nv_bfloat162 v = __floats2bfloat162_rn(a, b);
+  return *reinterpret_cast<uint32_t*>(&v);
+}
+
+template <bool FP8, int K, int M, int SPLITK, int U, class Epi, bool Q4 = false>
 __global__ void __launch_bounds__(32 * SPLITK) gemv_mma_kernel(const uint8_t* __restrict__ w,
-                                                              const float* __restrict__ w_scale, int rows,
+                                                              const float* __restrict__ w_scale,
+                                                              const uint8_t* __restrict__ w_bscale, int rows,
                                                               uint32_t zero, Epi epi) {
-  constexpr int CPL = FP8 ? 16 : 8;  // columns per lane per 16-byte weight load
-  constexpr int SPAN = 4 * CPL;      // columns per step (4 lanes t)
-  constexpr int KS = K / SPLITK;     // columns per warp
+  constexpr int CPL = (FP8 || Q4) ? 16 : 8;  // columns per lane per weight load
+  constexpr int SPAN = 4 * CPL;              // columns per step (4 lanes t)
+  constexpr int KS = K / SPLITK;             // columns per warp
   static_assert(KS % (SPAN * U) == 0, "K slice must split into unrolled steps");
   constexpr int NJ = KS / SPAN;
-  constexpr size_t ROW_BYTES = size_t(K) * (FP8 ? 1 : 2);
+  constexpr size_t ROW_BYTES = Q4 ? size_t(K / 2) : size_t(K) * (FP8 ? 1 : 2);
   __shared__ float cs[SPLITK][16][8];
 
   const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31, g = lane >> 2, t = lane & 3;
@@ -255,15 +296,28 @@ __global__ void __launch_bounds__(32 * SPLITK) gemv_mma_kernel(const uint8_t* __
     const bool la = ia == cur, lb = ib == cur, lx = g < M;
     const uint8_t* wa = w + size_t(la ? ra : 0) * ROW_BYTES;
     const uint8_t* wb = w + size_t(lb ? rb : 0) * ROW_BYTES;
+    const uint8_t* bsa = Q4 ? (w_bscale + size_t(la ? ra : 0) * (K / 16)) : nullptr;
+    const uint8_t* bsb = Q4 ? (w_bscale + size_t(lb ? rb : 0) * (K / 16)) : nullptr;
     const __nv_bfloat16* xg = epi.x_of(cur) + size_t(lx ? g : 0) * K;
 #pragma unroll 1
     for (int jb = 0; jb < NJ; jb += U) {
       uint4 A[U], B[U], X[U][CPL / 8];
+      uint8_t sA[U], sB[U];
 #pragma unroll
       for (int u = 0; u < U; ++u) {
-        const size_t off = size_t(c0 + (jb + u) * SPAN) * (FP8 ? 1 : 2);
-        A[u] = la ? l2::ld_stream<WEIGHT_L2>(wa + off, wpol) : make_uint4(0, 0, 0, 0);
-        B[u] = lb ? l2::ld_stream<WEIGHT_L2>(wb + off, wpol) : make_uint4(0, 0, 0, 0);
+        const int col = c0 + (jb + u) * SPAN;
+        if constexpr (Q4) {
+          const uint2 qa = la ? __ldg(reinterpret_cast<const uint2*>(wa + col / 2)) : make_uint2(0, 0);
+          const uint2 qb = lb ? __ldg(reinterpret_cast<const uint2*>(wb + col / 2)) : make_uint2(0, 0);
+          sA[u] = la ? __ldg(bsa + col / 16) : 0;
+          sB[u] = lb ? __ldg(bsb + col / 16) : 0;
+          A[u] = make_uint4(qa.x, qa.y, 0, 0);
+          B[u] = make_uint4(qb.x, qb.y, 0, 0);
+        } else {
+          const size_t off = size_t(col) * (FP8 ? 1 : 2);
+          A[u] = la ? l2::ld_stream<WEIGHT_L2>(wa + off, wpol) : make_uint4(0, 0, 0, 0);
+          B[u] = lb ? l2::ld_stream<WEIGHT_L2>(wb + off, wpol) : make_uint4(0, 0, 0, 0);
+        }
       }
       if (!waited) {  // the first batch of weights is in flight; activations come from earlier kernels
         pdl_wait_fenced(zero);
@@ -286,7 +340,21 @@ __global__ void __launch_bounds__(32 * SPLITK) gemv_mma_kernel(const uint8_t* __
       dep &= zero;
 #pragma unroll
       for (int u = 0; u < U; ++u) {
-        if constexpr (FP8) {
+        if constexpr (Q4) {
+          float fa[16], fb[16];
+          unpack_nvfp4x16(make_uint2(A[u].x, A[u].y), sA[u], fa);
+          unpack_nvfp4x16(make_uint2(B[u].x, B[u].y), sB[u], fb);
+          const uint32_t xw[8] = {X[u][0].x, X[u][0].y, X[u][0].z, X[u][0].w,
+                                  X[u][1].x, X[u][1].y, X[u][1].z, X[u][1].w};
+#pragma unroll
+          for (int s = 0; s < 4; ++s) {
+            const uint32_t a0 = pack_bf16x2(fa[4 * s], fa[4 * s + 1]);
+            const uint32_t a1 = pack_bf16x2(fb[4 * s], fb[4 * s + 1]);
+            const uint32_t a2 = pack_bf16x2(fa[4 * s + 2], fa[4 * s + 3]);
+            const uint32_t a3 = pack_bf16x2(fb[4 * s + 2], fb[4 * s + 3]);
+            mma_bf16(c, a0, a1, a2, a3, xw[2 * s] ^ dep, xw[2 * s + 1]);
+          }
+        } else if constexpr (FP8) {
           // 16 columns = 4 k-steps of 4 columns (2 k-pairs) each
           const uint32_t aw[4] = {A[u].x, A[u].y, A[u].z, A[u].w}, bw[4] = {B[u].x, B[u].y, B[u].z, B[u].w};
           const uint32_t xw[8] = {X[u][0].x, X[u][0].y, X[u][0].z, X[u][0].w,
@@ -327,12 +395,12 @@ __global__ void __launch_bounds__(32 * SPLITK) gemv_mma_kernel(const uint8_t* __
     for (int k = threadIdx.x; k < 16 * M; k += 32 * SPLITK) {
       const int r = k / M, m = k % M, row = r0 + r;
       if (row < rows && epi.input_of(row) >= 0)
-        epi.store1(row, m, total(r, m) * (FP8 ? __ldg(w_scale + row) : 1.f));
+        epi.store1(row, m, total(r, m) * ((FP8 || Q4) ? __ldg(w_scale + row) : 1.f));
     }
   } else {
     const int r = threadIdx.x, row = r0 + r;
     if (r < 16 && row < rows) {
-      const float scale = FP8 ? __ldg(w_scale + row) : 1.f;
+      const float scale = (FP8 || Q4) ? __ldg(w_scale + row) : 1.f;
       float y[M];
 #pragma unroll
       for (int m = 0; m < M; ++m) y[m] = total(r, m) * scale;
@@ -348,23 +416,27 @@ __global__ void __launch_bounds__(32 * SPLITK) gemv_mma_kernel(const uint8_t* __
 // UFP8: steps per load batch of its FP8 instantiation.
 template <int K, int BLOCK, int SPLITK, int UFP8, template <int> class Epi, class Make>
 void launch_gemv(const Matrix& w, int M, bool pdl, cudaStream_t stream, Make make) {
-  const bool fp8 = w.scale != nullptr;
+  const bool q4 = w.bscale != nullptr;
+  const bool fp8 = !q4 && w.scale != nullptr;
   require(w.w != nullptr && w.rows > 0, "weight matrix is empty");
   const int rows = w.rows;
   const float* sc = w.scale;
   const uint8_t* wp = static_cast<const uint8_t*>(w.w);
+  const uint8_t* bsp = static_cast<const uint8_t*>(w.bscale);
   auto go = [&](auto mc) {
     constexpr int MM = decltype(mc)::value;
     auto epi = make(std::integral_constant<int, MM>{});
     using E = decltype(epi);
     if constexpr (MM == 1 && BLOCK > 0) {
       constexpr int B = BLOCK > 0 ? BLOCK : 32;  // (the branch is discarded for BLOCK = 0)
-      if (fp8) launch_ex(gemv_kernel<true, K, 16, B, E>, dim3((rows * 16 + B - 1) / B), B, 0, 1, pdl, stream, wp, sc, rows, 0u, epi);
-      else launch_ex(gemv_kernel<false, K, 32, B, E>, dim3((rows * 32 + B - 1) / B), B, 0, 1, pdl, stream, wp, sc, rows, 0u, epi);
+      if (q4) launch_ex(gemv_kernel<false, K, 16, B, E, true>, dim3((rows * 16 + B - 1) / B), B, 0, 1, pdl, stream, wp, sc, bsp, rows, 0u, epi);
+      else if (fp8) launch_ex(gemv_kernel<true, K, 16, B, E, false>, dim3((rows * 16 + B - 1) / B), B, 0, 1, pdl, stream, wp, sc, bsp, rows, 0u, epi);
+      else launch_ex(gemv_kernel<false, K, 32, B, E, false>, dim3((rows * 32 + B - 1) / B), B, 0, 1, pdl, stream, wp, sc, bsp, rows, 0u, epi);
     } else {
       const dim3 blocks((rows + 15) / 16);
-      if (fp8) launch_ex(gemv_mma_kernel<true, K, MM, SPLITK, UFP8, E>, blocks, 32 * SPLITK, 0, 1, pdl, stream, wp, sc, rows, 0u, epi);
-      else launch_ex(gemv_mma_kernel<false, K, MM, SPLITK, MMA_U_BF16, E>, blocks, 32 * SPLITK, 0, 1, pdl, stream, wp, sc, rows, 0u, epi);
+      if (q4) launch_ex(gemv_mma_kernel<false, K, MM, SPLITK, UFP8, E, true>, blocks, 32 * SPLITK, 0, 1, pdl, stream, wp, sc, bsp, rows, 0u, epi);
+      else if (fp8) launch_ex(gemv_mma_kernel<true, K, MM, SPLITK, UFP8, E, false>, blocks, 32 * SPLITK, 0, 1, pdl, stream, wp, sc, bsp, rows, 0u, epi);
+      else launch_ex(gemv_mma_kernel<false, K, MM, SPLITK, MMA_U_BF16, E, false>, blocks, 32 * SPLITK, 0, 1, pdl, stream, wp, sc, bsp, rows, 0u, epi);
     }
   };
   switch (M) {
@@ -417,16 +489,78 @@ __global__ void fp8_rows_kernel(const __nv_bfloat16* __restrict__ w, int rows, i
         s > 0.f ? __nv_cvt_float_to_fp8(__bfloat162float(wr[k]) / s, __NV_SATFINITE, __NV_E4M3) : 0;
 }
 
+__device__ __forceinline__ uint32_t quant_e2m1(float x) {
+  uint32_t sign = 0;
+  if (x < 0.f) { sign = 8u; x = -x; }
+  uint32_t code;
+  if (x < 0.25f) code = 0u;
+  else if (x < 0.75f) code = 1u;
+  else if (x <= 1.25f) code = 2u;
+  else if (x < 1.75f) code = 3u;
+  else if (x <= 2.5f) code = 4u;
+  else if (x < 3.5f) code = 5u;
+  else if (x <= 5.0f) code = 6u;
+  else code = 7u;
+  return sign | code;
+}
+
+__global__ void nvfp4_rows_kernel(const __nv_bfloat16* __restrict__ w, int rows, int K, uint8_t* q,
+                                  __nv_fp8_storage_t* bscale, float* scale) {
+  const int lane = threadIdx.x & 31;
+  const int row = (blockIdx.x * blockDim.x + threadIdx.x) >> 5;
+  if (row >= rows) return;
+  const __nv_bfloat16* wr = w + size_t(row) * K;
+  float amax = 0.f;
+  for (int k = lane; k < K; k += 32) amax = fmaxf(amax, fabsf(__bfloat162float(wr[k])));
+#pragma unroll
+  for (int o = 16; o > 0; o >>= 1) amax = fmaxf(amax, __shfl_xor_sync(0xffffffffu, amax, o));
+  const float factor = amax / (6.f * 448.f);
+  if (lane == 0) scale[row] = factor;
+  const float inv_factor = factor > 0.f ? (1.f / factor) : 0.f;
+  uint2* row_codes = reinterpret_cast<uint2*>(q + size_t(row) * (K / 2));
+  __nv_fp8_storage_t* row_bscales = bscale + size_t(row) * (K / 16);
+  for (int b = lane; b < K / 16; b += 32) {
+    float vals[16], bmax = 0.f;
+#pragma unroll
+    for (int i = 0; i < 16; ++i) {
+      vals[i] = __bfloat162float(wr[b * 16 + i]);
+      bmax = fmaxf(bmax, fabsf(vals[i]));
+    }
+    const __nv_fp8_storage_t bs_fp8 =
+        factor > 0.f ? __nv_cvt_float_to_fp8((bmax / 6.f) * inv_factor, __NV_SATFINITE, __NV_E4M3) : 0;
+    row_bscales[b] = bs_fp8;
+    const float deq_bs = e4m3_to_float(bs_fp8) * factor;
+    const float inv_bs = deq_bs > 0.f ? (1.f / deq_bs) : 0.f;
+    uint32_t w0 = 0, w1 = 0;
+#pragma unroll
+    for (int i = 0; i < 8; ++i) {
+      const uint32_t c0 = quant_e2m1(vals[2 * i] * inv_bs);
+      const uint32_t c1 = quant_e2m1(vals[2 * i + 1] * inv_bs);
+      const uint32_t byte = c0 | (c1 << 4);
+      if (i < 4) w0 |= (byte << (8 * i));
+      else w1 |= (byte << (8 * (i - 4)));
+    }
+    row_codes[b] = make_uint2(w0, w1);
+  }
+}
+
 // weights.dequant: bf16(float(q) * scale[row]); one thread per 16 elements (K % 16 == 0).
+template <bool Q4 = false>
 __global__ void dequant_rows_kernel(const __nv_fp8_storage_t* __restrict__ q, const float* __restrict__ scale,
-                                    int K, long long total16, __nv_bfloat16* __restrict__ out) {
+                                    const uint8_t* __restrict__ bscale, int K, long long total16,
+                                    __nv_bfloat16* __restrict__ out) {
   const long long i = blockIdx.x * (long long)blockDim.x + threadIdx.x;
   if (i >= total16) return;
   const long long e = i * 16;
   const float s = scale[e / K];
-  const uint4 u = *reinterpret_cast<const uint4*>(q + e);
   float f[16];
-  unpack_e4m3x16(u, f);
+  if constexpr (Q4) {
+    const uint2 u = reinterpret_cast<const uint2*>(q)[i];
+    unpack_nvfp4x16(u, bscale[i], f);
+  } else {
+    const uint4 u = *reinterpret_cast<const uint4*>(q + e);
+    unpack_e4m3x16(u, f);
+  }
   __align__(16) __nv_bfloat16 v[16];
 #pragma unroll
   for (int j = 0; j < 16; ++j) v[j] = __float2bfloat16_rn(f[j] * s);
@@ -490,12 +624,27 @@ void fp8_rows(const __nv_bfloat16* w, int rows, int K, void* q, float* scale, cu
   CUDA_CHECK(cudaGetLastError());
 }
 
-void dequant_rows(const void* q, const float* scale, int rows, int K, __nv_bfloat16* out, cudaStream_t stream) {
+void nvfp4_rows(const __nv_bfloat16* w, int rows, int K, void* q, void* bscale, float* scale, cudaStream_t stream) {
+  require(rows >= 0 && K > 0 && K % 16 == 0, "nvfp4_rows: bad shape");
+  if (rows > 0)
+    nvfp4_rows_kernel<<<(rows + 7) / 8, 256, 0, stream>>>(
+        w, rows, K, static_cast<uint8_t*>(q), static_cast<__nv_fp8_storage_t*>(bscale), scale);
+  CUDA_CHECK(cudaGetLastError());
+}
+
+void dequant_rows(const void* q, const float* scale, int rows, int K, __nv_bfloat16* out, cudaStream_t stream,
+                  const void* bscale) {
   require(rows >= 0 && K > 0 && K % 16 == 0, "dequant_rows: K must be a multiple of 16");
   const long long total16 = (long long)rows * K / 16;
-  if (total16 > 0)
-    dequant_rows_kernel<<<unsigned((total16 + 255) / 256), 256, 0, stream>>>(
-        static_cast<const __nv_fp8_storage_t*>(q), scale, K, total16, out);
+  if (total16 > 0) {
+    if (bscale != nullptr) {
+      dequant_rows_kernel<true><<<unsigned((total16 + 255) / 256), 256, 0, stream>>>(
+          static_cast<const __nv_fp8_storage_t*>(q), scale, static_cast<const uint8_t*>(bscale), K, total16, out);
+    } else {
+      dequant_rows_kernel<false><<<unsigned((total16 + 255) / 256), 256, 0, stream>>>(
+          static_cast<const __nv_fp8_storage_t*>(q), scale, nullptr, K, total16, out);
+    }
+  }
   CUDA_CHECK(cudaGetLastError());
 }
 

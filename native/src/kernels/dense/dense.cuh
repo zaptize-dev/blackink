@@ -55,6 +55,39 @@ __device__ __forceinline__ void unpack_e4m3x16(const uint4& v, float* f) {
   unpack_e4m3x4(v.x, f); unpack_e4m3x4(v.y, f + 4); unpack_e4m3x4(v.z, f + 8); unpack_e4m3x4(v.w, f + 12);
 }
 
+__device__ __forceinline__ float e4m3_to_float(uint8_t b) {
+  __half_raw hr = __nv_cvt_fp8_to_halfraw(b, __NV_E4M3);
+  return __half2float(*reinterpret_cast<const __half*>(&hr));
+}
+
+__device__ __forceinline__ void unpack_e2m1x8(uint32_t w, float scale, float* f) {
+  uint32_t h0, h1, h2, h3;
+  asm("{\n"
+      ".reg .b8 b0, b1, b2, b3;\n"
+      "mov.b32 {b0, b1, b2, b3}, %4;\n"
+      "cvt.rn.f16x2.e2m1x2 %0, b0;\n"
+      "cvt.rn.f16x2.e2m1x2 %1, b1;\n"
+      "cvt.rn.f16x2.e2m1x2 %2, b2;\n"
+      "cvt.rn.f16x2.e2m1x2 %3, b3;\n"
+      "}"
+      : "=r"(h0), "=r"(h1), "=r"(h2), "=r"(h3)
+      : "r"(w));
+  const float2 a0 = __half22float2(*reinterpret_cast<const __half2*>(&h0));
+  const float2 a1 = __half22float2(*reinterpret_cast<const __half2*>(&h1));
+  const float2 a2 = __half22float2(*reinterpret_cast<const __half2*>(&h2));
+  const float2 a3 = __half22float2(*reinterpret_cast<const __half2*>(&h3));
+  f[0] = a0.x * scale; f[1] = a0.y * scale;
+  f[2] = a1.x * scale; f[3] = a1.y * scale;
+  f[4] = a2.x * scale; f[5] = a2.y * scale;
+  f[6] = a3.x * scale; f[7] = a3.y * scale;
+}
+
+__device__ __forceinline__ void unpack_nvfp4x16(const uint2& v, uint8_t bs, float* f) {
+  const float s = e4m3_to_float(bs);
+  unpack_e2m1x8(v.x, s, f);
+  unpack_e2m1x8(v.y, s, f + 8);
+}
+
 __device__ __forceinline__ float round_bf16(float x) { return __bfloat162float(__float2bfloat16_rn(x)); }
 
 // Sum over groups of LANES consecutive lanes (LANES = 16 or 32); every lane of the group gets the sum. Only

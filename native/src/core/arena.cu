@@ -71,12 +71,6 @@ std::atomic<int> g_fail_next{0};
 cudaError_t try_malloc(void** ptr, std::size_t bytes) {
     for (int left = g_fail_next.load(); left > 0;)
         if (g_fail_next.compare_exchange_weak(left, left - 1)) return cudaErrorMemoryAllocation;
-    if (bytes >= (164ull << 20)) {
-        std::size_t free_b = 0, total_b = 0;
-        if (cudaMemGetInfo(&free_b, &total_b) == cudaSuccess && free_b < bytes + (384ull << 20)) {
-            return cudaErrorMemoryAllocation;
-        }
-    }
     return cudaMalloc(ptr, bytes);
 }
 
@@ -97,10 +91,19 @@ void remove_release_hook(int id) {
 
 void fail_next_allocations(int n) { g_fail_next = n; }
 
-DeviceBuffer::DeviceBuffer(std::size_t size_bytes) : bytes(size_bytes) {
+DeviceBuffer::DeviceBuffer(std::size_t size_bytes, bool host_pinned) : bytes(size_bytes), pinned(host_pinned) {
     if (bytes == 0) { return; }
 
-    void* ptr       = nullptr;
+    void* ptr = nullptr;
+    if (pinned) {
+        const cudaError_t err = cudaHostAlloc(&ptr, bytes, cudaHostAllocMapped);
+        if (err != cudaSuccess) {
+            throw std::runtime_error(cuda_error_message("cudaHostAlloc failed", err));
+        }
+        p = ptr;
+        return;
+    }
+
     cudaError_t err = try_malloc(&ptr, bytes);
     if (err == cudaErrorMemoryAllocation) {
         cudaGetLastError();  // not sticky; clear it before retrying
@@ -129,22 +132,29 @@ DeviceBuffer::DeviceBuffer(std::size_t size_bytes) : bytes(size_bytes) {
     p = ptr;
 }
 
-DeviceBuffer::~DeviceBuffer() { free_device(p); }
+DeviceBuffer::~DeviceBuffer() {
+    if (pinned) free_pinned(p);
+    else free_device(p);
+}
 
-DeviceBuffer::DeviceBuffer(DeviceBuffer&& other) noexcept : p(other.p), bytes(other.bytes) {
-    other.p     = nullptr;
-    other.bytes = 0;
+DeviceBuffer::DeviceBuffer(DeviceBuffer&& other) noexcept : p(other.p), bytes(other.bytes), pinned(other.pinned) {
+    other.p      = nullptr;
+    other.bytes  = 0;
+    other.pinned = false;
 }
 
 DeviceBuffer& DeviceBuffer::operator=(DeviceBuffer&& other) noexcept {
     if (this == &other) { return *this; }
 
-    free_device(p);
-    p     = other.p;
-    bytes = other.bytes;
+    if (pinned) free_pinned(p);
+    else free_device(p);
+    p      = other.p;
+    bytes  = other.bytes;
+    pinned = other.pinned;
 
-    other.p     = nullptr;
-    other.bytes = 0;
+    other.p      = nullptr;
+    other.bytes  = 0;
+    other.pinned = false;
     return *this;
 }
 

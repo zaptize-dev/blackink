@@ -22,7 +22,7 @@ struct DeviceSpan {
 class DeviceBuffer {
 public:
     DeviceBuffer() noexcept = default;
-    explicit DeviceBuffer(std::size_t size_bytes);
+    explicit DeviceBuffer(std::size_t size_bytes, bool host_pinned = false);
     ~DeviceBuffer();
 
     DeviceBuffer(const DeviceBuffer&)            = delete;
@@ -40,6 +40,7 @@ public:
     // Raw access is intentional: Tensor and Weight are non-owning views.
     void* p           = nullptr;
     std::size_t bytes = 0;
+    bool pinned       = false;
 
 private:
     void require_range(std::size_t byte_offset, std::size_t count, const char* operation) const;

@@ -70,6 +70,11 @@ class Loader {
     return storage_.back().p;
   }
 
+  void* alloc_host(std::size_t bytes) {
+    storage_.emplace_back(bytes, true);
+    return storage_.back().p;
+  }
+
   Tensor upload_f32(const std::vector<float>& host, std::initializer_list<std::int32_t> shape) {
     void* d = alloc(host.size() * 4);
     CUDA_CHECK(cudaMemcpy(d, host.data(), host.size() * 4, cudaMemcpyHostToDevice));
@@ -150,15 +155,33 @@ std::array<ExpertFormat, LAYERS> expert_formats(const fs::path& model_dir) {
 }
 
 // FP8 rows + scales of a BF16 matrix (dense fp8_rows), into new storage.
-Dense to_fp8(Loader& ld, const Tensor& bf16, int rows, int cols) {
-  void* q = ld.alloc(std::size_t(rows) * cols);
-  float* s = static_cast<float*>(ld.alloc(std::size_t(rows) * 4));
+Dense to_fp8(Loader& ld, const Tensor& bf16, int rows, int cols, bool host_pinned = false) {
+  void* q = host_pinned ? ld.alloc_host(std::size_t(rows) * cols) : ld.alloc(std::size_t(rows) * cols);
+  float* s = static_cast<float*>(host_pinned ? ld.alloc_host(std::size_t(rows) * 4) : ld.alloc(std::size_t(rows) * 4));
   kernels::dense::fp8_rows(static_cast<const __nv_bfloat16*>(bf16.data), rows, cols, q, s, ld.stream());
-  return Dense{rm(q, DType::FP8_E4M3FN, {rows, cols}), rm(s, DType::FP32, {rows})};
+  return Dense{rm(q, DType::FP8_E4M3FN, {rows, cols}), rm(s, DType::FP32, {rows}), {}};
+}
+
+// NVFP4 rows + block scales + row factors of a BF16 matrix, into new storage.
+Dense to_nvfp4(Loader& ld, const Tensor& bf16, int rows, int cols) {
+  void* q = ld.alloc(std::size_t(rows) * (cols / 2));
+  void* bs = ld.alloc(std::size_t(rows) * (cols / 16));
+  float* s = static_cast<float*>(ld.alloc(std::size_t(rows) * 4));
+  kernels::dense::nvfp4_rows(static_cast<const __nv_bfloat16*>(bf16.data), rows, cols, q, bs, s, ld.stream());
+  return Dense{rm(q, DType::U8, {rows, cols / 2}), rm(s, DType::FP32, {rows}),
+               rm(bs, DType::FP8_E4M3FN, {rows, cols / 16})};
 }
 
 Dense row_view(const Dense& d, int begin, int end) {
   const int cols = d.cols();
+  if (d.nvfp4()) {
+    Dense v;
+    v.w = rm(static_cast<char*>(d.w.data) + std::size_t(begin) * (cols / 2), DType::U8, {end - begin, cols / 2});
+    v.scale = rm(static_cast<float*>(d.scale.data) + begin, DType::FP32, {end - begin});
+    v.bscale = rm(static_cast<char*>(d.bscale.data) + std::size_t(begin) * (cols / 16), DType::FP8_E4M3FN,
+                  {end - begin, cols / 16});
+    return v;
+  }
   const std::size_t esize = d.fp8() ? 1 : 2;
   Dense v;
   v.w = rm(static_cast<char*>(d.w.data) + std::size_t(begin) * cols * esize, d.w.dtype, {end - begin, cols});
@@ -340,13 +363,17 @@ Layer load_layer_into(Loader& ld, int l, ExpertFormat fmt, bool dense_fp8, bool 
     }
     ld.flush();
   }
-  if (dense_fp8) {
+  if (dense_fp8 && full_nvfp4) {
+    layer.wproj = to_nvfp4(ld, wproj_bf16, R, H);
+    layer.wo = to_nvfp4(ld, wo_bf16, H, HEADS * HEAD_DIM);
+    CUDA_CHECK(cudaStreamSynchronize(ld.stream()));  // before the BF16 temporaries are freed
+  } else if (dense_fp8) {
     layer.wproj = to_fp8(ld, wproj_bf16, R, H);
     layer.wo = to_fp8(ld, wo_bf16, H, HEADS * HEAD_DIM);
     CUDA_CHECK(cudaStreamSynchronize(ld.stream()));  // before the BF16 temporaries are freed
   } else {
-    layer.wproj = Dense{wproj_bf16, {}};
-    layer.wo = Dense{wo_bf16, {}};
+    layer.wproj = Dense{wproj_bf16, {}, {}};
+    layer.wo = Dense{wo_bf16, {}, {}};
   }
   Dense* views[NUM_SEGS] = {&layer.wq, &layer.wgate, &layer.wr, &layer.wsink,
                             &layer.wk, &layer.wv,    &layer.wk_dyn, &layer.wv_dyn};
@@ -388,7 +415,8 @@ Weights load_weights(const fs::path& model_dir, bool dense_fp8, cudaStream_t str
     ld.queue(name, embed_tmp.p, VOCAB);
     ld.flush();
     const Tensor bf = rm(embed_tmp.p, DType::BF16, {VOCAB, H});
-    const Dense d = to_fp8(ld, bf, VOCAB, H);
+    // Zero-copy pinned host memory for embed lookup table (only 1 row = 2.3 KB read per token, saves 443 MiB VRAM)
+    const Dense d = to_fp8(ld, bf, VOCAB, H, /*host_pinned=*/true);
     CUDA_CHECK(cudaStreamSynchronize(stream));
     w.embed = d.w;
     w.embed_scale = d.scale;
@@ -408,11 +436,14 @@ Weights load_weights(const fs::path& model_dir, bool dense_fp8, cudaStream_t str
     ld.queue(name, d, UNPADDED_VOCAB);  // unembed[:UNPADDED_VOCAB]
     ld.flush();
     const Tensor bf = rm(d, DType::BF16, {UNPADDED_VOCAB, H});
-    if (dense_fp8) {
+    if (dense_fp8 && full_nvfp4) {
+      w.unembed = to_nvfp4(ld, bf, UNPADDED_VOCAB, H);
+      CUDA_CHECK(cudaStreamSynchronize(stream));
+    } else if (dense_fp8) {
       w.unembed = to_fp8(ld, bf, UNPADDED_VOCAB, H);
       CUDA_CHECK(cudaStreamSynchronize(stream));
     } else {
-      w.unembed = Dense{bf, {}};
+      w.unembed = Dense{bf, {}, {}};
     }
   }
   w.layers.resize(LAYERS);
