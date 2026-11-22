@@ -44,7 +44,7 @@ class Drafter {
  public:
   static constexpr int BLOCK = kernels::draft::BLOCK;  // 8 rows per drafted block
   static constexpr int GAMMA = kernels::draft::GAMMA;  // 7 drafts per round
-  static constexpr int DRAFT_CTX = 65536;              // global-layer ring slots (at most)
+  static constexpr int DRAFT_CTX = 16384;              // global-layer ring slots (at most, 16 GB VRAM budget)
   static constexpr int SHORTLIST_ROWS = 32768;         // ranked tokens in the shortlist head
   static constexpr int CONTEXT_ROWS = 16384;           // context tokens added to it (until reset())
 

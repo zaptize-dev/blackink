@@ -366,13 +366,8 @@ Weights load_weights(const fs::path& model_dir, bool dense_fp8, cudaStream_t str
   w.storage.reserve(4096);
   Loader ld(m, up, stream, w.storage);
   const int H = HIDDEN;
-  for (int l = 0; l < LAYERS; ++l) {
-    w.layers.push_back(load_layer_into(ld, l, w.expert_formats[l], dense_fp8, full_nvfp4));
-    if (full_nvfp4) w.expert_formats[l] = ExpertFormat::NVFP4;
-  }
-
-  // message_queries [12, 4, H] = cat([queries[:, :1], kv_queries, queries[:, 1:]], dim=1) with queries and
-  // kv_queries [24, H] unflattened to [12, 2, H]
+  // Load embedding, unembedding, and MXFP8-transcoded layers first while plenty of VRAM is free for temporary
+  // BF16/MXFP8 buffers, eliminating the ~900 MiB temporary peak at the end of model loading on 16 GB GPUs.
   {
     const std::vector<float> q = host_f32(m, "model.llm.middle_cycle_cross_pass_queries");
     const std::vector<float> kv = host_f32(m, "model.llm.middle_cycle_cross_pass_kv_queries");
@@ -404,8 +399,8 @@ Weights load_weights(const fs::path& model_dir, bool dense_fp8, cudaStream_t str
   w.embed_norm = ld.f32("model.llm.embed_norm.weight", {H});
   w.final_query = ld.f32("model.llm.attn_res.output_query", {1, H});
   w.final_norm = ld.f32("model.llm.norm.weight", {H});
-  DeviceBuffer unembed_tmp;
   {
+    DeviceBuffer unembed_tmp;
     const std::string name = "model.llm.unembed.weight";
     if (m.at(name)->dtype != "BF16") throw std::runtime_error("weights: unembed must be BF16");
     const std::size_t bytes = std::size_t(UNPADDED_VOCAB) * H * 2;
@@ -418,6 +413,15 @@ Weights load_weights(const fs::path& model_dir, bool dense_fp8, cudaStream_t str
       CUDA_CHECK(cudaStreamSynchronize(stream));
     } else {
       w.unembed = Dense{bf, {}};
+    }
+  }
+  w.layers.resize(LAYERS);
+  for (int pass = 0; pass < 2; ++pass) {
+    for (int l = 0; l < LAYERS; ++l) {
+      const bool is_mxfp8 = w.expert_formats[l] != ExpertFormat::NVFP4;
+      if ((pass == 0) != is_mxfp8) continue;
+      w.layers[l] = load_layer_into(ld, l, w.expert_formats[l], dense_fp8, full_nvfp4);
+      if (full_nvfp4) w.expert_formats[l] = ExpertFormat::NVFP4;
     }
   }
   CUDA_CHECK(cudaStreamSynchronize(stream));

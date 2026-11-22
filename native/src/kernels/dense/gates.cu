@@ -68,17 +68,20 @@ struct GateArgs {
 
 template <int CL, bool FG32>
 struct GateCfg {
-  static constexpr int RPC = RANK / CL;           // down rows per CTA
-  static constexpr int NW = 2 * RPC;              // warps: (row, half)
-  static constexpr int NT = 32 * NW;              // threads
-  static constexpr int CPC = H / CL;              // channels per CTA (one thread each in the forget/gain phase)
-  static constexpr int FGB = FG32 ? 4 : 2;        // bytes per forget/gain weight
-  static constexpr int ROW = RANK * FGB;          // bytes of one forget/gain row
-  static constexpr int RS = ROW + 16;             // padded row stride in shared memory (no bank conflicts)
-  static constexpr int SLICE = CPC * RS;          // bytes of one padded matrix slice
-  static_assert(CPC <= NT && ROW % 16 == 0 && RPC == 4, "uneven split");
-  static constexpr int SMEM = 2 * SLICE;
-  static constexpr int XMAX = FG32 ? 1 : 4;       // tokens staged per barrier (one staging buffer each)
+  static constexpr int RPC = RANK / CL;             // down rows per CTA (4 for CL=16, 8 for CL=8)
+  static constexpr int RGROUPS = RPC / 4;           // groups of 4 down rows per CTA (1 for CL=16, 2 for CL=8)
+  static constexpr int NW = 8;                      // warps: 4 (row_in_group, half) pairs
+  static constexpr int NT = 32 * NW;                // 256 threads (divides H = 2304: XPT = 9)
+  static constexpr int CPC = H / CL;                // channels per CTA (144 for CL=16, 288 for CL=8)
+  static constexpr int CPASS = (CPC + NT - 1) / NT; // channel passes per thread (1 for CL=16, 2 for CL=8)
+  static constexpr int FGB = FG32 ? 4 : 2;          // bytes per forget/gain weight
+  static constexpr int ROW = RANK * FGB;            // bytes of one forget/gain row
+  static constexpr int RS = ROW + 16;               // padded row stride in shared memory (no bank conflicts)
+  static constexpr int SLICE = CPC * RS;            // bytes of one padded matrix slice
+  static constexpr bool STAGE_FG = !(CL == 8 && FG32);
+  static_assert(ROW % 16 == 0 && (RPC == 4 || RPC == 8), "uneven split");
+  static constexpr int SMEM = STAGE_FG ? 2 * SLICE : 0;
+  static constexpr int XMAX = (CL == 16 && !FG32) ? 4 : 1;  // tokens staged per barrier (one staging buffer each)
 };
 
 template <int CL, bool FG32, int M>
@@ -111,16 +114,16 @@ __global__ void __launch_bounds__(GateCfg<CL, FG32>::NT) gates_kernel(GateArgs a
     mb_init(mb_g);
     mb_init(mb_s);
     fence_mbarrier_init();
-    mb_expect(mb_g, 16u * CL * M);
+    mb_expect(mb_g, 16u * CL * C::RGROUPS * M);
     mb_expect(mb_s, 16u * CL * MQ);
   }
   cluster_arrive_relaxed();  // waited for before the first remote store
 
   // forget/gain slices (padded rows) -> shared memory, asynchronous, waited for before the forget/gain phase
   const std::uint64_t wpol = l2::policy<WEIGHT_L2>();
-  {
-    const uint8_t* fsrc = reinterpret_cast<const uint8_t*>(a.w_forget) + (size_t(g) * H + rank * C::CPC) * C::ROW;
-    const uint8_t* gsrc = reinterpret_cast<const uint8_t*>(a.w_gain) + (size_t(g) * H + rank * C::CPC) * C::ROW;
+  const uint8_t* const fsrc = reinterpret_cast<const uint8_t*>(a.w_forget) + (size_t(g) * H + rank * C::CPC) * C::ROW;
+  const uint8_t* const gsrc = reinterpret_cast<const uint8_t*>(a.w_gain) + (size_t(g) * H + rank * C::CPC) * C::ROW;
+  if constexpr (C::STAGE_FG) {
     constexpr int RCH = C::ROW / 16;
     for (int k = t; k < C::CPC * RCH; k += C::NT) {
       const int dst = (k / RCH) * C::RS + (k % RCH) * 16;
@@ -131,11 +134,14 @@ __global__ void __launch_bounds__(GateCfg<CL, FG32>::NT) gates_kernel(GateArgs a
   }
 
   // down projection weights -> registers
-  uint4 wv[DCH];
+  uint4 wv[C::RGROUPS][DCH];
   {
-    const __nv_bfloat16* wr = a.w_down + (size_t(g) * RANK + rank * C::RPC + rl) * 2 * H + half * H;
 #pragma unroll
-    for (int i = 0; i < DCH; ++i) wv[i] = l2::ld_stream<WEIGHT_L2>(wr + (i * 32 + lane) * 8, wpol);
+    for (int rg = 0; rg < C::RGROUPS; ++rg) {
+      const __nv_bfloat16* wr = a.w_down + (size_t(g) * RANK + rank * C::RPC + rg * 4 + rl) * 2 * H + half * H;
+#pragma unroll
+      for (int i = 0; i < DCH; ++i) wv[rg][i] = l2::ld_stream<WEIGHT_L2>(wr + (i * 32 + lane) * 8, wpol);
+    }
   }
 
   // all weights are in flight; h and msg come from earlier kernels
@@ -183,47 +189,57 @@ __global__ void __launch_bounds__(GateCfg<CL, FG32>::NT) gates_kernel(GateArgs a
       const int m = m0 + j;
       if (m < M) {
         const __nv_bfloat16* xb = xs[j];
-        float acc = 0.f;
 #pragma unroll
-        for (int i = 0; i < DCH; ++i) {
-          float wf[8], xf[8];
-          unpack_bf16x8(wv[i], wf);
-          unpack_bf16x8(*reinterpret_cast<const uint4*>(&xb[half * H + (i * 32 + lane) * 8]), xf);
+        for (int rg = 0; rg < C::RGROUPS; ++rg) {
+          float acc = 0.f;
 #pragma unroll
-          for (int e = 0; e < 8; ++e) acc = fmaf(wf[e], xf[e], acc);
+          for (int i = 0; i < DCH; ++i) {
+            float wf[8], xf[8];
+            unpack_bf16x8(wv[rg][i], wf);
+            unpack_bf16x8(*reinterpret_cast<const uint4*>(&xb[half * H + (i * 32 + lane) * 8]), xf);
+#pragma unroll
+            for (int e = 0; e < 8; ++e) acc = fmaf(wf[e], xf[e], acc);
+          }
+          acc = group_sum<32>(acc);
+          if (lane == 0) part[m][half][rg * 4 + rl] = acc;
         }
-        acc = group_sum<32>(acc);
-        if (lane == 0) part[m][half][rl] = acc;
       }
     }
   }
   __syncthreads();
 
   cluster_wait();  // all CTAs resident, barriers initialised: remote stores may start
-  if (t < M * CL) {  // thread (token m, destination d): the token's 4 rows as one 16-byte store
-    const int m = t % M, d = t / M;
-    const float4 p0 = *reinterpret_cast<const float4*>(&part[m][0][0]);
-    const float4 p1 = *reinterpret_cast<const float4*>(&part[m][1][0]);
+  if (t < M * CL * C::RGROUPS) {  // thread (group rg, token m, destination d): 4 rows as one 16-byte store
+    const int rg = t / (M * CL), rem = t % (M * CL);
+    const int m = rem % M, d = rem / M;
+    const float4 p0 = *reinterpret_cast<const float4*>(&part[m][0][4 * rg]);
+    const float4 p1 = *reinterpret_cast<const float4*>(&part[m][1][4 * rg]);
     const float4 v = make_float4(round_bf16(p0.x + p1.x), round_bf16(p0.y + p1.y), round_bf16(p0.z + p1.z),
                                  round_bf16(p0.w + p1.w));
-    st_async4(remote(smem_u32(&gall[m][rank * C::RPC]), d), v, remote(mb_g, d));
+    st_async4(remote(smem_u32(&gall[m][rank * C::RPC + 4 * rg]), d), v, remote(mb_g, d));
   }
   // this thread's channel inputs fly during the exchange
-  const int c = rank * C::CPC + t;
-  const bool own = t < C::CPC;
-  float hv[M], mv[M], nw = 0.f;
+  float hv[C::CPASS][M], mv[C::CPASS][M], nw[C::CPASS];
 #pragma unroll
-  for (int m = 0; m < M; ++m) hv[m] = mv[m] = 0.f;
-  if (own) {
+  for (int p = 0; p < C::CPASS; ++p) {
+    nw[p] = 0.f;
 #pragma unroll
-    for (int m = 0; m < M; ++m) {
-      hv[m] = hg[size_t(m) * H + c];
-      mv[m] = mg[size_t(m) * H + c];
+    for (int m = 0; m < M; ++m) hv[p][m] = mv[p][m] = 0.f;
+    const int tl = t + p * C::NT;
+    if (tl < C::CPC) {
+      const int c = rank * C::CPC + tl;
+#pragma unroll
+      for (int m = 0; m < M; ++m) {
+        hv[p][m] = hg[size_t(m) * H + c];
+        mv[p][m] = mg[size_t(m) * H + c];
+      }
+      nw[p] = a.norm_w[size_t(g) * H + c];
     }
-    nw = a.norm_w[size_t(g) * H + c];
   }
-  asm volatile("cp.async.wait_all;" ::: "memory");
-  __syncthreads();  // forget/gain slices from all threads' copies are visible
+  if constexpr (C::STAGE_FG) {
+    asm volatile("cp.async.wait_all;" ::: "memory");
+    __syncthreads();  // forget/gain slices from all threads' copies are visible
+  }
   mb_wait(mb_g);
 
   // forget / gain: one thread per channel; its two weight rows are read as 16-byte chunks from the padded
@@ -231,40 +247,45 @@ __global__ void __launch_bounds__(GateCfg<CL, FG32>::NT) gates_kernel(GateArgs a
   float sq[M];
 #pragma unroll
   for (int m = 0; m < M; ++m) sq[m] = 0.f;
-  if (own) {
-    constexpr int EPC = 16 / C::FGB;  // weights per chunk
-    const uint8_t* fr = fg + t * C::RS;
-    const uint8_t* gr = fg + C::SLICE + t * C::RS;
-    float df[M], dg[M];
 #pragma unroll
-    for (int m = 0; m < M; ++m) df[m] = dg[m] = 0.f;
+  for (int p = 0; p < C::CPASS; ++p) {
+    const int tl = t + p * C::NT;
+    if (tl < C::CPC) {
+      const int c = rank * C::CPC + tl;
+      constexpr int EPC = 16 / C::FGB;  // weights per chunk
+      const uint8_t* fr = C::STAGE_FG ? (fg + tl * C::RS) : (fsrc + tl * C::ROW);
+      const uint8_t* gr = C::STAGE_FG ? (fg + C::SLICE + tl * C::RS) : (gsrc + tl * C::ROW);
+      float df[M], dg[M];
+#pragma unroll
+      for (int m = 0; m < M; ++m) df[m] = dg[m] = 0.f;
 #pragma unroll 4
-    for (int k = 0; k < RANK / EPC; ++k) {
-      const uint4 uf = *reinterpret_cast<const uint4*>(fr + k * 16);
-      const uint4 ug = *reinterpret_cast<const uint4*>(gr + k * 16);
-      float wf[EPC], wg[EPC];
-      if constexpr (FG32) {
-        wf[0] = __uint_as_float(uf.x); wf[1] = __uint_as_float(uf.y); wf[2] = __uint_as_float(uf.z); wf[3] = __uint_as_float(uf.w);
-        wg[0] = __uint_as_float(ug.x); wg[1] = __uint_as_float(ug.y); wg[2] = __uint_as_float(ug.z); wg[3] = __uint_as_float(ug.w);
-      } else {
-        unpack_bf16x8(uf, wf);
-        unpack_bf16x8(ug, wg);
+      for (int k = 0; k < RANK / EPC; ++k) {
+        const uint4 uf = *reinterpret_cast<const uint4*>(fr + k * 16);
+        const uint4 ug = *reinterpret_cast<const uint4*>(gr + k * 16);
+        float wf[EPC], wg[EPC];
+        if constexpr (FG32) {
+          wf[0] = __uint_as_float(uf.x); wf[1] = __uint_as_float(uf.y); wf[2] = __uint_as_float(uf.z); wf[3] = __uint_as_float(uf.w);
+          wg[0] = __uint_as_float(ug.x); wg[1] = __uint_as_float(ug.y); wg[2] = __uint_as_float(ug.z); wg[3] = __uint_as_float(ug.w);
+        } else {
+          unpack_bf16x8(uf, wf);
+          unpack_bf16x8(ug, wg);
+        }
+#pragma unroll
+        for (int m = 0; m < M; ++m) {
+#pragma unroll
+          for (int e = 0; e < EPC; e += 4) {
+            const float4 gv = *reinterpret_cast<const float4*>(&gall[m][k * EPC + e]);
+            df[m] = fmaf(wf[e], gv.x, fmaf(wf[e + 1], gv.y, fmaf(wf[e + 2], gv.z, fmaf(wf[e + 3], gv.w, df[m]))));
+            dg[m] = fmaf(wg[e], gv.x, fmaf(wg[e + 1], gv.y, fmaf(wg[e + 2], gv.z, fmaf(wg[e + 3], gv.w, dg[m]))));
+          }
+        }
       }
 #pragma unroll
       for (int m = 0; m < M; ++m) {
-#pragma unroll
-        for (int e = 0; e < EPC; e += 4) {
-          const float4 gv = *reinterpret_cast<const float4*>(&gall[m][k * EPC + e]);
-          df[m] = fmaf(wf[e], gv.x, fmaf(wf[e + 1], gv.y, fmaf(wf[e + 2], gv.z, fmaf(wf[e + 3], gv.w, df[m]))));
-          dg[m] = fmaf(wg[e], gv.x, fmaf(wg[e + 1], gv.y, fmaf(wg[e + 2], gv.z, fmaf(wg[e + 3], gv.w, dg[m]))));
-        }
+        hv[p][m] = (1.f - tanhf(df[m])) * hv[p][m] + tanhf(dg[m]) * mv[p][m];  // gated
+        sq[m] += hv[p][m] * hv[p][m];
+        if (a.out_f32) a.out_f32[(size_t(g) * M + m) * H + c] = hv[p][m];
       }
-    }
-#pragma unroll
-    for (int m = 0; m < M; ++m) {
-      hv[m] = (1.f - tanhf(df[m])) * hv[m] + tanhf(dg[m]) * mv[m];  // gated
-      sq[m] = hv[m] * hv[m];
-      if (a.out_f32) a.out_f32[(size_t(g) * M + m) * H + c] = hv[m];
     }
   }
 
@@ -281,13 +302,18 @@ __global__ void __launch_bounds__(GateCfg<CL, FG32>::NT) gates_kernel(GateArgs a
   }
   mb_wait(mb_s);
 
-  if (own) {
 #pragma unroll
-    for (int m = 0; m < M; ++m) {
-      float ss = 0.f;
+  for (int p = 0; p < C::CPASS; ++p) {
+    const int tl = t + p * C::NT;
+    if (tl < C::CPC) {
+      const int c = rank * C::CPC + tl;
 #pragma unroll
-      for (int d = 0; d < CL; ++d) ss += ssall[d][m];
-      a.out_bf16[(size_t(g) * M + m) * H + c] = __float2bfloat16_rn(hv[m] * rsqrtf(ss / H + EPS) * nw);
+      for (int m = 0; m < M; ++m) {
+        float ss = 0.f;
+#pragma unroll
+        for (int d = 0; d < CL; ++d) ss += ssall[d][m];
+        a.out_bf16[(size_t(g) * M + m) * H + c] = __float2bfloat16_rn(hv[p][m] * rsqrtf(ss / H + EPS) * nw[p]);
+      }
     }
   }
 }
@@ -312,6 +338,31 @@ void launch_gates(int G, int M, const GateArgs& a, bool pdl, cudaStream_t stream
   }
 }
 
+// 16-CTA clusters need the non-portable opt-in and a GPC with 16 free SMs; fall back to 8 otherwise.
+int gates_cluster_size() {
+  static const int cl = [] {
+    using C = GateCfg<16, false>;
+    auto k = gates_kernel<16, false, 8>;
+    if (cudaFuncSetAttribute(k, cudaFuncAttributeNonPortableClusterSizeAllowed, 1) != cudaSuccess ||
+        cudaFuncSetAttribute(k, cudaFuncAttributeMaxDynamicSharedMemorySize, C::SMEM) != cudaSuccess) {
+      (void)cudaGetLastError();
+      return 8;
+    }
+    cudaLaunchConfig_t cfg = {};
+    cfg.gridDim = dim3(16);
+    cfg.blockDim = dim3(C::NT);
+    cfg.dynamicSmemBytes = C::SMEM;
+    cudaLaunchAttribute attr[1];
+    attr[0].id = cudaLaunchAttributeClusterDimension;
+    attr[0].val.clusterDim.x = 16; attr[0].val.clusterDim.y = 1; attr[0].val.clusterDim.z = 1;
+    cfg.attrs = attr; cfg.numAttrs = 1;
+    int n = 0;
+    if (cudaOccupancyMaxActiveClusters(&n, k, &cfg) != cudaSuccess) { (void)cudaGetLastError(); n = 0; }
+    return n > 0 ? 16 : 8;
+  }();
+  return cl;
+}
+
 }  // namespace
 
 void message_gates(const float* h, bool h_shared, const float* msg, int G, int M, const __nv_bfloat16* w_down,
@@ -330,10 +381,14 @@ void message_gates(const float* h, bool h_shared, const float* msg, int G, int M
   a.out_bf16 = out_bf16;
   a.out_f32 = out_f32;
   a.zero = 0;
-  // 16-CTA clusters (non-portable, verified schedulable on the RTX 5090): the FP32 forget/gain slices of
-  // an 8-CTA split would not fit in shared memory.
-  if (fg_fp32) launch_gates<16, true>(G, M, a, pdl, stream);
-  else launch_gates<16, false>(G, M, a, pdl, stream);
+  const bool c16 = gates_cluster_size() == 16;
+  if (fg_fp32) {
+    if (c16) launch_gates<16, true>(G, M, a, pdl, stream);
+    else launch_gates<8, true>(G, M, a, pdl, stream);
+  } else {
+    if (c16) launch_gates<16, false>(G, M, a, pdl, stream);
+    else launch_gates<8, false>(G, M, a, pdl, stream);
+  }
 }
 
 }  // namespace ingine::kernels::dense
