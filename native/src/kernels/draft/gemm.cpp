@@ -17,7 +17,10 @@ void lt_check(cublasStatus_t s, const char* what) {
 
 Bf16Gemm::Bf16Gemm(std::size_t workspace_bytes) : workspace_bytes_(workspace_bytes) {
   lt_check(cublasLtCreate(&handle_), "create");
-  CUDA_CHECK(cudaMalloc(&workspace_, workspace_bytes_));
+  if (cudaMalloc(&workspace_, workspace_bytes_) != cudaSuccess) {
+    (void)cudaGetLastError();
+    CUDA_CHECK(cudaMallocManaged(&workspace_, workspace_bytes_));
+  }
 }
 
 Bf16Gemm::~Bf16Gemm() {

@@ -208,8 +208,12 @@ DeviceArena::DeviceArena(std::size_t capacity_bytes) {
         throw std::invalid_argument("DeviceArena capacity must be nonzero");
     }
 
-    void* ptr             = nullptr;
-    const cudaError_t err = cudaMalloc(&ptr, capacity_bytes);
+    void* ptr       = nullptr;
+    cudaError_t err = cudaMalloc(&ptr, capacity_bytes);
+    if (err != cudaSuccess) {
+        (void)cudaGetLastError();
+        err = cudaMallocManaged(&ptr, capacity_bytes);
+    }
     if (err != cudaSuccess) {
         throw std::runtime_error(cuda_error_message("cudaMalloc failed", err));
     }

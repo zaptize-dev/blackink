@@ -21,7 +21,7 @@ void cublas_check(cublasStatus_t status, const char* what) {
                              std::to_string(static_cast<int>(status)));
 }
 
-constexpr std::size_t kWorkspaceBytes = 32u << 20;
+constexpr std::size_t kWorkspaceBytes = 8u << 20;
 
 }  // namespace
 
@@ -35,8 +35,11 @@ struct Gemm::Impl {
 Gemm::Gemm() : impl_(new Impl) {
   try {
     cublas_check(cublasLtCreate(&impl_->handle), "create");
-    if (cudaMalloc(&impl_->workspace, kWorkspaceBytes) != cudaSuccess)
-      throw std::runtime_error("prefill Gemm: workspace allocation failed");
+    if (cudaMalloc(&impl_->workspace, kWorkspaceBytes) != cudaSuccess) {
+      (void)cudaGetLastError();
+      if (cudaMallocManaged(&impl_->workspace, kWorkspaceBytes) != cudaSuccess)
+        throw std::runtime_error("prefill Gemm: workspace allocation failed");
+    }
   } catch (...) {
     if (impl_->handle) cublasLtDestroy(impl_->handle);
     delete impl_;
