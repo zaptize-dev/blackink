@@ -4,6 +4,7 @@ add_library(ingine_serve STATIC
   cli.cpp
   http_transport.cpp
   openai.cpp
+  webui.cpp
 )
 ingine_internal_includes(ingine_serve)
 target_link_libraries(ingine_serve

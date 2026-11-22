@@ -106,6 +106,15 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
     kwargs.erase("enable_thinking");
   }
   if (!enable_thinking.is_boolean()) throw BadRequest("'enable_thinking' must be a boolean", "enable_thinking");
+  if (effort.is_string()) {
+    const std::string& eff_str = effort.get_ref<const std::string&>();
+    if (eff_str == "default" || eff_str.empty()) {
+      effort = Json();
+    } else if (eff_str == "off") {
+      enable_thinking = false;
+      effort = Json("none");
+    }
+  }
 
   text::ChatOptions options;
   options.reasoning_effort = std::move(effort);
@@ -123,8 +132,21 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
                          std::to_string(max_model_len),
                      "messages");
   }
-  std::optional<int64_t> max_tokens = num_int(body, "max_completion_tokens", Bound{1, "1"});
-  if (!max_tokens) max_tokens = num_int(body, "max_tokens", Bound{1, "1"});
+  std::optional<int64_t> max_tokens;
+  if (const Json* mct = get(body, "max_completion_tokens");
+      !(mct && mct->is_number_integer() && mct->get<int64_t>() == -1)) {
+    max_tokens = num_int(body, "max_completion_tokens", Bound{1, "1"});
+  }
+  if (!max_tokens) {
+    if (const Json* mt = get(body, "max_tokens"); !(mt && mt->is_number_integer() && mt->get<int64_t>() == -1)) {
+      max_tokens = num_int(body, "max_tokens", Bound{1, "1"});
+    }
+  }
+  const Json* np = get(body, "n_predict");
+  const bool pre_encode = (np && np->is_number_integer() && np->get<int64_t>() == 0);
+  if (!max_tokens && np && np->is_number_integer() && np->get<int64_t>() > 0) {
+    max_tokens = np->get<int64_t>();
+  }
 
   ChatRequest req;
   req.sampling.temperature =
@@ -153,7 +175,7 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
     if (!it->is_object()) throw BadRequest("'stream_options' must be an object", "stream_options");
     if (auto u = it->find("include_usage"); u != it->end()) req.include_usage = truthy(*u);
   }
-  req.max_new_tokens = int(std::min(max_tokens.value_or(room), room));
+  req.max_new_tokens = pre_encode ? 0 : int(std::min(max_tokens.value_or(room), room));
   req.prompt_ids = std::move(prompt.ids);
   req.prefill_ids = std::move(prompt.prefill_ids);
   return req;

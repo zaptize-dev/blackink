@@ -98,6 +98,25 @@ Json usage(const Exchange& x) {
   return Json{{"prompt_tokens", prompt}, {"completion_tokens", completion}, {"total_tokens", prompt + completion}};
 }
 
+Json timings(const Exchange& x) {
+  const Clock::time_point now = Clock::now();
+  const engine::Job& job = *x.job;
+  const int prompt_n = int(job.prompt_ids.size());
+  const int predicted_n = x.parser.num_tokens();
+  const Clock::time_point t0 = job.t_start().value_or(job.t_submit);
+  const double prompt_ms = x.t_first ? std::max(0.0, seconds(*x.t_first - t0) * 1000.0) : 0.0;
+  const double predicted_ms =
+      (x.t_first && predicted_n > 1) ? std::max(0.0, seconds(now - *x.t_first) * 1000.0) : 0.0;
+  const double predicted_per_second =
+      (predicted_ms > 0.0 && predicted_n > 1) ? (double(predicted_n - 1) * 1000.0 / predicted_ms) : 0.0;
+  return Json{{"cache_n", 0},
+              {"prompt_n", prompt_n},
+              {"prompt_ms", prompt_ms},
+              {"predicted_n", predicted_n},
+              {"predicted_ms", predicted_ms},
+              {"predicted_per_second", predicted_per_second}};
+}
+
 void log_done(const Exchange& x) {
   const Clock::time_point now = Clock::now();
   const engine::Job& job = *x.job;
@@ -127,6 +146,7 @@ Json chunk(const Exchange& x, const std::string& model_id, Json delta, const std
                                        {"delta", std::move(delta)},
                                        {"logprobs", nullptr},
                                        {"finish_reason", finish ? Json(*finish) : Json()}}})}};
+  if (finish || x.parser.num_tokens() > 0) c["timings"] = timings(x);
   if (x.req.include_usage) c["usage"] = nullptr;
   return c;
 }
@@ -170,15 +190,16 @@ Json ChatServer::model_card() const {
               {"object", "model"},
               {"created", created_},
               {"owned_by", "ingine"},
-              {"max_model_len", max_model_len_}};
+              {"max_model_len", max_model_len_},
+              {"in_cache", true},
+              {"path", model_id_},
+              {"status", {{"value", "loaded"}}},
+              {"architecture", {{"input_modalities", Json::array({"text"})}}}};
 }
 
 void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res) {
   const std::string path = route_path(req);
-  if (path.empty() || path == "/chat" || path == "/ui") {
-    res.status = 200;
-    res.set_content(std::string(kWebUiHtml), "text/html; charset=utf-8");
-  } else if (path == "/health") {
+  if (path == "/health") {
     const engine::SchedulerStats st = scheduler_.stats();
     send_json(res, 200,
               Json{{"status", "ok"},
@@ -186,10 +207,117 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                    {"waiting", st.waiting},
                    {"running", st.running},
                    {"max_queue", st.max_queue}});
-  } else if (path == "/v1/models") {
-    send_json(res, 200, Json{{"object", "list"}, {"data", Json::array({model_card()})}});
+  } else if (path == "/v1/models" || path == "/models") {
+    send_json(res, 200,
+              Json{{"object", "list"},
+                   {"data", Json::array({model_card()})},
+                   {"models", Json::array({Json{{"name", model_id_},
+                                                {"model", model_id_},
+                                                {"capabilities", Json::array({"reasoning", "tools", "completion"})},
+                                                {"details", {{"format", "safetensors"},
+                                                             {"family", "inkling"},
+                                                             {"parameter_size", "20B-A1.8B"},
+                                                             {"quantization_level", "NVFP4"}}}}})}});
   } else if (path == "/v1/models/" + model_id_) {
     send_json(res, 200, model_card());
+  } else if (path == "/props") {
+    const engine::SchedulerStats st = scheduler_.stats();
+    send_json(
+        res, 200,
+        Json{{"default_generation_settings",
+              {{"id", 0},
+               {"id_task", -1},
+               {"n_ctx", max_model_len_},
+               {"speculative", true},
+               {"is_processing", st.running},
+               {"params",
+                {{"n_predict", 32768},
+                 {"seed", 4294967295ULL},
+                 {"temperature", sampling_defaults_.temperature},
+                 {"dynatemp_range", 0.0},
+                 {"dynatemp_exponent", 1.0},
+                 {"top_k", sampling_defaults_.top_k},
+                 {"top_p", sampling_defaults_.top_p},
+                 {"min_p", 0.0},
+                 {"top_n_sigma", -1.0},
+                 {"xtc_probability", 0.0},
+                 {"xtc_threshold", 0.1},
+                 {"typ_p", 1.0},
+                 {"typical_p", 1.0},
+                 {"repeat_last_n", 64},
+                 {"repeat_penalty", 1.0},
+                 {"presence_penalty", 0.0},
+                 {"frequency_penalty", 0.0},
+                 {"dry_multiplier", 0.0},
+                 {"dry_base", 1.75},
+                 {"dry_allowed_length", 2},
+                 {"dry_penalty_last_n", 64},
+                 {"dry_sequence_breakers", Json::array({"\n", ":", "\"", "*"})},
+                 {"mirostat", 0},
+                 {"mirostat_tau", 5.0},
+                 {"mirostat_eta", 0.1},
+                 {"stop", Json::array()},
+                 {"max_tokens", -1},
+                 {"n_keep", 0},
+                 {"n_discard", 0},
+                 {"ignore_eos", false},
+                 {"stream", true},
+                 {"logit_bias", Json::array()},
+                 {"n_probs", 0},
+                 {"min_keep", 0},
+                 {"grammar", ""},
+                 {"grammar_lazy", false},
+                 {"grammar_triggers", Json::array()},
+                 {"preserved_tokens", Json::array()},
+                 {"chat_format", "Content-only"},
+                 {"reasoning_format", "deepseek"},
+                 {"reasoning_in_content", false},
+                 {"generation_prompt", ""},
+                 {"samplers", Json::array({"top_k", "top_p", "temperature"})},
+                 {"backend_sampling", true},
+                 {"speculative.n_max", 7},
+                 {"speculative.n_min", 0},
+                 {"speculative.p_min", 0.8},
+                 {"timings_per_token", true},
+                 {"post_sampling_probs", false},
+                 {"lora", Json::array()}}},
+               {"prompt", ""},
+               {"next_token",
+                {{"has_next_token", false},
+                 {"has_new_line", false},
+                 {"n_remain", 0},
+                 {"n_decoded", 0},
+                 {"stopping_word", ""}}}}},
+             {"total_slots", 1},
+             {"model_path", model_id_},
+             {"role", "model"},
+             {"modalities", {{"vision", false}, {"audio", false}, {"video", false}}},
+             {"chat_template", "inkling-2-mini"},
+             {"chat_template_caps",
+              {{"reasoning_effort_levels", Json::array({"minimal", "low", "medium", "high", "xhigh", "max"})}}},
+             {"bos_token", "<|beginoftext|>"},
+             {"eos_token", "<|content_model_end_sampling|>"},
+             {"build_info", "BlackInk (sm_120a NVFP4 + 96K Q4 KV + DSpark MTP)"}});
+  } else if (path == "/slots") {
+    const engine::SchedulerStats st = scheduler_.stats();
+    send_json(res, 200,
+              Json::array({Json{{"id", 0},
+                                {"id_task", 0},
+                                {"n_ctx", max_model_len_},
+                                {"speculative", true},
+                                {"is_processing", st.running}}}));
+  } else if (path == "/tools") {
+    send_json(res, 200, Json::array());
+  } else if (const WebUiAsset* asset = find_webui_asset(path)) {
+    if (req.has_header("If-None-Match") && req.get_header_value("If-None-Match") == asset->etag) {
+      res.status = 304;
+      return;
+    }
+    res.status = 200;
+    res.set_header("Content-Encoding", "gzip");
+    res.set_header("ETag", std::string(asset->etag));
+    res.set_header("Cache-Control", asset->immutable ? "public, max-age=31536000, immutable" : "no-cache");
+    res.set_content(reinterpret_cast<const char*>(asset->gzip_data), asset->gzip_size, std::string(asset->mime_type));
   } else {
     send_error(res, 404, "no route for GET " + path);
   }
@@ -197,6 +325,14 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
 
 void ChatServer::handle_post(const httplib::Request& req, httplib::Response& res) {
   const std::string path = route_path(req);
+  if (path == "/v1/streams/lookup") {
+    send_json(res, 200, Json::array());
+    return;
+  }
+  if (path == "/v1/chat/completions/control") {
+    send_json(res, 200, Json::object());
+    return;
+  }
   if (path != "/v1/chat/completions") {
     send_error(res, 404, "no route for POST " + path);
     return;
@@ -228,6 +364,26 @@ void ChatServer::handle_post(const httplib::Request& req, httplib::Response& res
 }
 
 void ChatServer::complete(const httplib::Request& req, httplib::Response& res, ChatRequest request) {
+  if (request.max_new_tokens == 0 && !request.stream) {
+    const int prompt_n = int(request.prompt_ids.size());
+    send_json(res, 200,
+              Json{{"id", "chatcmpl-preencode"},
+                   {"object", "chat.completion"},
+                   {"created", std::time(nullptr)},
+                   {"model", model_id_},
+                   {"system_fingerprint", nullptr},
+                   {"choices", Json::array({Json{{"index", 0},
+                                                 {"message",
+                                                  {{"role", "assistant"},
+                                                   {"content", ""},
+                                                   {"reasoning_content", nullptr},
+                                                   {"refusal", nullptr}}},
+                                                 {"logprobs", nullptr},
+                                                 {"finish_reason", "length"}}})},
+                   {"usage", {{"prompt_tokens", prompt_n}, {"completion_tokens", 0}, {"total_tokens", prompt_n}}},
+                   {"timings", {{"cache_n", 0}, {"prompt_n", prompt_n}, {"predicted_n", 0}}}});
+    return;
+  }
   auto job = std::make_shared<engine::Job>(request.prompt_ids, request.max_new_tokens, request.sampling);
   if (!scheduler_.submit(job)) {
     res.set_header("Retry-After", "1");
@@ -277,7 +433,8 @@ void ChatServer::complete(const httplib::Request& req, httplib::Response& res, C
                                                  {"logprobs", nullptr},
                                                  {"finish_reason", result.finish_reason ? Json(*result.finish_reason)
                                                                                         : Json()}}})},
-                   {"usage", usage(*x)}});
+                   {"usage", usage(*x)},
+                   {"timings", timings(*x)}});
     return;
   }
 
