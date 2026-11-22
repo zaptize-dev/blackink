@@ -122,6 +122,7 @@ Json chunk(const Exchange& x, const std::string& model_id, Json delta, const std
          {"created", x.created},
          {"model", model_id},
          {"system_fingerprint", nullptr},
+         {"x_tokens", x.parser.num_tokens()},
          {"choices", Json::array({Json{{"index", 0},
                                        {"delta", std::move(delta)},
                                        {"logprobs", nullptr},

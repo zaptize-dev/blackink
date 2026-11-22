@@ -828,7 +828,17 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
       elStop.style.display = 'inline-flex';
 
       const t0 = performance.now();
+      let tFirst = null;
       let tokenCount = 0;
+      let renderQueued = false;
+      const scheduleRender = () => {
+        if (renderQueued) return;
+        renderQueued = true;
+        requestAnimationFrame(() => {
+          renderQueued = false;
+          renderMessages();
+        });
+      };
 
       try {
         const res = await fetch('/v1/chat/completions', {
@@ -862,32 +872,38 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
             try {
               const parsed = JSON.parse(payload);
               const delta = parsed.choices?.[0]?.delta;
-              if (delta) {
+              if (delta && (delta.reasoning_content || delta.content)) {
+                if (tFirst === null) tFirst = performance.now();
                 if (delta.reasoning_content) {
                   botMsg.reasoning += delta.reasoning_content;
-                  tokenCount++;
                 }
                 if (delta.content) {
                   botMsg.content += delta.content;
+                }
+                if (typeof parsed.x_tokens === 'number' && parsed.x_tokens > 0) {
+                  tokenCount = parsed.x_tokens;
+                } else {
                   tokenCount++;
                 }
-                const elapsed = Math.max((performance.now() - t0) / 1000, 0.05);
-                const tps = (tokenCount / elapsed).toFixed(1);
+                const decodeElapsed = Math.max((performance.now() - tFirst) / 1000, 0.02);
+                const tps = (Math.max(tokenCount - 1, 1) / decodeElapsed).toFixed(1);
+                const ttft = ((tFirst - t0) / 1000).toFixed(2);
                 elMetricTps.textContent = `${tps} tok/s`;
-                elMetricTokens.textContent = `${tokenCount} chunks`;
-                botMsg.meta = `${tps} tok/s`;
+                elMetricTokens.textContent = `${tokenCount} tok · TTFT ${ttft}s`;
+                botMsg.meta = `${tokenCount} tok · ${tps} tok/s`;
               }
               if (parsed.usage) {
                 const comp = parsed.usage.completion_tokens || tokenCount;
-                const elapsed = Math.max((performance.now() - t0) / 1000, 0.05);
-                const tps = (comp / elapsed).toFixed(1);
+                const decodeElapsed = tFirst ? Math.max((performance.now() - tFirst) / 1000, 0.02) : Math.max((performance.now() - t0) / 1000, 0.05);
+                const tps = (Math.max(comp - 1, 1) / decodeElapsed).toFixed(1);
+                const ttft = tFirst ? ((tFirst - t0) / 1000).toFixed(2) : '0.00';
                 elMetricTps.textContent = `${tps} tok/s`;
-                elMetricTokens.textContent = `${parsed.usage.total_tokens} total (${parsed.usage.prompt_tokens} prompt + ${comp} gen)`;
-                botMsg.meta = `${comp} tok · ${tps} tok/s`;
+                elMetricTokens.textContent = `${parsed.usage.total_tokens} total (${parsed.usage.prompt_tokens} prompt + ${comp} gen) · TTFT ${ttft}s`;
+                botMsg.meta = `${comp} tok · ${tps} tok/s (TTFT ${ttft}s)`;
               }
             } catch (_) {}
           }
-          renderMessages();
+          scheduleRender();
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
