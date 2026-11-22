@@ -219,6 +219,7 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
     P += commit;
     ++rounds;
     accepted += acc;
+    for (int p = 0; p < acc && p < 7; ++p) ++stats.spec_accepted_per_pos[std::size_t(p)];
     out.assign(r.drafts, r.drafts + acc);
     out.push_back(r.next);
   }

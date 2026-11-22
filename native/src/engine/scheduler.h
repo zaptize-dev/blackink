@@ -7,6 +7,7 @@
 
 #include "ingine/generator.h"
 
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -45,6 +46,7 @@ class Job {
   void cancel() { cancel_.store(true, std::memory_order_release); }
   bool cancelled() const { return cancel_.load(std::memory_order_acquire); }
   std::optional<Clock::time_point> t_start() const;
+  int reused_tokens() const { return reused_tokens_.load(std::memory_order_acquire); }
 
   // Waits up to `timeout` for output, then returns everything available (empty on timeout).
   JobBatch take(Clock::duration timeout);
@@ -57,6 +59,7 @@ class Job {
   void finish();
 
   std::atomic<bool> cancel_{false};
+  std::atomic<int> reused_tokens_{0};
   mutable std::mutex mutex_;
   std::condition_variable cv_;
   std::deque<int32_t> tokens_;
@@ -71,6 +74,22 @@ struct SchedulerStats {
   int max_queue = 0;
 };
 
+struct SchedulerMetrics {
+  uint64_t prompt_tokens_total = 0;
+  uint64_t prompt_tokens_cached_total = 0;
+  double prompt_seconds_total = 0.0;
+  uint64_t tokens_predicted_total = 0;
+  double tokens_predicted_seconds_total = 0.0;
+  uint64_t n_decode_total = 0;
+  uint64_t n_tokens_max = 0;
+  uint64_t spec_decode_num_draft_tokens_total = 0;
+  uint64_t spec_decode_num_accepted_tokens_total = 0;
+  uint64_t spec_decode_num_drafts_total = 0;
+  std::array<uint64_t, 7> spec_accepted_per_pos{};
+  int requests_processing = 0;
+  int requests_deferred = 0;
+};
+
 class Scheduler {
  public:
   Scheduler(model::Generator& generator, std::vector<int32_t> stop_ids, int max_queue);
@@ -83,6 +102,7 @@ class Scheduler {
   // Cancels the job and drops it from the waiting list if it has not started.
   void withdraw(const std::shared_ptr<Job>& job);
   SchedulerStats stats() const;
+  SchedulerMetrics metrics() const;
   // Fails waiting jobs ("server shutting down"), cancels the running one and joins the worker.
   void close();
 
@@ -98,6 +118,7 @@ class Scheduler {
   std::condition_variable cv_;
   std::deque<std::shared_ptr<Job>> waiting_;
   std::shared_ptr<Job> active_;
+  SchedulerMetrics metrics_{};
   bool closed_ = false;
   std::thread thread_;
 };

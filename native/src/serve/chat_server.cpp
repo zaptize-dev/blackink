@@ -12,6 +12,7 @@
 #include <ctime>
 #include <functional>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -101,7 +102,8 @@ Json usage(const Exchange& x) {
 Json timings(const Exchange& x) {
   const Clock::time_point now = Clock::now();
   const engine::Job& job = *x.job;
-  const int prompt_n = int(job.prompt_ids.size());
+  const int cache_n = std::max(0, job.reused_tokens());
+  const int prompt_n = std::max(0, int(job.prompt_ids.size()) - cache_n);
   const int predicted_n = x.parser.num_tokens();
   const Clock::time_point t0 = job.t_start().value_or(job.t_submit);
   const double prompt_ms = x.t_first ? std::max(0.0, seconds(*x.t_first - t0) * 1000.0) : 0.0;
@@ -109,12 +111,74 @@ Json timings(const Exchange& x) {
       (x.t_first && predicted_n > 1) ? std::max(0.0, seconds(now - *x.t_first) * 1000.0) : 0.0;
   const double predicted_per_second =
       (predicted_ms > 0.0 && predicted_n > 1) ? (double(predicted_n - 1) * 1000.0 / predicted_ms) : 0.0;
-  return Json{{"cache_n", 0},
+  return Json{{"cache_n", cache_n},
               {"prompt_n", prompt_n},
               {"prompt_ms", prompt_ms},
               {"predicted_n", predicted_n},
               {"predicted_ms", predicted_ms},
               {"predicted_per_second", predicted_per_second}};
+}
+
+std::string format_prometheus_metrics(const engine::SchedulerMetrics& m) {
+  struct Item {
+    const char* name;
+    const char* description;
+    double value;
+  };
+  const std::vector<Item> counters = {
+      {"prompt_tokens_total", "Number of prompt tokens processed, excluding cached tokens",
+       double(m.prompt_tokens_total)},
+      {"prompt_tokens_cached_total", "Number of prompt tokens reused from the cache",
+       double(m.prompt_tokens_cached_total)},
+      {"prompt_seconds_total", "Total time spent processing prompts", m.prompt_seconds_total},
+      {"tokens_predicted_total", "Number of generation tokens processed", double(m.tokens_predicted_total)},
+      {"tokens_predicted_seconds_total", "Total time spent generating tokens", m.tokens_predicted_seconds_total},
+      {"n_decode_total",
+       "Total number of llama_decode() calls, excluding speculative decoding and multimodal decoding",
+       double(m.n_decode_total)},
+      {"n_tokens_max", "Largest observed sequence length (prompt + generation)", double(m.n_tokens_max)},
+      {"spec_decode_num_draft_tokens_total", "Speculative: Total draft tokens generated",
+       double(m.spec_decode_num_draft_tokens_total)},
+      {"spec_decode_num_accepted_tokens_total", "Speculative: Total draft tokens accepted by the target model",
+       double(m.spec_decode_num_accepted_tokens_total)},
+      {"spec_decode_num_drafts_total", "Speculative: Total speculative decoding verification steps",
+       double(m.spec_decode_num_drafts_total)},
+  };
+  const double prompt_tps =
+      m.prompt_seconds_total > 1e-9 ? double(m.prompt_tokens_total) / m.prompt_seconds_total : 0.0;
+  const double predicted_tps = m.tokens_predicted_seconds_total > 1e-9
+                                   ? double(m.tokens_predicted_total) / m.tokens_predicted_seconds_total
+                                   : 0.0;
+  const std::vector<Item> gauges = {
+      {"prompt_tokens_seconds", "Average prompt throughput in tokens/s", prompt_tps},
+      {"predicted_tokens_seconds", "Average generation throughput in tokens/s", predicted_tps},
+      {"requests_processing", "Number of requests processing", double(m.requests_processing)},
+      {"requests_deferred", "Number of requests deferred", double(m.requests_deferred)},
+      {"n_busy_slots_per_decode", "Average number of busy slots per llama_decode() call",
+       m.n_decode_total > 0 ? 1.0 : 0.0},
+  };
+
+  std::ostringstream prometheus;
+  auto add_items = [&prometheus](const char* type, const std::vector<Item>& items) {
+    for (const auto& item : items) {
+      prometheus << "# HELP llamacpp:" << item.name << " " << item.description << "\n"
+                 << "# TYPE llamacpp:" << item.name << " " << type << "\n"
+                 << "llamacpp:" << item.name << " " << item.value << "\n";
+    }
+  };
+  add_items("counter", counters);
+  add_items("gauge", gauges);
+
+  if (m.spec_decode_num_drafts_total > 0) {
+    prometheus << "# HELP llamacpp:spec_decode_num_accepted_tokens_per_pos_total"
+                  " Accepted tokens per draft position\n"
+               << "# TYPE llamacpp:spec_decode_num_accepted_tokens_per_pos_total counter\n";
+    for (std::size_t i = 0; i < m.spec_accepted_per_pos.size(); ++i) {
+      prometheus << "llamacpp:spec_decode_num_accepted_tokens_per_pos_total{position=\"" << i << "\"} "
+                 << m.spec_accepted_per_pos[i] << "\n";
+    }
+  }
+  return prometheus.str();
 }
 
 void log_done(const Exchange& x) {
@@ -308,6 +372,9 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                                 {"is_processing", st.running}}}));
   } else if (path == "/tools") {
     send_json(res, 200, Json::array());
+  } else if (path == "/metrics") {
+    res.status = 200;
+    res.set_content(format_prometheus_metrics(scheduler_.metrics()), "text/plain; version=0.0.4; charset=utf-8");
   } else if (const WebUiAsset* asset = find_webui_asset(path)) {
     if (req.has_header("If-None-Match") && req.get_header_value("If-None-Match") == asset->etag) {
       res.status = 304;

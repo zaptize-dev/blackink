@@ -120,6 +120,14 @@ SchedulerStats Scheduler::stats() const {
   return {int(waiting_.size()), active_ != nullptr, max_queue_};
 }
 
+SchedulerMetrics Scheduler::metrics() const {
+  std::lock_guard lock(mutex_);
+  SchedulerMetrics m = metrics_;
+  m.requests_processing = active_ != nullptr ? 1 : 0;
+  m.requests_deferred = int(waiting_.size());
+  return m;
+}
+
 void Scheduler::close() {
   {
     std::lock_guard lock(mutex_);
@@ -179,6 +187,31 @@ void Scheduler::run(Job& job) {
   try {
     const model::GenerateStats st =
         generator_.generate(job.prompt_ids, job.max_new_tokens, job.sampling, stop_list_, on_tokens);
+    job.reused_tokens_.store(st.reused_tokens, std::memory_order_release);
+    {
+      std::lock_guard lock(mutex_);
+      const int prefilled = std::max(0, st.prompt_tokens - st.reused_tokens);
+      const int cached = std::max(0, st.reused_tokens);
+      const int generated = std::max(0, st.generated_tokens);
+      metrics_.prompt_tokens_total += uint64_t(prefilled);
+      metrics_.prompt_tokens_cached_total += uint64_t(cached);
+      metrics_.prompt_seconds_total += std::max(0.0, st.prefill_seconds);
+      metrics_.tokens_predicted_total += uint64_t(generated);
+      metrics_.tokens_predicted_seconds_total += std::max(0.0, st.decode_seconds);
+      const uint64_t decode_calls =
+          uint64_t(prefilled > 0 ? 1 : 0) + uint64_t(st.spec_rounds > 0 ? st.spec_rounds : generated);
+      metrics_.n_decode_total += decode_calls;
+      const uint64_t seq_len = uint64_t(std::max(0, st.prompt_tokens + generated));
+      if (seq_len > metrics_.n_tokens_max) metrics_.n_tokens_max = seq_len;
+      if (st.spec_rounds > 0) {
+        metrics_.spec_decode_num_drafts_total += uint64_t(st.spec_rounds);
+        metrics_.spec_decode_num_draft_tokens_total += uint64_t(st.spec_rounds) * 7ULL;
+        metrics_.spec_decode_num_accepted_tokens_total += uint64_t(std::max(0, st.spec_accepted));
+        for (std::size_t i = 0; i < st.spec_accepted_per_pos.size(); ++i) {
+          metrics_.spec_accepted_per_pos[i] += uint64_t(std::max(0, st.spec_accepted_per_pos[i]));
+        }
+      }
+    }
     // prefix reuse of the prompt: the path, the tokens reused and prefilled, the prefill time
     server_log().info("{}: reuse={} reused={} prefilled={} prefill={:.3f}s", job.id, model::to_string(st.reuse),
                       st.reused_tokens, st.prompt_tokens - st.reused_tokens, st.prefill_seconds);

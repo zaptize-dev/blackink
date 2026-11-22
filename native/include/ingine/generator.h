@@ -2,6 +2,7 @@
 // scheduler, the HTTP layer and their tests build without the model; ingine_model implements make_generator.
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <filesystem>
 #include <functional>
@@ -53,6 +54,7 @@ struct GenerateStats {
   Reuse reuse = Reuse::None;
   double prefill_seconds = 0, decode_seconds = 0;
   int spec_rounds = 0, spec_accepted = 0;
+  std::array<int, 7> spec_accepted_per_pos{};
   std::vector<SpecRoundRecord> spec_trace;  // forced replay only
 };
 
