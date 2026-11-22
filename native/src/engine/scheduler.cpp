@@ -132,6 +132,7 @@ SchedulerMetrics Scheduler::metrics() const {
   SchedulerMetrics m = metrics_;
   m.requests_processing = active_ != nullptr ? 1 : 0;
   m.requests_deferred = int(waiting_.size());
+  m.last_prefill_tps = last_prefill_tps_;
   m.context_used = last_context_used_;
   m.recent_requests.assign(recent_.begin(), recent_.end());
   if (active_) {
@@ -238,7 +239,11 @@ void Scheduler::run(Job& job) {
       const int generated = std::max(0, st.generated_tokens);
       metrics_.prompt_tokens_total += uint64_t(prefilled);
       metrics_.prompt_tokens_cached_total += uint64_t(cached);
-      metrics_.prompt_seconds_total += std::max(0.0, st.prefill_seconds);
+      if (prefilled > 0) {
+        const double psec = std::max(0.0, st.prefill_seconds);
+        metrics_.prompt_seconds_total += psec;
+        if (psec > 1e-6) last_prefill_tps_ = double(prefilled) / psec;
+      }
       metrics_.tokens_predicted_total += uint64_t(generated);
       metrics_.tokens_predicted_seconds_total += std::max(0.0, st.decode_seconds);
       const uint64_t decode_calls =
@@ -260,7 +265,7 @@ void Scheduler::run(Job& job) {
                              std::chrono::system_clock::now().time_since_epoch())
                              .count();
       rec.id = job.id;
-      rec.status = job.cancelled() ? "cancelled" : (generated >= job.max_new_tokens ? "length" : "done");
+      rec.status = generated >= job.max_new_tokens ? "length" : "done";
       rec.prompt_tokens = st.prompt_tokens;
       rec.reused_tokens = st.reused_tokens;
       rec.output_tokens = generated;

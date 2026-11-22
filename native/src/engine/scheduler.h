@@ -110,6 +110,7 @@ struct SchedulerMetrics {
   int active_prompt_tokens = 0;
   int active_output_tokens = 0;
   double active_live_tps = 0.0;
+  double last_prefill_tps = 0.0;
   int context_used = 0;
   std::vector<RequestRecord> recent_requests;
 };
@@ -144,6 +145,7 @@ class Scheduler {
   std::shared_ptr<Job> active_;
   SchedulerMetrics metrics_{};
   std::deque<RequestRecord> recent_;
+  double last_prefill_tps_ = 0.0;
   int last_context_used_ = 0;
   bool closed_ = false;
   std::thread thread_;

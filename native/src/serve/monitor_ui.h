@@ -241,7 +241,7 @@ inline constexpr std::string_view kMonitorHtml = R"HTML(<!doctype html>
         </div>
         <div class="kpi-right">
           <div class="val2" id="k-prefill">0<span class="kpi-unit">t/s</span></div>
-          <div class="kpi-sub">Prefill avg</div>
+          <div class="kpi-sub" id="k-prefill-sub">Prefill last</div>
         </div>
       </div>
       <svg class="spark" id="sp-speed"></svg>
@@ -482,7 +482,9 @@ function renderLast() {
   const liveSpeed = m.state === 'generating' && m.active_live_tps > 0 ? m.active_live_tps : m.predicted_tokens_seconds;
   document.getElementById('k-decode').textContent = liveSpeed.toFixed(1);
   document.getElementById('k-decode-sub').textContent = m.state === 'generating' ? 'Decode now' : 'Decode avg';
-  document.getElementById('k-prefill').innerHTML = `${fmtNum(m.prompt_tokens_seconds)}<span class="kpi-unit">t/s</span>`;
+  const prefillVal = m.last_prefill_tps > 0 ? m.last_prefill_tps : m.prompt_tokens_seconds;
+  document.getElementById('k-prefill').innerHTML = `${fmtNum(prefillVal)}<span class="kpi-unit">t/s</span>`;
+  document.getElementById('k-prefill-sub').textContent = m.last_prefill_tps > 0 ? `Prefill last (avg ${fmtNum(m.prompt_tokens_seconds)})` : 'Prefill avg';
 
   document.getElementById('k-gpu').textContent = s.gpu_util_pct;
   document.getElementById('k-gpu-name').textContent = s.gpu_name;

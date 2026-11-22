@@ -192,8 +192,9 @@ void log_done(const Exchange& x) {
       x.t_first && n > 1 ? fmt::format("{:.1f} tok/s", (n - 1) / std::max(seconds(now - *x.t_first), 1e-9)) : "-";
   const std::string ttft = x.t_first ? fmt::format("{:.3f}s", seconds(*x.t_first - job.t_submit)) : "-";
   const auto& finish = x.parser.finish_reason();
-  engine::server_log().info("{}: prompt={} completion={} finish={} queued={:.3f}s ttft={} decode={}{}", job.id,
+  engine::server_log().info("{}: prompt={} completion={} finish={} queued={:.3f}s ttft={} decode={} (T={:.2f},p={:.2f},k={}){}", job.id,
                             job.prompt_ids.size(), n, finish ? *finish : std::string("None"), queued, ttft, rate,
+                            x.req.sampling.temperature, x.req.sampling.top_p, x.req.sampling.top_k,
                             x.failure ? " error=" + *x.failure : std::string());
 }
 
@@ -408,6 +409,7 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                      {"active_prompt_tokens", m.active_prompt_tokens},
                      {"active_output_tokens", m.active_output_tokens},
                      {"active_live_tps", m.active_live_tps},
+                     {"last_prefill_tps", m.last_prefill_tps},
                      {"context_used", m.context_used},
                      {"prompt_tokens_total", m.prompt_tokens_total},
                      {"prompt_tokens_cached_total", m.prompt_tokens_cached_total},

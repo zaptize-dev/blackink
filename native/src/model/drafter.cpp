@@ -292,14 +292,7 @@ void Drafter::load(const std::filesystem::path& model_dir) {
   final_norm_ = persist({{"norm.weight", {h}}});
   mask_embed_ = persist({{"mask_embed", {h}}});
   const std::string mh = "markov_head.";
-  {
-    const SafetensorsTensor& tw1 = f.at(mh + "markov_w1.weight");
-    storage_.emplace_back(tw1.bytes, /*host_pinned=*/true);
-    void* dst = storage_.back().p;
-    CUDA_CHECK(cudaMemcpyAsync(dst, static_cast<const std::byte*>(raw.p) + (tw1.offset - base), tw1.bytes,
-                               cudaMemcpyDefault, stream_));
-    w1_ = reinterpret_cast<__nv_bfloat16*>(dst);
-  }
+  w1_ = persist({{mh + "markov_w1.weight", {V_, kd::RANK}}});
   if (f.at(mh + "markov_w1.weight").shape.at(0) < V_)
     throw std::runtime_error("mtp.safetensors: markov_w1 has fewer rows than the vocabulary");
   rnn_w_ = persist({{mh + "rnn_proj.weight", {kd::RNN_OUT, kd::RNN_IN}}});
