@@ -309,6 +309,12 @@ __device__ __forceinline__ void unpack8(const uint32_t u, float f[8]) {
     }
 }
 
+// Loads of anything an earlier kernel writes (caches, kpos, pos) are coherent `asm volatile` with a memory
+// clobber, so the compiler cannot hoist them above griddepcontrol.wait (programmatic dependent launch).
+// Cached K/V rows are read once per step (the next read of a ring row is a full step, ~1.5 GB of streams,
+// later): their L2 lines are filled evict-first (kernels/common/l2.cuh).
+constexpr l2::Evict KV_L2 = l2::Evict::first;
+
 __device__ __forceinline__ uint32_t ld_kv4(const void* ptr, std::uint64_t pol) {
     uint32_t v;
     if constexpr (l2::hinted<KV_L2>)
@@ -320,12 +326,6 @@ __device__ __forceinline__ uint32_t ld_kv4(const void* ptr, std::uint64_t pol) {
         asm volatile("ld.global.L1::no_allocate.u32 %0, [%1];" : "=r"(v) : "l"(ptr) : "memory");
     return v;
 }
-
-// Loads of anything an earlier kernel writes (caches, kpos, pos) are coherent `asm volatile` with a memory
-// clobber, so the compiler cannot hoist them above griddepcontrol.wait (programmatic dependent launch).
-// Cached K/V rows are read once per step (the next read of a ring row is a full step, ~1.5 GB of streams,
-// later): their L2 lines are filled evict-first (kernels/common/l2.cuh).
-constexpr l2::Evict KV_L2 = l2::Evict::first;
 
 __device__ __forceinline__ uint4 ld_kv(const void* ptr, std::uint64_t pol) {
     uint4 v;
