@@ -60,8 +60,9 @@ Drafter::Drafter(const std::filesystem::path& model_dir, const Weights& w, int m
                  int shortlist_rows)
     : w_(w), stream_(stream), ctx_(std::min(max_ctx, DRAFT_CTX)) {
   if (max_ctx < 2 * BLOCK) throw std::invalid_argument("Drafter: max_ctx must hold two blocks");
-  head_ = {w.unembed.w.data, w.unembed.fp8() ? static_cast<const float*>(w.unembed.scale.data) : nullptr,
-           w.unembed.rows()};
+  head_ = {w.unembed.w.data,
+           (w.unembed.fp8() || w.unembed.nvfp4()) ? static_cast<const float*>(w.unembed.scale.data) : nullptr,
+           w.unembed.rows(), w.unembed.bscale.data};
   V_ = w.unembed.rows();
   load(model_dir);
 
@@ -136,15 +137,19 @@ Drafter::Drafter(const std::filesystem::path& model_dir, const Weights& w, int m
       if (short_in_[t]) list.push_back(t);
     short_K_ = int(list.size());
     const int rows = short_K_ + CONTEXT_ROWS;
-    const std::size_t row_bytes = head_.scale ? std::size_t(H) : std::size_t(H) * 2;
+    const std::size_t row_bytes = head_.bscale ? std::size_t(H / 2) : (head_.scale ? std::size_t(H) : std::size_t(H) * 2);
     void* q = alloc(std::size_t(rows) * row_bytes);
+    void* qbs = head_.bscale ? alloc(std::size_t(rows) * (H / 16)) : nullptr;
     auto* qs = head_.scale ? f32s(rows) : nullptr;
     short_map_ = i32s(rows);
     short_ids_ = i32s(rows);
     CUDA_CHECK(cudaMemsetAsync(short_map_, 0, std::size_t(rows) * 4, stream_));
     CUDA_CHECK(cudaMemcpyAsync(short_ids_, list.data(), list.size() * 4, cudaMemcpyHostToDevice, stream_));
     kd::gather_head_rows(head_.w, head_.scale, row_bytes, short_ids_, short_K_, q, qs, short_map_, stream_);
-    short_head_ = kdense::Matrix{q, qs, rows};
+    if (qbs)
+      kd::gather_head_rows(head_.bscale, nullptr, std::size_t(H / 16), short_ids_, short_K_, qbs, nullptr, short_map_,
+                           stream_);
+    short_head_ = kdense::Matrix{q, qs, rows, qbs};
     seg_short_ = segments({short_K_});
     kd::fill(base_, std::size_t(GAMMA) * rows, -INFINITY, stream_);
   }
@@ -186,9 +191,9 @@ Drafter::~Drafter() {
 
 void Drafter::load(const std::filesystem::path& model_dir) {
   SafetensorsFile f(model_dir / "mtp.safetensors");
-  // Whole data region on the device, then the persistent (aligned, derived) tensors from it.
+  // Whole data region in pinned host RAM (0 MiB GPU VRAM spike), then persistent tensors derived from it.
   const std::uint64_t base = f.data_offset();
-  DeviceBuffer raw(f.file_size() - base);
+  DeviceBuffer raw(f.file_size() - base, /*host_pinned=*/true);
   {
     std::vector<UploadRequest> reqs;
     for (const SafetensorsTensor& t : f.tensors())
@@ -287,7 +292,14 @@ void Drafter::load(const std::filesystem::path& model_dir) {
   final_norm_ = persist({{"norm.weight", {h}}});
   mask_embed_ = persist({{"mask_embed", {h}}});
   const std::string mh = "markov_head.";
-  w1_ = persist({{mh + "markov_w1.weight", {f.at(mh + "markov_w1.weight").shape.at(0), kd::RANK}}});
+  {
+    const SafetensorsTensor& tw1 = f.at(mh + "markov_w1.weight");
+    storage_.emplace_back(tw1.bytes, /*host_pinned=*/true);
+    void* dst = storage_.back().p;
+    CUDA_CHECK(cudaMemcpyAsync(dst, static_cast<const std::byte*>(raw.p) + (tw1.offset - base), tw1.bytes,
+                               cudaMemcpyDefault, stream_));
+    w1_ = reinterpret_cast<__nv_bfloat16*>(dst);
+  }
   if (f.at(mh + "markov_w1.weight").shape.at(0) < V_)
     throw std::runtime_error("mtp.safetensors: markov_w1 has fewer rows than the vocabulary");
   rnn_w_ = persist({{mh + "rnn_proj.weight", {kd::RNN_OUT, kd::RNN_IN}}});
@@ -299,7 +311,7 @@ void Drafter::load(const std::filesystem::path& model_dir) {
   fold_b_ = static_cast<__nv_bfloat16*>(alloc(std::size_t(V_) * 2));
   const __nv_bfloat16* hw = persist({{mh + "hidden_out.weight", {h, kd::RANK}}});
   const __nv_bfloat16* hb = persist({{mh + "hidden_out.bias", {h}}});
-  kd::fold_head(w_.unembed.w.data, head_.scale, V_, hw, hb, fold_w_, fold_b_, stream_);
+  kd::fold_head(w_.unembed.w.data, head_.scale, V_, hw, hb, fold_w_, fold_b_, stream_, head_.bscale);
   CUDA_CHECK(cudaStreamSynchronize(stream_));  // raw and cat are freed on return
 }
 
@@ -332,12 +344,16 @@ void Drafter::note_tokens(std::span<const std::int32_t> ids) {
     }
   if (add.empty()) return;
   const std::size_t row = std::size_t(short_K_ + short_E_);
-  const std::size_t row_bytes = head_.scale ? std::size_t(H) : std::size_t(H) * 2;
+  const std::size_t row_bytes = head_.bscale ? std::size_t(H / 2) : (head_.scale ? std::size_t(H) : std::size_t(H) * 2);
   // pageable sources: copied before cudaMemcpyAsync returns; short_ids_ is free once earlier gathers ran
   CUDA_CHECK(cudaMemcpyAsync(short_ids_, add.data(), add.size() * 4, cudaMemcpyHostToDevice, stream_));
   kd::gather_head_rows(head_.w, head_.scale, row_bytes, short_ids_, int(add.size()),
                        static_cast<std::uint8_t*>(const_cast<void*>(short_head_.w)) + row * row_bytes,
                        head_.scale ? const_cast<float*>(short_head_.scale) + row : nullptr, short_map_ + row, stream_);
+  if (head_.bscale)
+    kd::gather_head_rows(head_.bscale, nullptr, std::size_t(H / 16), short_ids_, int(add.size()),
+                         static_cast<std::uint8_t*>(const_cast<void*>(short_head_.bscale)) + row * (H / 16), nullptr,
+                         short_map_ + row, stream_);
   short_extra_.insert(short_extra_.end(), add.begin(), add.end());
   short_E_ += int(add.size());
   const int seg[3] = {0, short_K_ + short_E_, 0};
@@ -379,7 +395,7 @@ void Drafter::adopt_checkpoint(const void* src, int length, std::span<const std:
 void Drafter::save_checkpoint(void* dst) {
   auto* d = static_cast<std::byte*>(dst);
   auto copy = [&](std::size_t off, const void* src, std::size_t bytes) {
-    CUDA_CHECK(cudaMemcpyAsync(d + off, src, bytes, cudaMemcpyDeviceToDevice, stream_));
+    CUDA_CHECK(cudaMemcpyAsync(d + off, src, bytes, cudaMemcpyDefault, stream_));
   };
   std::size_t off = 0;
   for (int l : {0, 2}) {
@@ -406,7 +422,7 @@ void Drafter::restore_checkpoint(const void* src) {
   if (src != checkpoint_) throw std::invalid_argument("Drafter::restore_checkpoint: not the last checkpoint saved");
   const auto* s = static_cast<const std::byte*>(src);
   auto copy = [&](void* dst, std::size_t off, std::size_t bytes) {
-    CUDA_CHECK(cudaMemcpyAsync(dst, s + off, bytes, cudaMemcpyDeviceToDevice, stream_));
+    CUDA_CHECK(cudaMemcpyAsync(dst, s + off, bytes, cudaMemcpyDefault, stream_));
   };
   std::size_t off = 0;
   for (int l : {0, 2}) {

@@ -455,7 +455,7 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
         <span class="ink-dot"></span>
         <span>BlackInk</span>
       </div>
-      <span class="badge">NVFP4 · 96K Q4</span>
+      <span class="badge">NVFP4 · 96K Q4 · MTP</span>
     </div>
 
     <button class="btn" id="newChatBtn">+ New Conversation</button>

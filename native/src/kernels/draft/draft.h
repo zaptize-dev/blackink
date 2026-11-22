@@ -212,7 +212,7 @@ void markov_finish(const std::int32_t* cand_idx, const float* cand_logits, const
 // hb bf16 [H]; fold_w bf16 [rows, 256], fold_b bf16 [rows]. FP64 results round to FP32, then BF16 (torch's
 // double -> bfloat16 conversion).
 void fold_head(const void* u, const float* u_scale, int rows, const __nv_bfloat16* hw, const __nv_bfloat16* hb,
-               __nv_bfloat16* fold_w, __nv_bfloat16* fold_b, cudaStream_t stream);
+               __nv_bfloat16* fold_w, __nv_bfloat16* fold_b, cudaStream_t stream, const void* u_bscale = nullptr);
 
 // Fills n floats with `value`.
 void fill(float* x, std::size_t n, float value, cudaStream_t stream);
