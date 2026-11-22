@@ -46,7 +46,9 @@ class Job {
   void cancel() { cancel_.store(true, std::memory_order_release); }
   bool cancelled() const { return cancel_.load(std::memory_order_acquire); }
   std::optional<Clock::time_point> t_start() const;
+  std::optional<Clock::time_point> t_first_token() const;
   int reused_tokens() const { return reused_tokens_.load(std::memory_order_acquire); }
+  int live_tokens() const { return live_tokens_.load(std::memory_order_acquire); }
 
   // Waits up to `timeout` for output, then returns everything available (empty on timeout).
   JobBatch take(Clock::duration timeout);
@@ -60,12 +62,28 @@ class Job {
 
   std::atomic<bool> cancel_{false};
   std::atomic<int> reused_tokens_{0};
+  std::atomic<int> live_tokens_{0};
   mutable std::mutex mutex_;
   std::condition_variable cv_;
   std::deque<int32_t> tokens_;
   std::optional<std::string> failure_;
   bool end_ = false;
   std::optional<Clock::time_point> t_start_;
+  std::optional<Clock::time_point> t_first_token_;
+};
+
+struct RequestRecord {
+  int64_t timestamp_ms = 0;
+  std::string id;
+  std::string status;  // "done", "length", "running", "cancelled", "error"
+  int prompt_tokens = 0;
+  int reused_tokens = 0;
+  int output_tokens = 0;
+  double decode_tps = 0.0;
+  double duration_s = 0.0;
+  double ttft_ms = 0.0;
+  int spec_rounds = 0;
+  int spec_accepted = 0;
 };
 
 struct SchedulerStats {
@@ -88,6 +106,12 @@ struct SchedulerMetrics {
   std::array<uint64_t, 7> spec_accepted_per_pos{};
   int requests_processing = 0;
   int requests_deferred = 0;
+  std::string state = "idle";  // "idle", "prefilling", "generating", "queued"
+  int active_prompt_tokens = 0;
+  int active_output_tokens = 0;
+  double active_live_tps = 0.0;
+  int context_used = 0;
+  std::vector<RequestRecord> recent_requests;
 };
 
 class Scheduler {
@@ -119,6 +143,8 @@ class Scheduler {
   std::deque<std::shared_ptr<Job>> waiting_;
   std::shared_ptr<Job> active_;
   SchedulerMetrics metrics_{};
+  std::deque<RequestRecord> recent_;
+  int last_context_used_ = 0;
   bool closed_ = false;
   std::thread thread_;
 };

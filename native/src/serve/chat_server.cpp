@@ -2,6 +2,8 @@
 
 #include "engine/log.h"
 #include "serve/http_transport.h"
+#include "serve/monitor_ui.h"
+#include "serve/sys_metrics.h"
 #include "serve/webui.h"
 
 #include <spdlog/spdlog.h>
@@ -372,9 +374,83 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                                 {"is_processing", st.running}}}));
   } else if (path == "/tools") {
     send_json(res, 200, Json::array());
+  } else if (path == "/api/metrics") {
+    const engine::SchedulerMetrics m = scheduler_.metrics();
+    const SysSnapshot s = sample_sys_metrics();
+    const double prompt_tps =
+        m.prompt_seconds_total > 1e-9 ? double(m.prompt_tokens_total) / m.prompt_seconds_total : 0.0;
+    const double predicted_tps = m.tokens_predicted_seconds_total > 1e-9
+                                     ? double(m.tokens_predicted_total) / m.tokens_predicted_seconds_total
+                                     : 0.0;
+    Json per_pos = Json::array();
+    for (uint64_t v : m.spec_accepted_per_pos) per_pos.push_back(v);
+    Json reqs = Json::array();
+    for (const auto& r : m.recent_requests) {
+      reqs.push_back(Json{{"timestamp_ms", r.timestamp_ms},
+                          {"id", r.id},
+                          {"status", r.status},
+                          {"prompt_tokens", r.prompt_tokens},
+                          {"reused_tokens", r.reused_tokens},
+                          {"output_tokens", r.output_tokens},
+                          {"decode_tps", r.decode_tps},
+                          {"duration_s", r.duration_s},
+                          {"ttft_ms", r.ttft_ms},
+                          {"spec_rounds", r.spec_rounds},
+                          {"spec_accepted", r.spec_accepted}});
+    }
+    send_json(res, 200,
+              Json{{"model",
+                    {{"model_id", model_id_},
+                     {"max_model_len", max_model_len_},
+                     {"state", m.state},
+                     {"requests_processing", m.requests_processing},
+                     {"requests_deferred", m.requests_deferred},
+                     {"active_prompt_tokens", m.active_prompt_tokens},
+                     {"active_output_tokens", m.active_output_tokens},
+                     {"active_live_tps", m.active_live_tps},
+                     {"context_used", m.context_used},
+                     {"prompt_tokens_total", m.prompt_tokens_total},
+                     {"prompt_tokens_cached_total", m.prompt_tokens_cached_total},
+                     {"tokens_predicted_total", m.tokens_predicted_total},
+                     {"prompt_tokens_seconds", prompt_tps},
+                     {"predicted_tokens_seconds", predicted_tps},
+                     {"spec_decode_num_drafts_total", m.spec_decode_num_drafts_total},
+                     {"spec_decode_num_accepted_tokens_total", m.spec_decode_num_accepted_tokens_total},
+                     {"spec_accepted_per_pos", std::move(per_pos)},
+                     {"recent_requests", std::move(reqs)}}},
+                   {"system",
+                    {{"gpu_available", s.gpu_available},
+                     {"gpu_name", s.gpu_name},
+                     {"gpu_util_pct", s.gpu_util_pct},
+                     {"mem_util_pct", s.mem_util_pct},
+                     {"vram_used_gb", s.vram_used_gb},
+                     {"vram_total_gb", s.vram_total_gb},
+                     {"gpu_temp_c", s.gpu_temp_c},
+                     {"power_w", s.power_w},
+                     {"power_limit_w", s.power_limit_w},
+                     {"pcie_gen", s.pcie_gen},
+                     {"pcie_width", s.pcie_width},
+                     {"pcie_tx_mbs", s.pcie_tx_mbs},
+                     {"pcie_rx_mbs", s.pcie_rx_mbs},
+                     {"cpu_util_pct", s.cpu_util_pct},
+                     {"cpu_threads", s.cpu_threads},
+                     {"ram_used_gb", s.ram_used_gb},
+                     {"ram_total_gb", s.ram_total_gb}}}});
   } else if (path == "/metrics") {
-    res.status = 200;
-    res.set_content(format_prometheus_metrics(scheduler_.metrics()), "text/plain; version=0.0.4; charset=utf-8");
+    const std::string fmt_param = req.has_param("format") ? req.get_param_value("format") : "";
+    const std::string accept = req.has_header("Accept") ? req.get_header_value("Accept") : "";
+    const bool want_prom = fmt_param == "prometheus" ||
+                           (accept.find("text/html") == std::string::npos &&
+                            (accept.find("text/plain") != std::string::npos ||
+                             accept.find("application/openmetrics-text") != std::string::npos));
+    if (want_prom) {
+      res.status = 200;
+      res.set_content(format_prometheus_metrics(scheduler_.metrics()), "text/plain; version=0.0.4; charset=utf-8");
+    } else {
+      res.status = 200;
+      res.set_header("Cache-Control", "no-cache");
+      res.set_content(std::string(kMonitorHtml), "text/html; charset=utf-8");
+    }
   } else if (const WebUiAsset* asset = find_webui_asset(path)) {
     if (req.has_header("If-None-Match") && req.get_header_value("If-None-Match") == asset->etag) {
       res.status = 304;

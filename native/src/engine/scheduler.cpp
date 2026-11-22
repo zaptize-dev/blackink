@@ -47,6 +47,11 @@ std::optional<Clock::time_point> Job::t_start() const {
   return t_start_;
 }
 
+std::optional<Clock::time_point> Job::t_first_token() const {
+  std::lock_guard lock(mutex_);
+  return t_first_token_;
+}
+
 JobBatch Job::take(Clock::duration timeout) {
   std::unique_lock lock(mutex_);
   cv_.wait_for(lock, timeout, [&] { return !tokens_.empty() || failure_ || end_; });
@@ -68,8 +73,10 @@ void Job::push(const std::vector<int32_t>& tokens) {
   if (tokens.empty()) return;
   {
     std::lock_guard lock(mutex_);
+    if (!t_first_token_) t_first_token_ = Clock::now();
     tokens_.insert(tokens_.end(), tokens.begin(), tokens.end());
   }
+  live_tokens_.fetch_add(int(tokens.size()), std::memory_order_acq_rel);
   cv_.notify_all();
 }
 
@@ -125,6 +132,42 @@ SchedulerMetrics Scheduler::metrics() const {
   SchedulerMetrics m = metrics_;
   m.requests_processing = active_ != nullptr ? 1 : 0;
   m.requests_deferred = int(waiting_.size());
+  m.context_used = last_context_used_;
+  m.recent_requests.assign(recent_.begin(), recent_.end());
+  if (active_) {
+    const int live_out = active_->live_tokens();
+    const int prompt_n = int(active_->prompt_ids.size());
+    const auto t_first = active_->t_first_token();
+    const auto t_start = active_->t_start().value_or(active_->t_submit);
+    const Clock::time_point now = Clock::now();
+    m.active_prompt_tokens = prompt_n;
+    m.active_output_tokens = live_out;
+    m.context_used = prompt_n + live_out;
+    if (t_first && live_out > 0) {
+      m.state = "generating";
+      const double sec = std::chrono::duration<double>(now - *t_first).count();
+      m.active_live_tps = (sec > 1e-6 && live_out > 1) ? double(live_out - 1) / sec : 0.0;
+    } else {
+      m.state = "prefilling";
+    }
+    RequestRecord live;
+    live.timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                            std::chrono::system_clock::now().time_since_epoch())
+                            .count();
+    live.id = active_->id;
+    live.status = "running";
+    live.prompt_tokens = prompt_n;
+    live.reused_tokens = active_->reused_tokens();
+    live.output_tokens = live_out;
+    live.decode_tps = m.active_live_tps;
+    live.duration_s = std::chrono::duration<double>(now - t_start).count();
+    live.ttft_ms = t_first ? std::chrono::duration<double>(*t_first - t_start).count() * 1000.0 : 0.0;
+    m.recent_requests.insert(m.recent_requests.begin(), std::move(live));
+  } else if (!waiting_.empty()) {
+    m.state = "queued";
+  } else {
+    m.state = "idle";
+  }
   return m;
 }
 
@@ -211,6 +254,23 @@ void Scheduler::run(Job& job) {
           metrics_.spec_accepted_per_pos[i] += uint64_t(std::max(0, st.spec_accepted_per_pos[i]));
         }
       }
+      last_context_used_ = st.prompt_tokens + generated;
+      RequestRecord rec;
+      rec.timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                             std::chrono::system_clock::now().time_since_epoch())
+                             .count();
+      rec.id = job.id;
+      rec.status = job.cancelled() ? "cancelled" : (generated >= job.max_new_tokens ? "length" : "done");
+      rec.prompt_tokens = st.prompt_tokens;
+      rec.reused_tokens = st.reused_tokens;
+      rec.output_tokens = generated;
+      rec.decode_tps = st.decode_seconds > 1e-6 ? double(generated) / st.decode_seconds : 0.0;
+      rec.duration_s = st.prefill_seconds + st.decode_seconds;
+      rec.ttft_ms = st.prefill_seconds * 1000.0;
+      rec.spec_rounds = st.spec_rounds;
+      rec.spec_accepted = st.spec_accepted;
+      recent_.push_front(std::move(rec));
+      if (recent_.size() > 50) recent_.pop_back();
     }
     // prefix reuse of the prompt: the path, the tokens reused and prefilled, the prefill time
     server_log().info("{}: reuse={} reused={} prefilled={} prefill={:.3f}s", job.id, model::to_string(st.reuse),
@@ -218,6 +278,16 @@ void Scheduler::run(Job& job) {
   } catch (const std::exception& e) {  // report to the client instead of killing the worker
     server_log().error("generator failed: {}: {}", type_name(e), e.what());
     job.fail("generation failed: " + type_name(e) + ": " + e.what());
+    std::lock_guard lock(mutex_);
+    RequestRecord rec;
+    rec.timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                           std::chrono::system_clock::now().time_since_epoch())
+                           .count();
+    rec.id = job.id;
+    rec.status = "error";
+    rec.prompt_tokens = int(job.prompt_ids.size());
+    recent_.push_front(std::move(rec));
+    if (recent_.size() > 50) recent_.pop_back();
   } catch (...) {
     server_log().error("generator failed: unknown exception");
     job.fail("generation failed: unknown exception");
