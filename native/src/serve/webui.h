@@ -302,9 +302,9 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
       background: #07080b;
       border: 1px solid var(--border);
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 0 0 8px 8px;
       overflow-x: auto;
-      margin: 10px 0;
+      margin: 0;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.84rem;
     }
@@ -316,6 +316,109 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
       font-size: 0.85em;
     }
     .msg-content pre code { background: none; padding: 0; }
+    .code-block {
+      margin: 12px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #07080b;
+    }
+    .code-block pre { border: none; }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: #141722;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .code-lang {
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #b4a2ff;
+    }
+    .code-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .code-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 9px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .code-btn:hover {
+      background: var(--panel-hover);
+      border-color: var(--accent);
+    }
+    .code-btn.preview-btn {
+      background: rgba(124, 92, 255, 0.2);
+      border-color: rgba(124, 92, 255, 0.45);
+      color: #d8ceff;
+    }
+    .code-btn.preview-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Live Preview Drawer (Artifacts / Canvas style) */
+    .preview-pane {
+      width: 48%;
+      min-width: 360px;
+      max-width: 900px;
+      height: 100vh;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .preview-pane.open {
+      display: flex;
+    }
+    .preview-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141722;
+    }
+    .preview-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .preview-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .preview-frame-wrap {
+      flex: 1;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #ffffff;
+    }
 
     /* Composer */
     .composer-wrap {
@@ -432,6 +535,24 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
     </footer>
   </main>
 
+  <aside class="preview-pane" id="previewPane">
+    <div class="preview-header">
+      <div class="preview-title">
+        <span class="ink-dot"></span>
+        <span id="previewTitleLabel">HTML Live Preview</span>
+      </div>
+      <div class="preview-controls">
+        <button class="code-btn" id="previewReloadBtn" title="Reload preview">↻ Reload</button>
+        <button class="code-btn" id="previewNewTabBtn" title="Open in new tab">⤢ New Tab</button>
+        <button class="code-btn" id="previewDownloadBtn" title="Download HTML">⬇ Download</button>
+        <button class="code-btn" id="previewCloseBtn" title="Close preview">✕</button>
+      </div>
+    </div>
+    <div class="preview-frame-wrap">
+      <iframe id="previewFrame" class="preview-frame" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
+    </div>
+  </aside>
+
   <script>
     const STORAGE_KEY = 'blackink_chats_v1';
     let chats = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -531,19 +652,113 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
       return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    const codeStore = [];
+    let currentPreviewCode = '';
+    const elPreviewPane = document.getElementById('previewPane');
+    const elPreviewFrame = document.getElementById('previewFrame');
+
+    function isPreviewableCode(lang, code) {
+      const l = (lang || '').toLowerCase();
+      if (l === 'html' || l === 'htm' || l === 'svg' || l === 'xml') return true;
+      const t = code.trim();
+      return /^<!doctype\s+html/i.test(t) || /^<html[\s>]/i.test(t) || /^<svg[\s>]/i.test(t) ||
+             (/<(div|section|main|canvas|style|script|body|head|h1|table|form)\b/i.test(t) && /<\/(div|section|main|canvas|style|script|body|html|table|form)>/i.test(t));
+    }
+
+    window.openHtmlPreview = function(idx) {
+      const code = codeStore[idx];
+      if (typeof code !== 'string') return;
+      currentPreviewCode = code;
+      elPreviewPane.classList.add('open');
+      elPreviewFrame.srcdoc = code;
+    };
+
+    window.openHtmlNewTab = function(idx) {
+      const code = typeof idx === 'number' ? codeStore[idx] : currentPreviewCode;
+      if (!code) return;
+      const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    };
+
+    window.downloadHtmlCode = function(idx) {
+      const code = typeof idx === 'number' ? codeStore[idx] : currentPreviewCode;
+      if (!code) return;
+      const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'blackink-preview-' + Date.now() + '.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    window.copyCodeBlock = function(idx, btn) {
+      const code = codeStore[idx];
+      if (typeof code !== 'string') return;
+      navigator.clipboard.writeText(code).then(() => {
+        const old = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = old; }, 1400);
+      });
+    };
+
+    document.getElementById('previewReloadBtn').onclick = () => {
+      if (currentPreviewCode) elPreviewFrame.srcdoc = currentPreviewCode;
+    };
+    document.getElementById('previewNewTabBtn').onclick = () => window.openHtmlNewTab();
+    document.getElementById('previewDownloadBtn').onclick = () => window.downloadHtmlCode();
+    document.getElementById('previewCloseBtn').onclick = () => {
+      elPreviewPane.classList.remove('open');
+    };
+
+    function renderCodeBlock(rawInner) {
+      let lang = 'code';
+      let code = rawInner;
+      const firstNl = rawInner.indexOf('\n');
+      if (firstNl !== -1) {
+        const firstLine = rawInner.slice(0, firstNl).trim();
+        if (/^[a-zA-Z0-9_+-]+$/.test(firstLine)) {
+          lang = firstLine;
+          code = rawInner.slice(firstNl + 1);
+        }
+      }
+      const idx = codeStore.length;
+      codeStore.push(code);
+      const canPreview = isPreviewableCode(lang, code);
+      const previewBtns = canPreview
+        ? `<button class="code-btn preview-btn" onclick="openHtmlPreview(${idx})">▶ Preview</button>
+           <button class="code-btn" onclick="openHtmlNewTab(${idx})" title="Open in new tab">⤢</button>`
+        : '';
+      return `<div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">${escapeHtml(lang)}</span>
+          <div class="code-actions">
+            ${previewBtns}
+            <button class="code-btn" onclick="copyCodeBlock(${idx}, this)">Copy</button>
+          </div>
+        </div>
+        <pre><code>${escapeHtml(code)}</code></pre>
+      </div>`;
+    }
+
     function formatMarkdown(text) {
       if (!text) return '';
-      const parts = text.split(/(```[\s\S]*?```)/g);
+      // Handle closed ```...``` blocks and an unclosed trailing ```... block during streaming
+      let normalized = text;
+      const fenceCount = (text.match(/```/g) || []).length;
+      if (fenceCount % 2 === 1) normalized += '\n```';
+      const parts = normalized.split(/(```[\s\S]*?```)/g);
       return parts.map(part => {
         if (part.startsWith('```') && part.endsWith('```')) {
-          const lines = part.slice(3, -3).replace(/^[a-zA-Z0-9_-]+\n/, '');
-          return '<pre><code>' + escapeHtml(lines) + '</code></pre>';
+          return renderCodeBlock(part.slice(3, -3));
         }
         return escapeHtml(part).replace(/`([^`\n]+)`/g, '<code>$1</code>');
       }).join('');
     }
 
     function renderMessages() {
+      codeStore.length = 0;
       const chat = chats.find(x => x.id === activeId);
       document.getElementById('activeTitle').textContent = chat?.title || 'New Conversation';
       elMessages.innerHTML = '';
@@ -685,6 +900,15 @@ inline constexpr std::string_view kWebUiHtml = R"HTML(<!DOCTYPE html>
         elStop.style.display = 'none';
         saveChats();
         renderMessages();
+        // Auto-preview the latest HTML/SVG block when generation finishes if preview pane is open
+        for (let i = codeStore.length - 1; i >= 0; --i) {
+          if (isPreviewableCode('', codeStore[i])) {
+            if (elPreviewPane.classList.contains('open')) {
+              window.openHtmlPreview(i);
+            }
+            break;
+          }
+        }
       }
     }
 
