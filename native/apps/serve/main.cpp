@@ -64,8 +64,8 @@ ingine::model::Sampling generation_defaults(const std::filesystem::path& model_d
 }  // namespace
 
 int main(int argc, char** argv) {
-  std::string model_dir, host = "127.0.0.1", ablation, backend = "fast", model_id, log_level = "INFO";
-  int port = 8003, max_ctx = 131072, max_queue = 4, max_model_len = 0, park_mb = -1;
+  std::string model_dir, host = "0.0.0.0", ablation, backend = "fast", model_id, log_level = "INFO";
+  int port = 8090, max_ctx = 131072, max_queue = 4, max_model_len = 0, park_mb = -1;
   bool engine = false, fake = false, dense_fp8 = false, kv_fp8 = false, kv_q4 = false, full_nvfp4 = false, spec = false;
   double spec_threshold = 0.8, fake_delay = 0.02;
   // sampling defaults; negative: from generation_config.json

@@ -78,7 +78,7 @@
   "ablation": "inkling-2-mini-abliterated.safetensors",
   "serving": {
     "host": "0.0.0.0",
-    "port": 8003,
+    "port": 8090,
     "max_ctx": 131072,
     "dense_fp8": true,
     "full_nvfp4": true,
