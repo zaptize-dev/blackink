@@ -416,11 +416,12 @@ Weights load_weights(const fs::path& model_dir, bool dense_fp8, cudaStream_t str
     }
   }
   w.layers.resize(LAYERS);
+  const auto orig_formats = w.expert_formats;
   for (int pass = 0; pass < 2; ++pass) {
     for (int l = 0; l < LAYERS; ++l) {
-      const bool is_mxfp8 = w.expert_formats[l] != ExpertFormat::NVFP4;
+      const bool is_mxfp8 = orig_formats[l] != ExpertFormat::NVFP4;
       if ((pass == 0) != is_mxfp8) continue;
-      w.layers[l] = load_layer_into(ld, l, w.expert_formats[l], dense_fp8, full_nvfp4);
+      w.layers[l] = load_layer_into(ld, l, orig_formats[l], dense_fp8, full_nvfp4);
       if (full_nvfp4) w.expert_formats[l] = ExpertFormat::NVFP4;
     }
   }
