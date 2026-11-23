@@ -140,7 +140,7 @@ INGINE_EXTRA_ARGS="--dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70
 * **OpenAI-Compatible Chat API**: `POST /v1/chat/completions` at `http://<server-ip>:<port>/v1`, model `inkling-2-mini-abliterated` (no API key required; keep bound to a trusted network).
 
 Supported request parameters on `POST /v1/chat/completions`:
-* `reasoning_effort`: `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max` (or `0` to `0.99`; template default `0.9`)
+* `reasoning_effort`: `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max` (or `0` to `0.99`; server default `medium` / `0.7`)
 * `enable_thinking: false`: answer directly without `<think>` reasoning (also accepted in `chat_template_kwargs`)
 * `tools`, `stop`, `max_tokens` / `max_completion_tokens`, `temperature`, `top_p`, `top_k`, `seed`
 * `stream: true` (SSE streaming with `reasoning_content` and `content` deltas; `stream_options.include_usage` supported)

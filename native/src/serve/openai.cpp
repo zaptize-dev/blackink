@@ -115,6 +115,9 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
       effort = Json("none");
     }
   }
+  if (effort.is_null() && enable_thinking.get<bool>()) {
+    effort = Json("medium");
+  }
 
   text::ChatOptions options;
   options.reasoning_effort = std::move(effort);
