@@ -45,6 +45,16 @@ __device__ __forceinline__ void cp_async8(void* dst, const void* src) {
 
 __device__ __forceinline__ int swz_fp4(int rr, int lb) { return (((lb >> 4) ^ ((rr >> 1) & 3)) << 4) + (lb & 15); }
 
+// Converts sequential E2M1 nibble layout ([0,1][2,3]... [8,9][10,11]...) to MMA layout ([0,8][1,9]... [4,12]...).
+__device__ __forceinline__ unsigned repack_e2m1(unsigned raw, int odd_tig) {
+  const unsigned peer = __shfl_xor_sync(0xffffffffu, raw, 1);
+  unsigned lo = odd_tig ? (peer >> 16) : (raw & 0xffffu);
+  unsigned hi = odd_tig ? (raw >> 16) : (peer & 0xffffu);
+  const unsigned lo_out = (lo & 0x000fu) | ((lo & 0x00f0u) << 4) | ((lo & 0x0f00u) << 8) | ((lo & 0xf000u) << 12);
+  const unsigned hi_out = ((hi & 0x000fu) << 4) | ((hi & 0x00f0u) << 8) | ((hi & 0x0f00u) << 12) | ((hi & 0xf000u) << 16);
+  return lo_out | hi_out;
+}
+
 __device__ __forceinline__ float e2m1_mag(unsigned c) {
   const unsigned m = c & 7u;
   if (m < 2u) return 0.5f * float(m);
@@ -326,8 +336,8 @@ __global__ __launch_bounds__(kThreads, 1) void moe_fp4_gemm_kernel(const Fp4Gemm
         const int sr = warp_n * 32 + r * 8 + group;
         const uint8_t* rowp = bs + sr * kBRowStride;
         const uint8_t* pcode = rowp + s * 32;
-        b0[r] = *reinterpret_cast<const uint32_t*>(pcode + 4 * tig);
-        b1[r] = *reinterpret_cast<const uint32_t*>(pcode + 16 + 4 * tig);
+        b0[r] = repack_e2m1(*reinterpret_cast<const uint32_t*>(pcode + 4 * tig), tig & 1);
+        b1[r] = repack_e2m1(*reinterpret_cast<const uint32_t*>(pcode + 16 + 4 * tig), tig & 1);
         const unsigned v = *reinterpret_cast<const uint32_t*>(rowp + 64 + s * 4) & 0x7f7f7f7fu;
         sb[r] = v & ~__vcmpeq4(v, 0x7f7f7f7fu);
       }
