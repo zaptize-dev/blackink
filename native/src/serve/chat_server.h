@@ -16,6 +16,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 
@@ -65,6 +66,9 @@ class ChatServer {
   httplib::Server server_;
   int port_ = 0;
   std::thread thread_;
+  mutable std::mutex reasoning_mu_;
+  std::string reasoning_effort_ = "medium (0.7)";
+  std::string reasoning_source_ = "default";
 };
 
 }  // namespace ingine::serve

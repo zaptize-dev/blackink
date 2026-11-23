@@ -135,7 +135,7 @@ INGINE_EXTRA_ARGS="--dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70
 ## Web UI, Live Monitor & API
 
 * **Web Chat UI**: Open `http://<server-ip>:<port>/` (or `/chat`) in any browser.
-* **Live Monitor**: Open `http://<server-ip>:<port>/metrics` (`?format=prometheus` for Prometheus format; `GET /api/metrics` for JSON).
+* **Live Monitor**: Open `http://<server-ip>:<port>/metrics` (`GET /api/metrics` for JSON).
 * **Health & Models**: `GET /health` and `GET /v1/models`.
 * **OpenAI-Compatible Chat API**: `POST /v1/chat/completions` at `http://<server-ip>:<port>/v1`, model `inkling-2-mini-abliterated` (no API key required; keep bound to a trusted network).
 

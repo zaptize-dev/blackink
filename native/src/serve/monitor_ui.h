@@ -198,11 +198,6 @@ inline constexpr std::string_view kMonitorHtml = R"HTML(<!doctype html>
       </span>
       <span>BlackInk</span>
     </a>
-    <nav class="nav">
-      <a href="/">Chat</a>
-      <a href="/metrics" class="active">Monitor</a>
-      <a href="/metrics?format=prometheus" target="_blank">Prometheus</a>
-    </nav>
   </div>
   <div class="status-pill" id="top-pill">
     <span class="dot" id="top-dot"></span>
@@ -222,7 +217,10 @@ inline constexpr std::string_view kMonitorHtml = R"HTML(<!doctype html>
           <span data-s="queued"><i class="dot"></i>Queued</span>
         </div>
       </div>
-      <span style="font-family:var(--mono);font-size:11.5px;color:var(--muted)" id="model-tag">—</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-family:var(--mono);font-size:11.5px;padding:3px 9px;border-radius:999px;background:#181e26;border:1px solid #28323e;color:var(--text)" id="reasoning-tag">Thinking: —</span>
+        <span style="font-family:var(--mono);font-size:11.5px;color:var(--muted)" id="model-tag">—</span>
+      </div>
     </div>
     <div class="state-meta">
       <span id="state-action">Waiting for requests</span>
@@ -447,6 +445,9 @@ function renderLast() {
   const act = document.getElementById('state-action');
   const right = document.getElementById('state-right');
   document.getElementById('model-tag').textContent = `${m.model_id} · max_ctx ${fmtK(m.max_model_len)}`;
+  const rEffort = m.reasoning_effort || 'medium (0.7)';
+  const rSrc = m.reasoning_source === 'harness' ? 'harness' : 'padrão';
+  document.getElementById('reasoning-tag').textContent = `Thinking: ${rEffort} · ${rSrc}`;
 
   if (m.state === 'generating') {
     topDot.className = 'dot green';

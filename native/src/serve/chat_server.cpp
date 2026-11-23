@@ -399,10 +399,19 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                           {"spec_rounds", r.spec_rounds},
                           {"spec_accepted", r.spec_accepted}});
     }
+    std::string reasoning_effort;
+    std::string reasoning_source;
+    {
+      std::lock_guard<std::mutex> lk(reasoning_mu_);
+      reasoning_effort = reasoning_effort_;
+      reasoning_source = reasoning_source_;
+    }
     send_json(res, 200,
               Json{{"model",
                     {{"model_id", model_id_},
                      {"max_model_len", max_model_len_},
+                     {"reasoning_effort", reasoning_effort},
+                     {"reasoning_source", reasoning_source},
                      {"state", m.state},
                      {"requests_processing", m.requests_processing},
                      {"requests_deferred", m.requests_deferred},
@@ -439,20 +448,9 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                      {"ram_used_gb", s.ram_used_gb},
                      {"ram_total_gb", s.ram_total_gb}}}});
   } else if (path == "/metrics") {
-    const std::string fmt_param = req.has_param("format") ? req.get_param_value("format") : "";
-    const std::string accept = req.has_header("Accept") ? req.get_header_value("Accept") : "";
-    const bool want_prom = fmt_param == "prometheus" ||
-                           (accept.find("text/html") == std::string::npos &&
-                            (accept.find("text/plain") != std::string::npos ||
-                             accept.find("application/openmetrics-text") != std::string::npos));
-    if (want_prom) {
-      res.status = 200;
-      res.set_content(format_prometheus_metrics(scheduler_.metrics()), "text/plain; version=0.0.4; charset=utf-8");
-    } else {
-      res.status = 200;
-      res.set_header("Cache-Control", "no-cache");
-      res.set_content(std::string(kMonitorHtml), "text/html; charset=utf-8");
-    }
+    res.status = 200;
+    res.set_header("Cache-Control", "no-cache");
+    res.set_content(std::string(kMonitorHtml), "text/html; charset=utf-8");
   } else if (const WebUiAsset* asset = find_webui_asset(path)) {
     if (req.has_header("If-None-Match") && req.get_header_value("If-None-Match") == asset->etag) {
       res.status = 304;
@@ -498,6 +496,11 @@ void ChatServer::handle_post(const httplib::Request& req, httplib::Response& res
     }
     if (!body.is_object()) throw BadRequest("request body must be a JSON object");
     request = parse_request(body, fmt_, max_model_len_, sampling_defaults_);
+    {
+      std::lock_guard<std::mutex> lk(reasoning_mu_);
+      reasoning_effort_ = request.reasoning_effort;
+      reasoning_source_ = request.reasoning_source;
+    }
   } catch (const BadRequest& e) {
     send_error(res, e.status, e.what(), e.param);
     return;

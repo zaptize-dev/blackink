@@ -34,6 +34,8 @@ struct ChatRequest {
   std::vector<std::string> stop;
   bool stream = false;
   bool include_usage = false;
+  std::string reasoning_effort = "medium (0.7)";
+  std::string reasoning_source = "default";
 };
 
 // Validates `body` (a JSON object) and renders the prompt. Throws BadRequest or text::ChatError. Sampling fields

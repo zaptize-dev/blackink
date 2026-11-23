@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <sstream>
 #include <string>
 
 namespace ingine::serve {
@@ -115,8 +116,10 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
       effort = Json("none");
     }
   }
+  bool reasoning_from_default = false;
   if (effort.is_null() && enable_thinking.get<bool>()) {
     effort = Json("medium");
+    reasoning_from_default = true;
   }
 
   text::ChatOptions options;
@@ -152,6 +155,26 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
   }
 
   ChatRequest req;
+  if (!enable_thinking.get<bool>()) {
+    req.reasoning_effort = "none (0.0)";
+    req.reasoning_source = "harness";
+  } else if (effort.is_string()) {
+    const std::string& e = effort.get_ref<const std::string&>();
+    if (e == "none") req.reasoning_effort = "none (0.0)";
+    else if (e == "minimal") req.reasoning_effort = "minimal (0.1)";
+    else if (e == "low") req.reasoning_effort = "low (0.2)";
+    else if (e == "medium") req.reasoning_effort = "medium (0.7)";
+    else if (e == "high") req.reasoning_effort = "high (0.9)";
+    else if (e == "xhigh") req.reasoning_effort = "xhigh (0.99)";
+    else if (e == "max") req.reasoning_effort = "max (0.99)";
+    else req.reasoning_effort = e;
+    req.reasoning_source = reasoning_from_default ? "default" : "harness";
+  } else if (effort.is_number()) {
+    std::ostringstream oss;
+    oss << effort.get<double>();
+    req.reasoning_effort = oss.str();
+    req.reasoning_source = "harness";
+  }
   req.sampling.temperature =
       float(num_float(body, "temperature", Bound{0.0, "0.0"}, Bound{2.0, "2.0"}).value_or(defaults.temperature));
   req.sampling.top_p = float(num_float(body, "top_p", Bound{0.0, "0.0"}, Bound{1.0, "1.0"}).value_or(defaults.top_p));
