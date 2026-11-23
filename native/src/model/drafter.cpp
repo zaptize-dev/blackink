@@ -292,9 +292,10 @@ void Drafter::load(const std::filesystem::path& model_dir) {
   final_norm_ = persist({{"norm.weight", {h}}});
   mask_embed_ = persist({{"mask_embed", {h}}});
   const std::string mh = "markov_head.";
-  w1_ = persist({{mh + "markov_w1.weight", {V_, kd::RANK}}});
-  if (f.at(mh + "markov_w1.weight").shape.at(0) < V_)
-    throw std::runtime_error("mtp.safetensors: markov_w1 has fewer rows than the vocabulary");
+  const auto& tw1_shape = f.at(mh + "markov_w1.weight").shape;
+  if (tw1_shape.size() != 2 || tw1_shape[0] < V_ || tw1_shape[1] != kd::RANK)
+    throw std::runtime_error("mtp.safetensors: markov_w1 has unexpected shape");
+  w1_ = persist({{mh + "markov_w1.weight", tw1_shape}});
   rnn_w_ = persist({{mh + "rnn_proj.weight", {kd::RNN_OUT, kd::RNN_IN}}});
   rnn_b_ = persist({{mh + "rnn_proj.bias", {kd::RNN_OUT}}});
   f_norm_ = persist({{mh + "dflare_norm.weight", {h}}});
