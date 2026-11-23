@@ -2,10 +2,10 @@
 
 **BlackInk** is a 16 GB NVIDIA Blackwell-optimized fork of **ingine**, serving an abliterated
 [thinkingmachines/Inkling-2-Mini](https://huggingface.co/thinkingmachines/Inkling-2-Mini) on a single **16 GB+ NVIDIA
-Blackwell GPU (RTX 5060 Ti 16 GB, RTX 5070 Ti, RTX 5080, or RTX 5090)** with up to **131,072 (128K) tokens of Q4
-context** (98,304 tokens with speculative decoding enabled), **Full-NVFP4 routed experts**, **FP4 Tensor Core MoE
-prefill**, **adaptive DSpark speculative decoding**, an **OpenAI-compatible API**, an **integrated Web Chat UI** (`/` or
-`/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
+Blackwell GPU (RTX 5060 Ti 16 GB, RTX 5070 Ti, RTX 5080, or RTX 5090)** with **98,304 (96K) tokens of Q4 context**
+with speculative decoding enabled (up to **131,072 / 128K** without `--spec`), **Full-NVFP4 routed experts**, **FP4
+Tensor Core MoE prefill**, **adaptive DSpark speculative decoding**, an **OpenAI-compatible API**, an **integrated Web
+Chat UI** (`/` or `/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
 
 ---
 
@@ -15,8 +15,9 @@ prefill**, **adaptive DSpark speculative decoding**, an **OpenAI-compatible API*
   from 8-bit `MXFP8` to 4-bit `NVFP4` (matching layers 0–19), `embed` is quantized to `FP8 E4M3` with per-row scales,
   and router/gate weights are deduplicated — saving **~2.32 GiB of VRAM** without modifying the checkpoint on disk.
 * **4-bit Full-Attention KV Cache (`--kv-q4`)**: Compresses the 8 long-range full-attention visits to 4-bit symmetric
-  non-linear quantization (`0.5 byte/element`), fitting **131,072 tokens of context in ~1.0 GiB of VRAM** (while
-  keeping the 40 sliding-window visits in exact `BF16`).
+  non-linear quantization (`0.5 byte/element`), fitting **98,304 (96K) tokens of context** alongside `--spec` on
+  16 GB GPUs (or **131,072 / 128K tokens in ~1.0 GiB** without `--spec`, while keeping the 40 sliding-window visits in
+  exact `BF16`).
 * **FP4 Block-Scaled Tensor Core MoE Prefill (`moe_fp4.cu`)**: Grouped `W4A4` two-term FP4 Tensor Core (`sm_120a`)
   MoE GEMMs for prefill (`prefill_chunk = 384`), doubling prompt-reading throughput compared to BF16 dequantization.
 * **Adaptive DSpark Speculative Decoding (`--spec`)**: Combines the official 3-layer DSpark drafter with EMA acceptance
