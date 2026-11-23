@@ -63,7 +63,7 @@ struct RuntimeOptions {
   int max_ctx = 98304;
   // Tokens per prefill chunk. 256 keeps prefill scratch to ~110 MiB so 16 GB Blackwell GPUs have plenty of
   // headroom for 96K Q4 KV cache + DSpark MTP speculative decoding.
-  int prefill_chunk = 1024;
+  int prefill_chunk = 768;
   bool dense_fp8 = true, kv_fp8 = false, kv_q4 = false, full_nvfp4 = false, spec = false;
   float spec_threshold = 0.8f;
   // Conversation parking: device memory (MiB) for the checkpoints of conversations displaced by another

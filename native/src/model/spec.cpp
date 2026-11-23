@@ -134,6 +134,22 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
 
   int emitted = 0, rounds = 0, accepted = 0;
   std::vector<std::int32_t> out{token};
+  // Adaptive draft policy (Basalt-style): track EMA of accepted drafts per round. When acceptance drops below
+  // the break-even point (~0.85 tokens/round), temporarily fall back to pipelined width-1 steps for 24 tokens
+  // while keeping the drafter context synced via 1-row commits, then re-probe.
+  float ema_acc = 1.5f;
+  int probe_rounds = 0;
+  int cooldown = 0;
+  auto has_suffix_match = [&](std::int32_t anchor) -> bool {
+    const std::size_t n = tokens_in_state.size();
+    if (n < 16) return false;
+    const std::int32_t t1 = tokens_in_state[n - 2], t2 = tokens_in_state[n - 1];
+    const std::size_t lo = n > 4096 ? n - 4096 : 0;
+    for (std::size_t i = n - 6; i > lo + 2; --i) {
+      if (tokens_in_state[i] == anchor && tokens_in_state[i - 1] == t2 && tokens_in_state[i - 2] == t1) return true;
+    }
+    return false;
+  };
   // the last verify call (none before the first round): its position, width and accepted drafts
   int round_P = -1, round_m = 0, round_acc = 0;
   // forced replay: per round, events around the verify + acceptance and around the next draft
@@ -178,6 +194,39 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
       break;
     }
 
+    if (cooldown > 0 && !forced) {
+      if (has_suffix_match(anchor)) {
+        cooldown = 0;
+        probe_rounds = 0;
+        ema_acc = 1.2f;
+        drafter_.draft(anchor, P, sampling.temperature);
+      } else {
+        const float* logits = rt_.decode_logits(anchor, P);
+        const kh::SamplingParams params{sampling.temperature, sampling.top_k, sampling.top_p};
+        if (greedy) kh::argmax(logits, 1, V, V, scratch.target, stream);
+        else kh::sample(logits, 1, V, V, params, rng, scratch.target, stream);
+        std::int32_t next_tok = 0;
+        CUDA_CHECK(cudaMemcpyAsync(&record_dev->next, scratch.target, sizeof(std::int32_t), cudaMemcpyDeviceToDevice, stream));
+        CUDA_CHECK(cudaEventRecord(done_, stream));
+        drafter_.commit(ptr<const __nv_bfloat16>(rt_.buffers(1).taps), 1, P);
+        CUDA_CHECK(cudaEventSynchronize(done_));
+        next_tok = record->next;
+        tokens_in_state.push_back(anchor);
+        P += 1;
+        round_P = -1;
+        round_m = 0;
+        round_acc = 0;
+        out.assign(1, next_tok);
+        --cooldown;
+        if (cooldown == 0) {
+          probe_rounds = 0;
+          ema_acc = 1.0f;
+          drafter_.draft(next_tok, P, sampling.temperature);
+        }
+        continue;
+      }
+    }
+
     // verify the confident drafts in the width the device picks, accept, roll back the rejected rows; then
     // commit the accepted rows and draft for the next anchor, all from device values
     const std::int32_t inputs[1] = {anchor};
@@ -220,6 +269,11 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
     ++rounds;
     accepted += acc;
     for (int p = 0; p < acc && p < 7; ++p) ++stats.spec_accepted_per_pos[std::size_t(p)];
+    ema_acc = 0.8f * ema_acc + 0.2f * float(acc);
+    ++probe_rounds;
+    if (!forced && probe_rounds >= 6 && ema_acc < 0.85f) {
+      cooldown = 24;
+    }
     out.assign(r.drafts, r.drafts + acc);
     out.push_back(r.next);
   }
