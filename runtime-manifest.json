@@ -84,11 +84,10 @@
     "full_nvfp4": true,
     "kv_fp8": false,
     "kv_q4": true,
-    "spec": true,
-    "spec_threshold": 0.7,
-    "temperature": 0.5,
-    "top_p": 0.9,
-    "top_k": 20,
+    "spec": false,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": 0,
     "model_id": "inkling-2-mini-abliterated"
   },
   "runtime": {
