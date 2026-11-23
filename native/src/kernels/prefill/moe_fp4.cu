@@ -1,6 +1,7 @@
 // FP4 block-scaled Tensor Core (sm_120a) grouped MoE GEMMs for prefill (adapted from Basalt's moe_fp4.cu).
 // Uses two FP4 activation terms (W4A4, ~8-bit activation accuracy) with weights read directly from BlackInk's
 // NVFP4 experts (w13/w2 codes + E4M3 scales + per-expert float factors).
+#include "core/device.h"
 #include "kernels/prefill/common.cuh"
 #include "kernels/prefill/prefill.h"
 
