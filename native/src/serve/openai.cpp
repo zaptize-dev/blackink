@@ -158,8 +158,8 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
   if (!enable_thinking.get<bool>()) {
     req.reasoning_effort = "none (0.0)";
     req.reasoning_source = "harness";
-  } else if (effort.is_string()) {
-    const std::string& e = effort.get_ref<const std::string&>();
+  } else if (options.reasoning_effort.is_string()) {
+    const std::string& e = options.reasoning_effort.get_ref<const std::string&>();
     if (e == "none") req.reasoning_effort = "none (0.0)";
     else if (e == "minimal") req.reasoning_effort = "minimal (0.1)";
     else if (e == "low") req.reasoning_effort = "low (0.2)";
@@ -169,9 +169,9 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
     else if (e == "max") req.reasoning_effort = "max (0.99)";
     else req.reasoning_effort = e;
     req.reasoning_source = reasoning_from_default ? "default" : "harness";
-  } else if (effort.is_number()) {
+  } else if (options.reasoning_effort.is_number()) {
     std::ostringstream oss;
-    oss << effort.get<double>();
+    oss << options.reasoning_effort.get<double>();
     req.reasoning_effort = oss.str();
     req.reasoning_source = "harness";
   }
