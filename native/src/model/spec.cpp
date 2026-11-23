@@ -141,7 +141,7 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
   // expected tokens/s (1 - a^B)/(1 - a) / t_spec[B] beats plain 1 / t_plain; otherwise fall back to pipelined
   // width-1 steps with periodic probes (every 12 plain tokens) and instant trigram suffix wake-up.
   const Widths widths = verify_widths(rt_);
-  double t_plain = 0.0082;
+  double t_plain = 0.0075;
   double t_spec[3] = {0.0115, 0.0135, 0.0165};
   double S = 1.5, F = 1.0;
   int spec_rounds_since_wake = 0;
@@ -304,10 +304,10 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
         best_v_spec = std::max(best_v_spec, e / t_spec[i]);
       }
       const double v_plain = 1.0 / t_plain;
-      if ((in_probe && best_v_spec <= v_plain) || (spec_rounds_since_wake >= 6 && best_v_spec <= v_plain)) {
-        cooldown = 10;
+      if ((in_probe && acc == 0) || (spec_rounds_since_wake >= 3 && best_v_spec <= v_plain)) {
+        cooldown = 12;
         in_probe = false;
-      } else if (in_probe && best_v_spec > v_plain) {
+      } else if (in_probe && acc > 0) {
         in_probe = false;
       }
     }
