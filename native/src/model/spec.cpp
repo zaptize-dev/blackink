@@ -5,6 +5,8 @@
 #include "model/model_kernels.h"
 
 #include <algorithm>
+#include <chrono>
+#include <cmath>
 #include <cstring>
 #include <stdexcept>
 
@@ -134,11 +136,16 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
 
   int emitted = 0, rounds = 0, accepted = 0;
   std::vector<std::int32_t> out{token};
-  // Adaptive draft policy (Basalt-style): track EMA of accepted drafts per round. When acceptance drops below
-  // the break-even point (~0.85 tokens/round), temporarily fall back to pipelined width-1 steps for 24 tokens
-  // while keeping the drafter context synced via 1-row commits, then re-probe.
-  float ema_acc = 1.5f;
-  int probe_rounds = 0;
+  // Economic adaptive draft gate (Maya-ik2 style): track measured wall-clock time for plain width-1 steps
+  // and each verify width {2, 4, 8}, plus decayed per-token acceptance probability a. Speculate only when
+  // expected tokens/s (1 - a^B)/(1 - a) / t_spec[B] beats plain 1 / t_plain; otherwise fall back to pipelined
+  // width-1 steps with periodic probes (every 12 plain tokens) and instant trigram suffix wake-up.
+  const Widths widths = verify_widths(rt_);
+  double t_plain = 0.0075;
+  double t_spec[3] = {0.0115, 0.0135, 0.0165};
+  double S = 1.5, F = 1.0;
+  int spec_rounds_since_wake = 0;
+  bool in_probe = false;
   int cooldown = 0;
   auto has_suffix_match = [&](std::int32_t anchor) -> bool {
     const std::size_t n = tokens_in_state.size();
@@ -197,10 +204,13 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
     if (cooldown > 0 && !forced) {
       if (has_suffix_match(anchor)) {
         cooldown = 0;
-        probe_rounds = 0;
-        ema_acc = 1.2f;
+        spec_rounds_since_wake = 0;
+        in_probe = false;
+        S = std::max(S, 1.5);
+        F = std::min(F, 1.0);
         drafter_.draft(anchor, P, sampling.temperature);
       } else {
+        const auto t0 = std::chrono::steady_clock::now();
         const float* logits = rt_.decode_logits(anchor, P);
         const kh::SamplingParams params{sampling.temperature, sampling.top_k, sampling.top_p};
         if (greedy) kh::argmax(logits, 1, V, V, scratch.target, stream);
@@ -210,6 +220,8 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
         CUDA_CHECK(cudaEventRecord(done_, stream));
         drafter_.commit(ptr<const __nv_bfloat16>(rt_.buffers(1).taps), 1, P);
         CUDA_CHECK(cudaEventSynchronize(done_));
+        const double dt = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+        if (dt > 0.001 && dt < 0.25) t_plain = 0.9 * t_plain + 0.1 * dt;
         next_tok = record->next;
         tokens_in_state.push_back(anchor);
         P += 1;
@@ -219,8 +231,8 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
         out.assign(1, next_tok);
         --cooldown;
         if (cooldown == 0) {
-          probe_rounds = 0;
-          ema_acc = 1.0f;
+          spec_rounds_since_wake = 0;
+          in_probe = true;
           drafter_.draft(next_tok, P, sampling.temperature);
         }
         continue;
@@ -229,6 +241,7 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
 
     // verify the confident drafts in the width the device picks, accept, roll back the rejected rows; then
     // commit the accepted rows and draft for the next anchor, all from device values
+    const auto spec_t0 = std::chrono::steady_clock::now();
     const std::int32_t inputs[1] = {anchor};
     rt_.set_inputs(inputs, P);
     if (forced) {  // the forced tokens after the anchor (forced[emitted - 1]); the accept graph reads them
@@ -247,6 +260,7 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
     drafter_.advance(P);
     if (forced) record_event(2);
     CUDA_CHECK(cudaEventSynchronize(done_));  // the round's only host synchronisation
+    const double spec_dt = std::chrono::duration<double>(std::chrono::steady_clock::now() - spec_t0).count();
     VerifyRecord r;
     std::memcpy(&r, record, sizeof r);
     const int acc = r.accepted;
@@ -269,10 +283,33 @@ void SpecLoop::generate(std::int32_t token, int max_new_tokens, const Sampling& 
     ++rounds;
     accepted += acc;
     for (int p = 0; p < acc && p < 7; ++p) ++stats.spec_accepted_per_pos[std::size_t(p)];
-    ema_acc = 0.8f * ema_acc + 0.2f * float(acc);
-    ++probe_rounds;
-    if (!forced && probe_rounds >= 6 && ema_acc < 0.85f) {
-      cooldown = 24;
+    if (spec_dt > 0.001 && spec_dt < 0.5) {
+      for (int i = 0; i < widths.n; ++i) {
+        if (widths.w[i] == r.m) {
+          t_spec[i] = 0.8 * t_spec[i] + 0.2 * spec_dt;
+          break;
+        }
+      }
+    }
+    constexpr double kDecay = 0.85;
+    S = kDecay * S + double(acc);
+    F = kDecay * F + (acc < r.m - 1 ? 1.0 : 0.0);
+    ++spec_rounds_since_wake;
+    if (!forced) {
+      const double a = std::min(0.98, (S + 0.5) / (S + F + 1.0));
+      double best_v_spec = 0.0;
+      for (int i = 0; i < widths.n; ++i) {
+        const double b = double(widths.w[i]);
+        const double e = (1.0 - std::pow(a, b)) / (1.0 - a);
+        best_v_spec = std::max(best_v_spec, e / t_spec[i]);
+      }
+      const double v_plain = 1.0 / t_plain;
+      if ((in_probe && acc == 0) || (spec_rounds_since_wake >= 3 && best_v_spec <= v_plain)) {
+        cooldown = 12;
+        in_probe = false;
+      } else if (in_probe && acc > 0) {
+        in_probe = false;
+      }
     }
     out.assign(r.drafts, r.drafts + acc);
     out.push_back(r.next);
