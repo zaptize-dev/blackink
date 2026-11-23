@@ -1,6 +1,7 @@
 add_library(ingine_kernels_prefill STATIC
   attention.cu
   moe.cu
+  moe_fp4.cu
   wgemm.cu
   rows.cu
   gemm.cpp

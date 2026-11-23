@@ -163,6 +163,12 @@ void moe_gate_up(const MoeExperts& e, const __nv_bfloat16* x, int T, const MoeWo
 // down[t * 8 + slot] = bf16(W2_e . act[pair]), bf16 [T * 8, H].
 void moe_down(const MoeExperts& e, const __nv_bfloat16* act, int T, const MoeWork& w, __nv_bfloat16* down,
               cudaStream_t stream);
+// FP4 block-scaled Tensor Core (W4A4, two activation terms) MoE GEMMs for NVFP4 experts (fmt == 0).
+std::size_t moe_fp4_workspace_bytes(int max_T);
+void moe_fp4_gate_up(const MoeExperts& e, const __nv_bfloat16* x, int T, const MoeWork& w, void* fp4_ws,
+                     __nv_bfloat16* act, cudaStream_t stream);
+void moe_fp4_down(const MoeExperts& e, const __nv_bfloat16* act, int T, const MoeWork& w, void* fp4_ws,
+                  __nv_bfloat16* down, cudaStream_t stream);
 // out[t] = bf16(sum over slots in order of down[t, slot] * wts[t, slot]), bf16 [T, H].
 void moe_combine(const __nv_bfloat16* down, const float* wts, int T, __nv_bfloat16* out, cudaStream_t stream);
 

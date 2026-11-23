@@ -77,6 +77,7 @@ Prefiller::Prefiller(const Weights& w, const Ablation& abl, int max_chunk, cudaS
   counts_ = i32(EXPERTS), tiles_n_ = i32(1), pair_token_ = i32(C * TOP_K), pair_dst_ = i32(C * TOP_K);
   tiles_ = static_cast<int4*>(alloc(std::size_t(pk::moe_tiles_capacity(max_chunk)) * sizeof(int4)));
   act_ = bf16(C * TOP_K * INTER), down_ = bf16(C * TOP_K * H), moe_sum_ = bf16(C * H);
+  fp4_ws_ = alloc(pk::moe_fp4_workspace_bytes(max_chunk));
   gin_ = rel_;
   fpre_ = reinterpret_cast<float*>(down_), gpre_ = fpre_ + C * H;
   wscratch_ = w.dense_fp8 ? bf16(std::max(std::size_t(PROJ_ROWS_FULL) * H, std::size_t(H) * HEADS * HEAD_DIM)) : nullptr;
@@ -308,8 +309,13 @@ void Prefiller::run(State& st, const std::int32_t* tokens, int T, int pos0, floa
     const Experts& ex = layer.experts;
     const pk::MoeExperts me{ex.fmt == ExpertFormat::NVFP4 ? 0 : 1, ex.w13.data, ex.w13_scale.data,
                             f32p(ex.w13_factor), ex.w2.data, ex.w2_scale.data, f32p(ex.w2_factor)};
-    pk::moe_gate_up(me, xm_, T, work, act_, s);
-    pk::moe_down(me, act_, T, work, down_, s);
+    if (me.fmt == 0 && fp4_ws_ != nullptr) {
+      pk::moe_fp4_gate_up(me, xm_, T, work, fp4_ws_, act_, s);
+      pk::moe_fp4_down(me, act_, T, work, fp4_ws_, down_, s);
+    } else {
+      pk::moe_gate_up(me, xm_, T, work, act_, s);
+      pk::moe_down(me, act_, T, work, down_, s);
+    }
     pk::moe_combine(down_, wts_, T, moe_sum_, s);
     pk::static_conv(moe_sum_, H, T, H, f32p(layer.mlp_conv), st.conv_mlp_at(v), y2_, s);
     pk::conv_state_update(st.conv_mlp_at(v), moe_sum_, H, T, H, s);
