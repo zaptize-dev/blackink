@@ -150,6 +150,7 @@ next_steps() {
 install_everything() {
   ensure_system_tools || return 1
   run_step bash "$ROOT/scripts/install.sh" || return 1
+  run_step bash "$ROOT/scripts/install_dsh.sh" || return 1
   printf '\nInstallation complete. '
   next_steps
 }
@@ -215,6 +216,7 @@ update_installer() {
 finish_update() {
   ensure_system_tools || return 1
   run_step bash "$ROOT/scripts/install.sh" --update-from "${INGINE_UPDATE_FROM:-}" || return 1
+  run_step bash "$ROOT/scripts/install_dsh.sh" || return 1
   printf '\nUpdate complete. Restart a running server so it uses the update: ingine stop && ingine start\n'
   if [[ "$show_menu" == 1 ]]; then
     echo "(or, for a server started with option 3, stop it with Ctrl-C and choose 3 again)."

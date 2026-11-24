@@ -25,11 +25,12 @@ Chat UI** (`/` or `/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
   `markov_w1` offloaded to pinned host RAM to preserve VRAM.
 * **16 GB System RAM & VRAM Friendly**: Streams layer-by-layer loading through a lean 64 MiB pinned staging pool with
   CUDA Unified Memory fallback when VRAM is tight.
-* **Integrated Web Chat UI & Live Monitor**:
+* **Integrated Web Chat UI, Live Monitor & Development Harness (`dsh`)**:
   * **`/` or `/chat`**: Official `llama-ui` SvelteKit interface with streaming `<think>` reasoning blocks,
     `reasoning_effort` controls, live `tok/s` telemetry, and multi-conversation history.
-  * **`/metrics` & `/api/metrics`**: Live Strata-style GPU/engine telemetry dashboard (`GET /metrics?format=prometheus`
-    for Prometheus scraping).
+  * **`/metrics` & `/api/metrics`**: Live Strata-style GPU/engine telemetry dashboard.
+  * **`/editor/`**: Built-in **DeepSeek Harness (`dsh`)** agentic workspace (installed by `setup.sh` when Node.js is
+    available and pre-configured to use `inkling-2-mini-abliterated` as its default model).
 
 ---
 

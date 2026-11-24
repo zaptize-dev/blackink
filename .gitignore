@@ -9,8 +9,10 @@ results/serve-*.log
 /.tools
 /.venv
 /.cuda-toolkit
+/.dsh-app
 /models
 /.run
+/workspace
 # tools/publish_hf.py staging (default)
 /work
 # native (C++) build trees

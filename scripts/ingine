@@ -73,7 +73,8 @@ case "${1:-help}" in
 esac
 
 # ---- settings: config file, then the environment on top ----------------------------------------------
-VARS=(INGINE_MODEL_DIR INGINE_ABLATION HOST PORT INGINE_CTX INGINE_EXTRA_ARGS INGINE_START_TIMEOUT)
+VARS=(INGINE_MODEL_DIR INGINE_ABLATION HOST PORT INGINE_CTX INGINE_EXTRA_ARGS INGINE_START_TIMEOUT
+      INGINE_DSH INGINE_INTERNAL_PORT DSH_PORT DSH_WORKSPACE INGINE_PUBLIC_HOST)
 declare -A explicit=()
 for name in "${VARS[@]}"; do
   if [[ -v $name ]]; then explicit[$name]="${!name}"; fi
@@ -107,7 +108,20 @@ else
 fi
 INGINE_EXTRA_ARGS="${INGINE_EXTRA_ARGS-}"
 INGINE_START_TIMEOUT="${INGINE_START_TIMEOUT:-300}"
+DSH_BIN="$ROOT/.dsh-app/node_modules/.bin/dsh"
+PROXY_BIN="$ROOT/scripts/blackink-proxy.mjs"
+if [[ -z "${INGINE_DSH:-}" ]]; then
+  if [[ -x "$DSH_BIN" && -f "$PROXY_BIN" ]] && command -v node >/dev/null 2>&1; then
+    INGINE_DSH=1
+  else
+    INGINE_DSH=0
+  fi
+fi
+INGINE_INTERNAL_PORT="${INGINE_INTERNAL_PORT:-18090}"
+DSH_PORT="${DSH_PORT:-3080}"
+DSH_WORKSPACE="$(absolute "${DSH_WORKSPACE:-workspace}")"
 export HOST PORT INGINE_CTX INGINE_MODEL_DIR INGINE_ABLATION INGINE_EXTRA_ARGS INGINE_START_TIMEOUT
+export INGINE_DSH INGINE_INTERNAL_PORT DSH_PORT DSH_WORKSPACE INGINE_PUBLIC_HOST
 
 # ---- helpers --------------------------------------------------------------------------------------
 case "$HOST" in
@@ -117,7 +131,71 @@ case "$HOST" in
   *:*) PROBE="$HOST" URL_HOST="[$HOST]" ;;
   *) PROBE="$HOST" URL_HOST="$HOST" ;;
 esac
+PUBLIC_HOST="${INGINE_PUBLIC_HOST:-}"
+if [[ -z "$PUBLIC_HOST" ]]; then
+  if [[ "$HOST" == "0.0.0.0" || -z "$HOST" ]]; then
+    PUBLIC_HOST="$(hostname -I 2>/dev/null | awk '{print $1}')"
+    PUBLIC_HOST="${PUBLIC_HOST:-127.0.0.1}"
+  else
+    PUBLIC_HOST="$URL_HOST"
+  fi
+fi
 BASE="http://$URL_HOST:$PORT"
+PUBLIC_BASE="http://$PUBLIC_HOST:$PORT"
+
+start_dsh_stack() {
+  [[ "$INGINE_DSH" == 1 ]] || return 0
+  mkdir -p "$RUN" "$DSH_WORKSPACE"
+  local dsh_pid="" proxy_pid=""
+  if [[ -r "$RUN/dsh.pid" ]]; then dsh_pid="$(<"$RUN/dsh.pid")"; fi
+  if [[ -z "$dsh_pid" ]] || ! kill -0 "$dsh_pid" 2>/dev/null; then
+    local -a trust=(--trusted-host "${PUBLIC_HOST}:${PORT}" --trusted-host "${PUBLIC_HOST}"
+                    --trusted-host "127.0.0.1:${PORT}" --trusted-host "127.0.0.1"
+                    --trusted-host "localhost:${PORT}" --trusted-host "localhost")
+    local ip
+    for ip in $(hostname -I 2>/dev/null || true); do
+      trust+=(--trusted-host "${ip}:${PORT}" --trusted-host "${ip}")
+    done
+    (cd "$DSH_WORKSPACE" && nohup setsid env BLACKINK_API_KEY=none "$DSH_BIN" --profile web --no-open \
+      --host 127.0.0.1 --port "$DSH_PORT" --public-url "${PUBLIC_BASE}/editor/" "${trust[@]}" \
+      > "$RUN/dsh.log" 2>&1 < /dev/null 9>&- & echo "$!" > "$RUN/dsh.pid")
+  fi
+  if [[ -r "$RUN/proxy.pid" ]]; then proxy_pid="$(<"$RUN/proxy.pid")"; fi
+  if [[ -z "$proxy_pid" ]] || ! kill -0 "$proxy_pid" 2>/dev/null; then
+    nohup setsid env PROXY_HOST="${HOST:-127.0.0.1}" PROXY_PORT="$PORT" \
+      INGINE_HOST=127.0.0.1 INGINE_PORT="$INGINE_INTERNAL_PORT" \
+      DSH_HOST=127.0.0.1 DSH_PORT="$DSH_PORT" \
+      node "$PROXY_BIN" > "$RUN/proxy.log" 2>&1 < /dev/null 9>&- &
+    say "$!" > "$RUN/proxy.pid"
+  fi
+}
+
+stop_dsh_stack() {
+  local f pid
+  for f in "$RUN/proxy.pid" "$RUN/dsh.pid"; do
+    if [[ -r "$f" ]]; then
+      pid="$(<"$f")"
+      if [[ "$pid" =~ ^[0-9]+$ ]] && kill -0 "$pid" 2>/dev/null; then
+        kill -TERM "$pid" 2>/dev/null || true
+        for _ in $(seq 20); do kill -0 "$pid" 2>/dev/null || break; sleep 0.25; done
+        kill -KILL "$pid" 2>/dev/null || true
+      fi
+      rm -f "$f"
+    fi
+  done
+}
+
+dsh_editor_url() {
+  local tok=""
+  if [[ -r "$RUN/dsh.log" ]]; then
+    tok="$(grep -o 'token=[^[:space:]]*' "$RUN/dsh.log" | head -n 1 || true)"
+  fi
+  if [[ -n "$tok" ]]; then
+    say "${PUBLIC_BASE}/editor/?${tok}"
+  else
+    say "${PUBLIC_BASE}/editor/"
+  fi
+}
 
 http_get() { curl -fsS --max-time 3 "$BASE$1" 2>/dev/null; }
 
@@ -169,7 +247,12 @@ or set INGINE_ABLATION= (empty) to serve the original model."
 # ---- commands -------------------------------------------------------------------------------------
 cmd_serve() {
   check_install
-  local args=(--engine --model-dir "$INGINE_MODEL_DIR" --host "$HOST" --port "$PORT" --max-ctx "$INGINE_CTX"
+  local bind_host="$HOST" bind_port="$PORT"
+  if [[ "$INGINE_DSH" == 1 ]]; then
+    bind_host=127.0.0.1
+    bind_port="$INGINE_INTERNAL_PORT"
+  fi
+  local args=(--engine --model-dir "$INGINE_MODEL_DIR" --host "$bind_host" --port "$bind_port" --max-ctx "$INGINE_CTX"
               "${profile_flags[@]}")
   if [[ -n "$INGINE_ABLATION" ]]; then args+=(--ablation "$INGINE_ABLATION" --model-id "$profile_model_id"); fi
   local extra=()
@@ -199,7 +282,9 @@ cmd_start() {
     say "The server is already starting; waiting for it."
   elif port_open; then
     die "Port $PORT on $HOST is used by another program (see: ss -ltnp 'sport = :$PORT'). Stop it or set PORT."
-  elif [[ "$MODE" == systemd ]]; then
+  fi
+  start_dsh_stack
+  if [[ "$MODE" == systemd ]]; then
     systemctl --user reset-failed "$UNIT" >/dev/null 2>&1 || true
     local env=() name
     for name in "${VARS[@]}"; do
@@ -223,6 +308,11 @@ cmd_start() {
     if body="$(http_get /health)"; then
       model="$(json_field model "$body")"
       say "Ready after $((SECONDS - start)) s: $BASE/v1 (model $model)"
+      if [[ "$INGINE_DSH" == 1 ]]; then
+        say "Chat:    ${PUBLIC_BASE}/chat"
+        say "Monitor: ${PUBLIC_BASE}/metrics"
+        say "Editor:  $(dsh_editor_url)"
+      fi
       notify normal "Inkling ingine ready" "$BASE/v1 (model $model)"
       return 0
     fi
@@ -259,6 +349,7 @@ cmd_stop() {
     stopped=1
   fi
   rm -f "$RUN/ingine.pid"
+  stop_dsh_stack
   if (( ! stopped )); then
     if port_open; then
       die "Not started by ingine, but port $PORT on $HOST is in use (see: ss -ltnp 'sport = :$PORT')."
@@ -305,6 +396,9 @@ cmd_status() {
       say "API:     $BASE/v1  ${value//,/, }"
     else
       say "API:     $BASE/v1 (no /v1/models answer)"
+    fi
+    if [[ "$INGINE_DSH" == 1 ]]; then
+      say "Routes:  ${PUBLIC_BASE}/chat  |  ${PUBLIC_BASE}/metrics  |  $(dsh_editor_url)"
     fi
     code=0
   elif is_running; then
