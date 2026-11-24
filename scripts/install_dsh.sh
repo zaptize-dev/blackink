@@ -75,6 +75,10 @@ if grep -q "defaultDirectory: ${ROOT}/workspace" "$PATCH_FILE" 2>/dev/null; then
   sed -i "s|defaultDirectory: ${ROOT}/workspace|defaultDirectory: ${WORKSPACE_DIR}|g" "$PATCH_FILE"
   echo "Updated DeepSeek Harness defaultDirectory -> ${WORKSPACE_DIR}."
 fi
+if grep -qE "input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]" "$PATCH_FILE" 2>/dev/null; then
+  sed -i 's/input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]/input: [text, image]/g' "$PATCH_FILE"
+  echo "Enabled image input for BlackInk in DeepSeek Harness."
+fi
 
 WS_FILE="$DSH_HOME/storages/workspace.json"
 if [[ ! -f "$WS_FILE" ]]; then
