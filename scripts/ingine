@@ -131,11 +131,16 @@ case "$HOST" in
   *:*) PROBE="$HOST" URL_HOST="[$HOST]" ;;
   *) PROBE="$HOST" URL_HOST="$HOST" ;;
 esac
+LAN_IP="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' || true)"
+if [[ -z "$LAN_IP" ]]; then
+  LAN_IP="$(hostname -I 2>/dev/null | awk '{print $1}' || true)"
+fi
+LAN_IP="${LAN_IP:-127.0.0.1}"
+
 PUBLIC_HOST="${INGINE_PUBLIC_HOST:-}"
 if [[ -z "$PUBLIC_HOST" ]]; then
-  if [[ "$HOST" == "0.0.0.0" || -z "$HOST" ]]; then
-    PUBLIC_HOST="$(hostname -I 2>/dev/null | awk '{print $1}')"
-    PUBLIC_HOST="${PUBLIC_HOST:-127.0.0.1}"
+  if [[ "$HOST" == "0.0.0.0" || "$HOST" == "127.0.0.1" || -z "$HOST" ]]; then
+    PUBLIC_HOST="$LAN_IP"
   else
     PUBLIC_HOST="$URL_HOST"
   fi
@@ -150,6 +155,7 @@ start_dsh_stack() {
   if [[ -r "$RUN/dsh.pid" ]]; then dsh_pid="$(<"$RUN/dsh.pid")"; fi
   if [[ -z "$dsh_pid" ]] || ! kill -0 "$dsh_pid" 2>/dev/null; then
     local -a trust=(--trusted-host "${PUBLIC_HOST}:${PORT}" --trusted-host "${PUBLIC_HOST}"
+                    --trusted-host "${LAN_IP}:${PORT}" --trusted-host "${LAN_IP}"
                     --trusted-host "127.0.0.1:${PORT}" --trusted-host "127.0.0.1"
                     --trusted-host "localhost:${PORT}" --trusted-host "localhost")
     local ip
@@ -157,14 +163,14 @@ start_dsh_stack() {
       trust+=(--trusted-host "${ip}:${PORT}" --trusted-host "${ip}")
     done
     (cd "$DSH_WORKSPACE" && nohup setsid env BLACKINK_API_KEY=none "$DSH_BIN" --profile web --no-open \
-      --host 127.0.0.1 --port "$DSH_PORT" --public-url "${PUBLIC_BASE}/editor/" "${trust[@]}" \
+      --host "$LAN_IP" --port "$DSH_PORT" --public-url "${PUBLIC_BASE}/editor/" "${trust[@]}" \
       > "$RUN/dsh.log" 2>&1 < /dev/null 9>&- & echo "$!" > "$RUN/dsh.pid")
   fi
   if [[ -r "$RUN/proxy.pid" ]]; then proxy_pid="$(<"$RUN/proxy.pid")"; fi
   if [[ -z "$proxy_pid" ]] || ! kill -0 "$proxy_pid" 2>/dev/null; then
-    nohup setsid env PROXY_HOST="${HOST:-127.0.0.1}" PROXY_PORT="$PORT" \
-      INGINE_HOST=127.0.0.1 INGINE_PORT="$INGINE_INTERNAL_PORT" \
-      DSH_HOST=127.0.0.1 DSH_PORT="$DSH_PORT" \
+    nohup setsid env PROXY_HOST="${HOST:-0.0.0.0}" PROXY_PORT="$PORT" \
+      INGINE_HOST="$LAN_IP" INGINE_PORT="$INGINE_INTERNAL_PORT" \
+      DSH_HOST="$LAN_IP" DSH_PORT="$DSH_PORT" \
       node "$PROXY_BIN" > "$RUN/proxy.log" 2>&1 < /dev/null 9>&- &
     say "$!" > "$RUN/proxy.pid"
   fi
@@ -249,7 +255,7 @@ cmd_serve() {
   check_install
   local bind_host="$HOST" bind_port="$PORT"
   if [[ "$INGINE_DSH" == 1 ]]; then
-    bind_host=127.0.0.1
+    bind_host="$LAN_IP"
     bind_port="$INGINE_INTERNAL_PORT"
   fi
   local args=(--engine --model-dir "$INGINE_MODEL_DIR" --host "$bind_host" --port "$bind_port" --max-ctx "$INGINE_CTX"

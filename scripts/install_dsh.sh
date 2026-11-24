@@ -29,6 +29,11 @@ fi
 API_PORT="${INGINE_API_PORT:-18090}"
 CTX_LEN="${INGINE_CTX:-98304}"
 WORKSPACE_DIR="${DSH_WORKSPACE:-$ROOT/workspace}"
+LAN_IP="${INGINE_LAN_IP:-$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' || true)}"
+if [[ -z "$LAN_IP" ]]; then
+  LAN_IP="$(hostname -I 2>/dev/null | awk '{print $1}' || true)"
+fi
+LAN_IP="${LAN_IP:-127.0.0.1}"
 mkdir -p "$WORKSPACE_DIR" "$DSH_HOME/storages"
 PATCH_FILE="$DSH_HOME/profiles/web/cordis.patch.yml"
 if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; then
@@ -41,7 +46,7 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
     providers:
       blackink:
         api: openai-completions
-        baseURL: http://127.0.0.1:${API_PORT}/v1
+        baseURL: http://${LAN_IP}:${API_PORT}/v1
         apiKeyEnv: BLACKINK_API_KEY
         reasoning: medium
         models:
@@ -61,7 +66,10 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
     provider: blackink
     model: inkling-2-mini-abliterated
 EOF
-  echo "Configured DeepSeek Harness default model -> blackink/inkling-2-mini-abliterated ($PATCH_FILE)."
+  echo "Configured DeepSeek Harness default model -> http://${LAN_IP}:${API_PORT}/v1 ($PATCH_FILE)."
+elif grep -q "baseURL: http://127.0.0.1:${API_PORT}/v1" "$PATCH_FILE" 2>/dev/null && [[ "$LAN_IP" != "127.0.0.1" ]]; then
+  sed -i "s|baseURL: http://127.0.0.1:${API_PORT}/v1|baseURL: http://${LAN_IP}:${API_PORT}/v1|g" "$PATCH_FILE"
+  echo "Updated DeepSeek Harness BlackInk baseURL -> http://${LAN_IP}:${API_PORT}/v1."
 fi
 
 WS_FILE="$DSH_HOME/storages/workspace.json"
