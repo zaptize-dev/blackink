@@ -28,9 +28,14 @@ fi
 
 API_PORT="${INGINE_API_PORT:-18090}"
 CTX_LEN="${INGINE_CTX:-98304}"
+WORKSPACE_DIR="${DSH_WORKSPACE:-$ROOT/workspace}"
+mkdir -p "$WORKSPACE_DIR" "$DSH_HOME/storages"
 PATCH_FILE="$DSH_HOME/profiles/web/cordis.patch.yml"
 if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; then
   cat > "$PATCH_FILE" <<EOF
+- id: working-directory
+  config:
+    defaultDirectory: ${WORKSPACE_DIR}
 - id: llm-pi-ai
   config:
     providers:
@@ -57,4 +62,37 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
     model: inkling-2-mini-abliterated
 EOF
   echo "Configured DeepSeek Harness default model -> blackink/inkling-2-mini-abliterated ($PATCH_FILE)."
+fi
+
+WS_FILE="$DSH_HOME/storages/workspace.json"
+if [[ ! -f "$WS_FILE" ]]; then
+  NOW_ISO="$(date -u '+%Y-%m-%dT%H:%M:%S.000Z')"
+  cat > "$WS_FILE" <<EOF
+{
+  "unit": {
+    "name": "workspace",
+    "version": 2
+  },
+  "global": {
+    "initialized": true,
+    "workspaceIds": [
+      "00000000-0000-4000-8000-000000000001"
+    ],
+    "archivedSessionIds": [],
+    "pinnedSessionIds": []
+  },
+  "tables": {
+    "workspaces": {
+      "00000000-0000-4000-8000-000000000001": {
+        "path": "${WORKSPACE_DIR}",
+        "title": "workspace",
+        "sessionIds": [],
+        "createdAt": "${NOW_ISO}",
+        "updatedAt": "${NOW_ISO}"
+      }
+    }
+  }
+}
+EOF
+  echo "Initialized DeepSeek Harness default workspace -> $WORKSPACE_DIR ($WS_FILE)."
 fi
