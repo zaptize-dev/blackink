@@ -106,6 +106,7 @@ In the setup menu:
 ingine start      # start the server in the background (systemd user unit inkling-ingine)
 ingine stop       # stop the server and free the GPU
 ingine status     # unit state, health, served model, GPU memory (0=ready, 1=starting, 3=stopped)
+ingine links      # print active URLs: API, Chat (/chat), Monitor (/metrics), Editor (/editor/?token=...)
 ingine logs       # view server logs (ingine logs -f to follow)
 ingine serve      # run in the foreground; extra flags are passed to ingine-serve
 ingine update     # pull latest commits and rebuild incrementally

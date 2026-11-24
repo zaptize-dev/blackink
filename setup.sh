@@ -143,8 +143,30 @@ download_model() {
 }
 
 next_steps() {
+  local lan_ip port editor_url=""
+  lan_ip="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' || true)"
+  [[ -n "$lan_ip" ]] || lan_ip="$(hostname -I 2>/dev/null | awk '{print $1}' || true)"
+  lan_ip="${lan_ip:-127.0.0.1}"
+  port="${PORT:-8090}"
+  if [[ -r "$ROOT/native/build-install/profile.env" ]]; then
+    port="$(grep -E '^profile_port=' "$ROOT/native/build-install/profile.env" | head -n1 | cut -d= -f2- | tr -d "'\"")"
+    port="${port:-8090}"
+  fi
+  if [[ -r "$ROOT/.run/dsh.log" ]]; then
+    local tok
+    tok="$(grep -o 'token=[^[:space:]]*' "$ROOT/.run/dsh.log" | tail -n1 || true)"
+    [[ -n "$tok" ]] && editor_url="http://${lan_ip}:${port}/editor/?${tok}"
+  fi
   printf 'Start the server with option 3 (foreground), or with ingine start in the background\n'
-  printf '(option 5 installs the ingine command). API: http://127.0.0.1:8003/v1\n'
+  printf '(option 5 installs the ingine / blackink commands).\n'
+  printf '  API:     http://%s:%s/v1\n' "$lan_ip" "$port"
+  printf '  Chat:    http://%s:%s/chat\n' "$lan_ip" "$port"
+  printf '  Monitor: http://%s:%s/metrics\n' "$lan_ip" "$port"
+  if [[ -n "$editor_url" ]]; then
+    printf '  Editor:  %s\n' "$editor_url"
+  else
+    printf '  Editor:  http://%s:%s/editor/ (run "ingine start" then "ingine links" to get the token URL)\n' "$lan_ip" "$port"
+  fi
 }
 
 install_everything() {

@@ -27,6 +27,7 @@ Commands
                    (it keeps starting then).
   stop             Stop the server and wait until the port is free.
   status           Server state, /health, /v1/models and GPU memory. Exit 0 ready, 1 starting, 3 stopped.
+  links            Show all service URLs (Chat, Monitor, Editor with token, API).
   logs [-f]        Server log (journalctl --user -u $UNIT, or .run/ingine.log); -f follows it.
   update           Update the code, rebuild the server and update the model: bash setup.sh --update.
   help             This text.
@@ -192,14 +193,26 @@ stop_dsh_stack() {
 }
 
 dsh_editor_url() {
-  local tok=""
-  if [[ -r "$RUN/dsh.log" ]]; then
-    tok="$(grep -o 'token=[^[:space:]]*' "$RUN/dsh.log" | head -n 1 || true)"
-  fi
+  local tok="" f=""
+  for f in "$RUN/dsh.log" "/tmp/dsh-web.log"; do
+    if [[ -r "$f" ]]; then
+      tok="$(grep -o 'token=[^[:space:]]*' "$f" | tail -n 1 || true)"
+      [[ -n "$tok" ]] && break
+    fi
+  done
   if [[ -n "$tok" ]]; then
     say "${PUBLIC_BASE}/editor/?${tok}"
   else
     say "${PUBLIC_BASE}/editor/"
+  fi
+}
+
+print_links() {
+  say "API:     ${PUBLIC_BASE}/v1"
+  say "Chat:    ${PUBLIC_BASE}/chat"
+  say "Monitor: ${PUBLIC_BASE}/metrics"
+  if [[ "$INGINE_DSH" == 1 ]]; then
+    say "Editor:  $(dsh_editor_url)"
   fi
 }
 
@@ -279,6 +292,7 @@ cmd_start() {
   if body="$(http_get /health)"; then
     model="$(json_field model "$body")"
     say "Already running: $BASE/v1 (model $model)"
+    print_links
     notify normal "Inkling ingine" "Already running: $BASE/v1 (model $model)"
     return 0
   fi
@@ -313,12 +327,14 @@ cmd_start() {
   while :; do
     if body="$(http_get /health)"; then
       model="$(json_field model "$body")"
-      say "Ready after $((SECONDS - start)) s: $BASE/v1 (model $model)"
-      if [[ "$INGINE_DSH" == 1 ]]; then
-        say "Chat:    ${PUBLIC_BASE}/chat"
-        say "Monitor: ${PUBLIC_BASE}/metrics"
-        say "Editor:  $(dsh_editor_url)"
+      if [[ "$INGINE_DSH" == 1 && -r "$RUN/dsh.log" ]]; then
+        for _ in $(seq 10); do
+          grep -q 'token=' "$RUN/dsh.log" 2>/dev/null && break
+          sleep 0.5
+        done
       fi
+      say "Ready after $((SECONDS - start)) s: $BASE/v1 (model $model)"
+      print_links
       notify normal "Inkling ingine ready" "$BASE/v1 (model $model)"
       return 0
     fi
@@ -434,6 +450,10 @@ cmd_logs() {
   exec journalctl --user -u "$UNIT" -n 200 --no-pager "${rest[@]}"
 }
 
+cmd_links() {
+  print_links
+}
+
 cmd_update() {
   [[ -f "$ROOT/setup.sh" ]] || die "$ROOT/setup.sh is missing; reinstall with the curl command from the README."
   exec bash "$ROOT/setup.sh" --update "$@"
@@ -446,6 +466,7 @@ case "$command" in
   start) cmd_start "$@" ;;
   stop) cmd_stop ;;
   status) cmd_status ;;
+  links) cmd_links ;;
   logs) cmd_logs "$@" ;;
   update) cmd_update "$@" ;;
   help|-h|--help) usage ;;
