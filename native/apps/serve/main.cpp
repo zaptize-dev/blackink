@@ -151,6 +151,7 @@ int main(int argc, char** argv) {
     server_options.max_queue = max_queue;
     server_options.max_model_len = max_model_len;
     server_options.model_id = model_id;
+    server_options.model_dir = model_dir;
     server_options.sampling = generation_defaults(model_dir);
     if (temperature >= 0) server_options.sampling.temperature = float(temperature);
     if (top_p >= 0) server_options.sampling.top_p = float(top_p);

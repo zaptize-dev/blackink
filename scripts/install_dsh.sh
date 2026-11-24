@@ -54,7 +54,7 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
             name: Inkling 2 Mini Abliterated (BlackInk)
             contextWindow: ${CTX_LEN}
             maxTokens: 32768
-            input: [text]
+            input: [text, image]
             reasoningEfforts:
               off: none
               low: low

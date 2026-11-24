@@ -35,11 +35,13 @@ std::string type_name(const std::exception& e) {
 
 }  // namespace
 
-Job::Job(std::vector<int32_t> prompt_ids_, int max_new_tokens_, model::Sampling sampling_)
+Job::Job(std::vector<int32_t> prompt_ids_, int max_new_tokens_, model::Sampling sampling_,
+         std::vector<model::ImageSpan> images_)
     : id("chatcmpl-" + random_hex32()),
       prompt_ids(std::move(prompt_ids_)),
       max_new_tokens(max_new_tokens_),
       sampling(sampling_),
+      images(std::move(images_)),
       t_submit(Clock::now()) {}
 
 std::optional<Clock::time_point> Job::t_start() const {
@@ -230,7 +232,8 @@ void Scheduler::run(Job& job) {
   };
   try {
     const model::GenerateStats st =
-        generator_.generate(job.prompt_ids, job.max_new_tokens, job.sampling, stop_list_, on_tokens);
+        generator_.generate_multimodal(job.prompt_ids, job.images, job.max_new_tokens, job.sampling, stop_list_,
+                                       on_tokens);
     job.reused_tokens_.store(st.reused_tokens, std::memory_order_release);
     {
       std::lock_guard lock(mutex_);

@@ -72,6 +72,12 @@ struct RuntimeOptions {
   int park_mb = 0;
 };
 
+struct ImageSpan {
+  int offset = 0;           // starting token index in prompt
+  int n_tokens = 0;         // number of visual tokens
+  std::vector<float> data;  // [n_tokens * 2304] row-major FP32
+};
+
 class Generator {
  public:
   virtual ~Generator() = default;
@@ -83,6 +89,13 @@ class Generator {
   virtual GenerateStats generate(std::span<const int32_t> prompt, int max_new_tokens, const Sampling& sampling,
                                  std::span<const int32_t> stop_ids,
                                  const std::function<bool(std::span<const int32_t>)>& on_tokens) = 0;
+  virtual GenerateStats generate_multimodal(std::span<const int32_t> prompt,
+                                            std::span<const ImageSpan> /*images*/,
+                                            int max_new_tokens, const Sampling& sampling,
+                                            std::span<const int32_t> stop_ids,
+                                            const std::function<bool(std::span<const int32_t>)>& on_tokens) {
+    return generate(prompt, max_new_tokens, sampling, stop_ids, on_tokens);
+  }
 };
 
 std::unique_ptr<Generator> make_generator(const RuntimeOptions& options);  // the model (ingine_model)

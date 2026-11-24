@@ -11,10 +11,12 @@
 #include "ingine/generator.h"
 #include "serve/openai.h"
 #include "text/chat.h"
+#include "vision/vision.h"
 
 #include <httplib.h>
 
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -26,6 +28,7 @@ struct ServerOptions {
   int max_queue = 4;      // requests allowed to wait behind the running one
   int max_model_len = 0;  // context limit; 0: generator.max_model_len()
   std::string model_id;   // model name reported by the API; empty: generator.model_id()
+  std::filesystem::path model_dir;  // model directory for lazy CPU vision encoder
   model::Sampling sampling;  // temperature / top_p / top_k of requests that omit them
 };
 
@@ -69,6 +72,7 @@ class ChatServer {
   mutable std::mutex reasoning_mu_;
   std::string reasoning_effort_ = "medium (0.7)";
   std::string reasoning_source_ = "default";
+  std::unique_ptr<vision::VisionEncoder> vision_;
 };
 
 }  // namespace ingine::serve

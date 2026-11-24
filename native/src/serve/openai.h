@@ -4,6 +4,7 @@
 
 #include "ingine/generator.h"
 #include "text/chat.h"
+#include "vision/vision.h"
 
 #include <nlohmann/json.hpp>
 
@@ -36,12 +37,13 @@ struct ChatRequest {
   bool include_usage = false;
   std::string reasoning_effort = "medium (0.7)";
   std::string reasoning_source = "default";
+  std::vector<model::ImageSpan> images;
 };
 
 // Validates `body` (a JSON object) and renders the prompt. Throws BadRequest or text::ChatError. Sampling fields
 // the request omits (temperature, top_p, top_k) take their values from `defaults`.
 ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max_model_len,
-                          const model::Sampling& defaults = {});
+                          const model::Sampling& defaults = {}, const vision::VisionEncoder* vision = nullptr);
 
 // {"error": {"message", "type", "param", "code"}} with the type server.py maps from the status.
 Json error_body(int status, std::string_view message, const std::optional<std::string>& param = std::nullopt);

@@ -1,9 +1,11 @@
 #include "serve/openai.h"
 
 #include <algorithm>
+#include <array>
 #include <climits>
 #include <cmath>
 #include <cstdint>
+#include <fstream>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -83,8 +85,86 @@ bool truthy(const Json& value) {
   }
 }
 
+constexpr int32_t kImagePlaceholderId = 200054;  // <|unused_200054|>
+
+std::vector<uint8_t> decode_base64(std::string_view b64) {
+  static constexpr auto kTable = []() {
+    std::array<int, 256> t{};
+    t.fill(-1);
+    for (int i = 0; i < 26; ++i) t[static_cast<unsigned char>('A' + i)] = i;
+    for (int i = 0; i < 26; ++i) t[static_cast<unsigned char>('a' + i)] = 26 + i;
+    for (int i = 0; i < 10; ++i) t[static_cast<unsigned char>('0' + i)] = 52 + i;
+    t[static_cast<unsigned char>('+')] = 62;
+    t[static_cast<unsigned char>('/')] = 63;
+    return t;
+  }();
+  std::vector<uint8_t> out;
+  out.reserve((b64.size() * 3) / 4);
+  int val = 0, valb = -8;
+  for (unsigned char c : b64) {
+    if (c == '=' || c == '\r' || c == '\n' || c == ' ') continue;
+    const int d = kTable[c];
+    if (d == -1) throw BadRequest("invalid base64 image payload", "messages");
+    val = (val << 6) + d;
+    valb += 6;
+    if (valb >= 0) {
+      out.push_back(static_cast<uint8_t>((val >> valb) & 0xff));
+      valb -= 8;
+    }
+  }
+  return out;
+}
+
+std::vector<uint8_t> load_image_bytes(std::string_view url) {
+  if (url.rfind("data:", 0) == 0) {
+    const std::size_t comma = url.find(',');
+    if (comma == std::string_view::npos) throw BadRequest("malformed data: image URL", "messages");
+    const std::string_view meta = url.substr(0, comma);
+    if (meta.find(";base64") == std::string_view::npos) {
+      throw BadRequest("only base64 data: image URLs are supported", "messages");
+    }
+    return decode_base64(url.substr(comma + 1));
+  }
+  if (url.rfind("file://", 0) == 0 || (!url.empty() && url[0] == '/')) {
+    const std::string path(url.rfind("file://", 0) == 0 ? url.substr(7) : url);
+    std::ifstream f(path, std::ios::binary | std::ios::ate);
+    if (!f) throw BadRequest("cannot open image file: " + path, "messages");
+    const auto sz = f.tellg();
+    f.seekg(0, std::ios::beg);
+    std::vector<uint8_t> out(static_cast<std::size_t>(sz));
+    f.read(reinterpret_cast<char*>(out.data()), sz);
+    return out;
+  }
+  throw BadRequest("image_url must be a data:image/...;base64,... URL", "messages");
+}
+
+std::vector<std::string> extract_image_urls(const Json& messages) {
+  std::vector<std::string> urls;
+  if (!messages.is_array()) return urls;
+  for (const auto& msg : messages) {
+    if (!msg.is_object()) continue;
+    const auto it = msg.find("content");
+    if (it == msg.end() || !it->is_array()) continue;
+    for (const auto& part : *it) {
+      if (!part.is_object()) continue;
+      const std::string type = part.contains("type") && part["type"].is_string() ? part["type"].get<std::string>() : "";
+      if (type != "image_url" && type != "image" && type != "input_image") continue;
+      if (part.contains("image_url")) {
+        const auto& iu = part["image_url"];
+        if (iu.is_string()) urls.push_back(iu.get<std::string>());
+        else if (iu.is_object() && iu.contains("url") && iu["url"].is_string()) urls.push_back(iu["url"].get<std::string>());
+      } else if (part.contains("url") && part["url"].is_string()) {
+        urls.push_back(part["url"].get<std::string>());
+      } else if (part.contains("image") && part["image"].is_string()) {
+        urls.push_back(part["image"].get<std::string>());
+      }
+    }
+  }
+  return urls;
+}
+
 ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max_model_len,
-                          const model::Sampling& defaults) {
+                          const model::Sampling& defaults, const vision::VisionEncoder* vision) {
   if (num_int(body, "n", Bound{1, "1"}, Bound{1, "1"}).value_or(1) != 1) {
     throw BadRequest("only n=1 is supported", "n");
   }
@@ -132,6 +212,34 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
   text::RenderedPrompt prompt = fmt.render(messages == body.end() ? kAbsent : *messages,
                                            tools == body.end() ? kAbsent : *tools, options);
 
+  std::vector<model::ImageSpan> image_spans;
+  if (messages != body.end()) {
+    const std::vector<std::string> image_urls = extract_image_urls(*messages);
+    if (!image_urls.empty()) {
+      if (!vision) throw BadRequest("vision encoder is not enabled on this server", "messages");
+      std::vector<vision::ImageEmbeddings> encoded;
+      encoded.reserve(image_urls.size());
+      for (const std::string& url : image_urls) {
+        const std::vector<uint8_t> bytes = load_image_bytes(url);
+        encoded.push_back(vision->encode_image_bytes(bytes, 256));
+      }
+      std::vector<int32_t> expanded;
+      expanded.reserve(prompt.ids.size() + encoded.size() * 256);
+      std::size_t img_idx = 0;
+      for (int32_t id : prompt.ids) {
+        if (id == kImagePlaceholderId && img_idx < encoded.size()) {
+          auto& emb = encoded[img_idx++];
+          const int offset = int(expanded.size());
+          expanded.insert(expanded.end(), std::size_t(emb.n_tokens), kImagePlaceholderId);
+          image_spans.push_back(model::ImageSpan{offset, emb.n_tokens, std::move(emb.data)});
+        } else {
+          expanded.push_back(id);
+        }
+      }
+      prompt.ids = std::move(expanded);
+    }
+  }
+
   const int64_t room = int64_t(max_model_len) - int64_t(prompt.ids.size());
   if (room <= 0) {
     throw BadRequest("prompt has " + std::to_string(prompt.ids.size()) + " tokens; the model context is " +
@@ -155,6 +263,7 @@ ChatRequest parse_request(const Json& body, const text::ChatFormat& fmt, int max
   }
 
   ChatRequest req;
+  req.images = std::move(image_spans);
   if (!enable_thinking.get<bool>()) {
     req.reasoning_effort = "none (0.0)";
     req.reasoning_source = "harness";

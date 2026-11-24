@@ -234,6 +234,10 @@ ChatServer::ChatServer(model::Generator& generator, const text::ChatFormat& fmt,
       sampling_defaults_(options.sampling),
       created_(std::time(nullptr)),
       scheduler_(generator, fmt.stop_ids(), options.max_queue) {
+  if (!options.model_dir.empty() &&
+      std::filesystem::exists(options.model_dir / "model-00001-of-00001.safetensors")) {
+    vision_ = std::make_unique<vision::VisionEncoder>(options.model_dir);
+  }
   // A pool thread per connection, as ThreadingHTTPServer: the running request, the waiting ones, the ones
   // rejected with 503 and /health probes must all be served concurrently.
   server_.new_task_queue = [] { return new httplib::ThreadPool(8, 1024); };
@@ -358,7 +362,7 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
              {"total_slots", 1},
              {"model_path", model_id_},
              {"role", "model"},
-             {"modalities", {{"vision", false}, {"audio", false}, {"video", false}}},
+             {"modalities", {{"vision", bool(vision_)}, {"audio", false}, {"video", false}}},
              {"chat_template", "inkling-2-mini"},
              {"chat_template_caps",
               {{"reasoning_effort_levels", Json::array({"minimal", "low", "medium", "high", "xhigh", "max"})}}},
@@ -495,7 +499,7 @@ void ChatServer::handle_post(const httplib::Request& req, httplib::Response& res
       return;
     }
     if (!body.is_object()) throw BadRequest("request body must be a JSON object");
-    request = parse_request(body, fmt_, max_model_len_, sampling_defaults_);
+    request = parse_request(body, fmt_, max_model_len_, sampling_defaults_, vision_.get());
     {
       std::lock_guard<std::mutex> lk(reasoning_mu_);
       reasoning_effort_ = request.reasoning_effort;
@@ -532,7 +536,8 @@ void ChatServer::complete(const httplib::Request& req, httplib::Response& res, C
                    {"timings", {{"cache_n", 0}, {"prompt_n", prompt_n}, {"predicted_n", 0}}}});
     return;
   }
-  auto job = std::make_shared<engine::Job>(request.prompt_ids, request.max_new_tokens, request.sampling);
+  auto job = std::make_shared<engine::Job>(request.prompt_ids, request.max_new_tokens, request.sampling,
+                                           std::move(request.images));
   if (!scheduler_.submit(job)) {
     res.set_header("Retry-After", "1");
     send_error(res, 503, "server busy: request queue is full");

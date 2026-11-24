@@ -35,12 +35,14 @@ struct JobBatch {
 
 class Job {
  public:
-  Job(std::vector<int32_t> prompt_ids, int max_new_tokens, model::Sampling sampling);
+  Job(std::vector<int32_t> prompt_ids, int max_new_tokens, model::Sampling sampling,
+      std::vector<model::ImageSpan> images = {});
 
   const std::string id;  // "chatcmpl-" + 32 hex digits
   const std::vector<int32_t> prompt_ids;
   const int max_new_tokens;
   const model::Sampling sampling;
+  const std::vector<model::ImageSpan> images;
   const Clock::time_point t_submit;
 
   void cancel() { cancel_.store(true, std::memory_order_release); }

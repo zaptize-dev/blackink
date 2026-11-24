@@ -88,6 +88,13 @@ class EngineGenerator final : public Generator {
   GenerateStats generate(std::span<const std::int32_t> prompt, int max_new_tokens, const Sampling& sampling,
                          std::span<const std::int32_t> stop_ids,
                          const std::function<bool(std::span<const std::int32_t>)>& on_tokens) override {
+    return generate_multimodal(prompt, {}, max_new_tokens, sampling, stop_ids, on_tokens);
+  }
+
+  GenerateStats generate_multimodal(std::span<const std::int32_t> prompt, std::span<const ImageSpan> images,
+                                    int max_new_tokens, const Sampling& sampling,
+                                    std::span<const std::int32_t> stop_ids,
+                                    const std::function<bool(std::span<const std::int32_t>)>& on_tokens) override {
     if (prompt.empty()) throw std::invalid_argument("prompt is empty");
     const int n = int(prompt.size());
     if (!sampling.forced.empty()) max_new_tokens = std::min(max_new_tokens, int(sampling.forced.size()));
@@ -106,7 +113,7 @@ class EngineGenerator final : public Generator {
 
     auto t = std::chrono::steady_clock::now();
     try {
-      prefill(prompt, stats);
+      prefill(prompt, images, stats);
       stats.prompt_tokens = n;
       if (spec_) {
         std::int32_t token = sample(static_cast<const float*>(logits_.p), sampling, rng);
@@ -209,17 +216,36 @@ class EngineGenerator final : public Generator {
   //   live conversation, restore the parked one's checkpoint and prefill the rest.
   // * None: park the live conversation, reset and prefill everything.
   // After a prefill the checkpoint moves to the end of `ids`.
-  void prefill(std::span<const std::int32_t> ids, GenerateStats& stats) {
+  static std::uint64_t hash_images(std::span<const ImageSpan> images) {
+    std::uint64_t h = 14695981039346656037ULL;
+    auto mix = [&](const void* p, std::size_t n) {
+      const auto* b = static_cast<const std::uint8_t*>(p);
+      for (std::size_t i = 0; i < n; ++i) h = (h ^ b[i]) * 1099511628211ULL;
+    };
+    for (const auto& img : images) {
+      mix(&img.offset, sizeof(img.offset));
+      mix(&img.n_tokens, sizeof(img.n_tokens));
+      if (!img.data.empty()) mix(img.data.data(), std::min<std::size_t>(img.data.size() * 4, 4096));
+    }
+    return h;
+  }
+
+  void prefill(std::span<const std::int32_t> ids, std::span<const ImageSpan> images, GenerateStats& stats) {
     const std::vector<std::int32_t>& prev = tokens_in_state_;
     const std::size_t n = ids.size();
+    const std::uint64_t img_hash = images.empty() ? 0 : hash_images(images);
+    const bool same_images = (img_hash == images_hash_);
     const bool drafter_in_step = !drafter_ || drafter_->length() == int(prev.size());  // else a row is missing
     State& st = rt_.state();
     const cudaStream_t stream = rt_.stream();
     const bool extend =
-        drafter_in_step && !prev.empty() && prev.size() < n && std::equal(prev.begin(), prev.end(), ids.begin());
-    const bool checkpoint = !extend && !checkpoint_ids_.empty() && checkpoint_ids_.size() <= n &&
+        same_images && drafter_in_step && !prev.empty() && prev.size() < n &&
+        std::equal(prev.begin(), prev.end(), ids.begin());
+    const bool checkpoint = same_images && !extend && !checkpoint_ids_.empty() && checkpoint_ids_.size() <= n &&
                             std::equal(checkpoint_ids_.begin(), checkpoint_ids_.end(), ids.begin());
-    Parked* parked = find_parked(ids, extend ? prev.size() : checkpoint ? checkpoint_ids_.size() : 0);
+    Parked* parked = (images.empty() && images_hash_ == 0)
+                         ? find_parked(ids, extend ? prev.size() : checkpoint ? checkpoint_ids_.size() : 0)
+                         : nullptr;
     std::size_t start = 0;
     if (parked) {
       // parking the live conversation may move the parked list (never evicting the one to restore)
@@ -253,12 +279,25 @@ class EngineGenerator final : public Generator {
       Tensor taps;
       if (drafter_) taps = rm(taps_.p, DType::BF16, {T, NUM_TAPS, HIDDEN});
       prefiller_.run(st, static_cast<const std::int32_t*>(chunk_tokens_.p), T, int(s), static_cast<float*>(logits_.p),
-                     drafter_ ? &taps : nullptr);
+                     drafter_ ? &taps : nullptr, [&] {
+                       std::vector<EmbedOverride> ovs;
+                       for (const auto& img : images) {
+                         const int a = std::max(int(s), img.offset);
+                         const int b = std::min(int(s) + T, img.offset + img.n_tokens);
+                         if (a < b) {
+                           const int local_off = a - int(s);
+                           const int img_off = a - img.offset;
+                           ovs.push_back({local_off, b - a, img.data.data() + std::size_t(img_off) * HIDDEN});
+                         }
+                       }
+                       return ovs;
+                     }());
       if (drafter_) {
         drafter_->note_tokens(ids.subspan(s, std::size_t(T)));  // the prompt's tokens join the drafter's shortlist
         drafter_->commit(taps, int(s));
       }
     }
+    images_hash_ = img_hash;
     tokens_in_state_.assign(ids.begin(), ids.end());
     if (start < n) save_checkpoint();
     stats.reused_tokens = int(start);
@@ -437,6 +476,7 @@ class EngineGenerator final : public Generator {
   std::size_t checkpoint_drafter_ = 0, checkpoint_logits_ = 0;  // byte offsets in checkpoint_
   std::vector<std::int32_t> checkpoint_ids_;
   std::vector<std::int32_t> tokens_in_state_;
+  std::uint64_t images_hash_ = 0;
   std::vector<Parked> parked_;
   std::size_t park_budget_ = 0;  // bytes
   std::uint64_t clock_ = 0;      // last use of a parked conversation
