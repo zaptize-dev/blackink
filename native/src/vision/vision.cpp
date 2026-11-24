@@ -295,7 +295,7 @@ ImageEmbeddings VisionEncoder::encode_image_bytes(std::span<const std::uint8_t> 
           for (int dx = 0; dx < kPatchSize; ++dx) {
             const int iy = py * kPatchSize + dy;
             const int ix = px * kPatchSize + dx;
-            dst[(c * kPatchSize + dy) * kPatchSize + dx] = norm_img[(std::size_t(iy) * pw + ix) * 3 + c];
+            dst[(dy * kPatchSize + dx) * 3 + c] = norm_img[(std::size_t(iy) * pw + ix) * 3 + c];
           }
         }
       }
