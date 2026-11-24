@@ -120,7 +120,7 @@ if [[ ! -f "$AGENTS_FILE" ]]; then
 
 1. **One folder per project:** Whenever the user asks to create a new project, create a dedicated subfolder \`./<project-slug>/\` inside this workspace and initialize its own \`git init\` repository inside that project folder (never at the workspace root).
 2. **Strict directory isolation:** Work ONLY inside the active project folder (\`./<project-slug>/\`). Never list, read, modify, or run commands against sibling project folders, parent directories (\`../\`), \`$HOME\`, \`/home/zaptize/blackink\`, or system directories.
-3. **Preview & access link:** To run or test any web app or API, pick an unused TCP port in \`4100-4999\` (check first with \`ss -ltn\`), bind the dev server to \`0.0.0.0\` (e.g. \`--host 0.0.0.0 --port <PORT>\`), and always reply with the full network link \`http://${LAN_IP}:<PORT>\`.
+3. **Preview & access link:** To run or test any web app or API, pick an unused TCP port in \`4100-4999\` (check first with \`ss -ltn\`), bind the dev server to \`0.0.0.0\` (e.g. \`--host 0.0.0.0 --port <PORT>\`), detach it so it stays alive after the tool exits (\`nohup setsid <cmd> >/tmp/preview-<PORT>.log 2>&1 </dev/null &\`), verify it is listening, and always reply with the full network link \`http://${LAN_IP}:<PORT>\`.
 4. **Deploy-ready structure:** When the user asks to prepare for Git / Coolify, include a clean \`Dockerfile\` (or \`docker-compose.yml\`) and \`.gitignore\` inside the project folder and stop any temporary dev server on that port if requested.
 EOF
   echo "Created default workspace rules -> $AGENTS_FILE."
