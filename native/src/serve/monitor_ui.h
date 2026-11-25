@@ -519,7 +519,7 @@ function renderLast() {
 
   // Context fill donut
   const ctxUsed = m.context_used || 0;
-  const ctxMax = m.max_model_len || 98304;
+  const ctxMax = m.max_model_len || 131072;
   const ctxPct = Math.min(100, (ctxUsed / ctxMax) * 100);
   const circ = 2 * Math.PI * 56;
   document.getElementById('ctx-arc').style.strokeDashoffset = (circ * (1 - ctxPct / 100)).toFixed(2);
