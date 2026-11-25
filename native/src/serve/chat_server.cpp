@@ -368,7 +368,7 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
               {{"reasoning_effort_levels", Json::array({"minimal", "low", "medium", "high", "xhigh", "max"})}}},
              {"bos_token", "<|beginoftext|>"},
              {"eos_token", "<|content_model_end_sampling|>"},
-             {"build_info", "BlackInk (sm_120a NVFP4 + 96K Q4 KV + DSpark MTP)"}});
+             {"build_info", "BlackInk (sm_120a NVFP4 + 112K Q4 KV + DSpark MTP)"}});
   } else if (path == "/slots") {
     const engine::SchedulerStats st = scheduler_.stats();
     send_json(res, 200,

@@ -261,7 +261,7 @@ inline constexpr std::string_view kMonitorHtml = R"HTML(<!doctype html>
       <div class="kpi-body">
         <div>
           <div><span class="kpi-val" id="k-vram">0.0</span><span class="kpi-unit" id="k-vram-tot">/ 16 GB</span></div>
-          <div class="kpi-sub">NVFP4 + 96K Q4 KV + MTP</div>
+          <div class="kpi-sub">NVFP4 + 112K Q4 KV + MTP</div>
         </div>
       </div>
       <svg class="spark" id="sp-vram"></svg>
@@ -519,7 +519,7 @@ function renderLast() {
 
   // Context fill donut
   const ctxUsed = m.context_used || 0;
-  const ctxMax = m.max_model_len || 131072;
+  const ctxMax = m.max_model_len || 114688;
   const ctxPct = Math.min(100, (ctxUsed / ctxMax) * 100);
   const circ = 2 * Math.PI * 56;
   document.getElementById('ctx-arc').style.strokeDashoffset = (circ * (1 - ctxPct / 100)).toFixed(2);
