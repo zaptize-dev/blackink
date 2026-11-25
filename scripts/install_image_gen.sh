@@ -15,7 +15,7 @@ if [[ ! -d "$VENV_DIR" ]]; then
   python3 -m venv "$VENV_DIR"
 fi
 "$VENV_DIR/bin/pip" install --upgrade pip wheel >/dev/null
-"$VENV_DIR/bin/pip" install huggingface-hub pillow >/dev/null
+"$VENV_DIR/bin/pip" install huggingface-hub pillow "rembg[cpu]" >/dev/null
 
 if [[ ! -d "$SD_DIR" ]]; then
   echo "Cloning stable-diffusion.cpp..."

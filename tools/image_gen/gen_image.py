@@ -153,6 +153,17 @@ def _run_sd_cli(
         raise RuntimeError(f"Image generation failed with exit code {proc.returncode}")
 
 
+def _remove_background(image_path: Path) -> None:
+    from PIL import Image
+    from rembg import new_session, remove
+
+    with Image.open(image_path) as img:
+        rgba = img.convert("RGBA")
+    session = new_session("u2net")
+    cutout = remove(rgba, session=session)
+    cutout.save(image_path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="gen-image",
@@ -164,6 +175,11 @@ def main() -> int:
     parser.add_argument("--steps", type=int, default=None, help="Optional refinement steps")
     parser.add_argument("--guidance", type=float, default=None, help="Optional guidance scale")
     parser.add_argument("--seed", type=int, default=None, help="Optional random seed")
+    parser.add_argument(
+        "--transparent",
+        action="store_true",
+        help="Remove background and save with alpha transparency (.png or .webp)",
+    )
     parser.add_argument("--quiet", action="store_true", help="Suppress JSON output")
     args = parser.parse_args()
 
@@ -173,17 +189,26 @@ def main() -> int:
     guidance = args.guidance if args.guidance is not None else float(cfg.get("default_guidance", 4.5))
     out_path = Path(args.out).expanduser().resolve()
 
+    if args.transparent and out_path.suffix.lower() not in (".png", ".webp"):
+        raise ValueError("--transparent requires an output format with alpha channel (.png or .webp)")
+
+    prompt = args.prompt.strip()
+    if args.transparent and "background" not in prompt.lower():
+        prompt = f"{prompt}, isolated on a clean solid white background"
+
     t0 = time.monotonic()
     LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
     with LOCK_PATH.open("w") as lock_fh:
         fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
         backend = str(cfg.get("backend", "sana-sprint-0.6b"))
         if backend in ("sana-sprint-0.6b", "sana-sprint-1.6b", "sana-sprint"):
-            _run_sana_sprint(cfg, args.prompt, width, height, steps, guidance, args.seed, out_path)
+            _run_sana_sprint(cfg, prompt, width, height, steps, guidance, args.seed, out_path)
         elif backend == "sd-cli":
-            _run_sd_cli(cfg, args.prompt, width, height, steps, guidance, args.seed, out_path)
+            _run_sd_cli(cfg, prompt, width, height, steps, guidance, args.seed, out_path)
         else:
             raise RuntimeError("Configured image generation backend is unavailable")
+        if args.transparent:
+            _remove_background(out_path)
 
     elapsed = round(time.monotonic() - t0, 2)
     if not args.quiet:
@@ -194,6 +219,7 @@ def main() -> int:
                     "path": str(out_path),
                     "width": width,
                     "height": height,
+                    "transparent": bool(args.transparent),
                     "elapsed_sec": elapsed,
                 }
             )
