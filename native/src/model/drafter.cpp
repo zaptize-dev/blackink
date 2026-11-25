@@ -218,7 +218,7 @@ void Drafter::load(const std::filesystem::path& model_dir) {
       const SafetensorsTensor& t = f.at(name);
       if (t.dtype != "BF16" || t.shape != shape) throw std::runtime_error("mtp.safetensors: unexpected " + name);
       CUDA_CHECK(cudaMemcpyAsync(dst + off, static_cast<const std::byte*>(raw.p) + (t.offset - base), t.bytes,
-                                 cudaMemcpyDeviceToDevice, stream_));
+                                 cudaMemcpyHostToDevice, stream_));
       off += t.bytes;
     }
     return reinterpret_cast<__nv_bfloat16*>(dst);
@@ -248,46 +248,50 @@ void Drafter::load(const std::filesystem::path& model_dir) {
   }
 
   // FP8 rows of a row-concatenation of [r, K] tensors (kernels::dense::fp8_rows, as dense.fp8_rows in dspark)
-  DeviceBuffer cat(std::size_t(2) * I * h * 2);
-  auto fp8 = [&](std::initializer_list<std::pair<std::string, std::int64_t>> parts, std::int64_t K = H) {
-    std::int64_t rows = 0;
-    for (const auto& [name, r] : parts) {
-      const std::byte* s = src(name, {r, K});
-      CUDA_CHECK(cudaMemcpyAsync(static_cast<std::byte*>(cat.p) + rows * K * 2, s, std::size_t(r * K * 2),
-                                 cudaMemcpyDeviceToDevice, stream_));
-      rows += r;
-    }
-    void* q = alloc(std::size_t(rows * K));
-    auto* scale = static_cast<float*>(alloc(std::size_t(rows) * 4));
-    kdense::fp8_rows(static_cast<const __nv_bfloat16*>(cat.p), int(rows), int(K), q, scale, stream_);
-    return kdense::Matrix{q, scale, int(rows)};
-  };
-
-  // the three layers' context k/v projections: BF16 for large commits (cuBLASLt), and one FP8-row matrix of
-  // all three for a small commit (one dense GEMV)
+  // Scoped so `cat` is freed before fold_w_ / fold_b_ are allocated.
   {
-    auto kv = [](int l, const char* x) { return "layers." + std::to_string(l) + ".self_attn." + x + "_proj_ctx.weight"; };
-    const std::vector<std::int64_t> shape{kd::KV_DIM, h};
-    const __nv_bfloat16* all = persist({{kv(0, "k"), shape}, {kv(0, "v"), shape}, {kv(1, "k"), shape},
-                                        {kv(1, "v"), shape}, {kv(2, "k"), shape}, {kv(2, "v"), shape}});
-    for (int l = 0; l < 3; ++l) layers_[l].wkv_ctx = all + std::size_t(l) * 2 * kd::KV_DIM * H;
-    wkv_all_ = fp8({{kv(0, "k"), kd::KV_DIM}, {kv(0, "v"), kd::KV_DIM}, {kv(1, "k"), kd::KV_DIM},
-                    {kv(1, "v"), kd::KV_DIM}, {kv(2, "k"), kd::KV_DIM}, {kv(2, "v"), kd::KV_DIM}});
-  }
-  for (int l = 0; l < 3; ++l) {
-    const std::string p = "layers." + std::to_string(l) + ".";
-    const std::string a = p + "self_attn.";
-    DraftLayer& L = layers_[l];
-    L.in_norm = persist({{p + "input_layernorm.weight", {h}}});
-    L.post_norm = persist({{p + "post_attention_layernorm.weight", {h}}});
-    L.ctx_norm = persist({{p + "dflare_norm.weight", {h}}});
-    L.q_norm = persist({{a + "q_norm.weight", {kd::HEAD_DIM}}});
-    L.k_norm = persist({{a + "k_norm.weight", {kd::HEAD_DIM}}});
-    L.k_norm_ctx = persist({{a + "k_norm_ctx.weight", {kd::HEAD_DIM}}});
-    L.qkv = fp8({{a + "q_proj.weight", kd::Q_DIM}, {a + "k_proj.weight", kd::KV_DIM}, {a + "v_proj.weight", kd::KV_DIM}});
-    L.gate_up = fp8({{p + "mlp.gate_proj.weight", I}, {p + "mlp.up_proj.weight", I}});
-    L.wo = fp8({{a + "o_proj.weight", h}}, kd::Q_DIM);
-    L.w_down = fp8({{p + "mlp.down_proj.weight", h}}, I);
+    DeviceBuffer cat(std::size_t(2) * I * h * 2);
+    auto fp8 = [&](std::initializer_list<std::pair<std::string, std::int64_t>> parts, std::int64_t K = H) {
+      std::int64_t rows = 0;
+      for (const auto& [name, r] : parts) {
+        const std::byte* s = src(name, {r, K});
+        CUDA_CHECK(cudaMemcpyAsync(static_cast<std::byte*>(cat.p) + rows * K * 2, s, std::size_t(r * K * 2),
+                                   cudaMemcpyHostToDevice, stream_));
+        rows += r;
+      }
+      void* q = alloc(std::size_t(rows * K));
+      auto* scale = static_cast<float*>(alloc(std::size_t(rows) * 4));
+      kdense::fp8_rows(static_cast<const __nv_bfloat16*>(cat.p), int(rows), int(K), q, scale, stream_);
+      return kdense::Matrix{q, scale, int(rows)};
+    };
+
+    // the three layers' context k/v projections: BF16 for large commits (cuBLASLt), and one FP8-row matrix of
+    // all three for a small commit (one dense GEMV)
+    {
+      auto kv = [](int l, const char* x) { return "layers." + std::to_string(l) + ".self_attn." + x + "_proj_ctx.weight"; };
+      const std::vector<std::int64_t> shape{kd::KV_DIM, h};
+      const __nv_bfloat16* all = persist({{kv(0, "k"), shape}, {kv(0, "v"), shape}, {kv(1, "k"), shape},
+                                          {kv(1, "v"), shape}, {kv(2, "k"), shape}, {kv(2, "v"), shape}});
+      for (int l = 0; l < 3; ++l) layers_[l].wkv_ctx = all + std::size_t(l) * 2 * kd::KV_DIM * H;
+      wkv_all_ = fp8({{kv(0, "k"), kd::KV_DIM}, {kv(0, "v"), kd::KV_DIM}, {kv(1, "k"), kd::KV_DIM},
+                      {kv(1, "v"), kd::KV_DIM}, {kv(2, "k"), kd::KV_DIM}, {kv(2, "v"), kd::KV_DIM}});
+    }
+    for (int l = 0; l < 3; ++l) {
+      const std::string p = "layers." + std::to_string(l) + ".";
+      const std::string a = p + "self_attn.";
+      DraftLayer& L = layers_[l];
+      L.in_norm = persist({{p + "input_layernorm.weight", {h}}});
+      L.post_norm = persist({{p + "post_attention_layernorm.weight", {h}}});
+      L.ctx_norm = persist({{p + "dflare_norm.weight", {h}}});
+      L.q_norm = persist({{a + "q_norm.weight", {kd::HEAD_DIM}}});
+      L.k_norm = persist({{a + "k_norm.weight", {kd::HEAD_DIM}}});
+      L.k_norm_ctx = persist({{a + "k_norm_ctx.weight", {kd::HEAD_DIM}}});
+      L.qkv = fp8({{a + "q_proj.weight", kd::Q_DIM}, {a + "k_proj.weight", kd::KV_DIM}, {a + "v_proj.weight", kd::KV_DIM}});
+      L.gate_up = fp8({{p + "mlp.gate_proj.weight", I}, {p + "mlp.up_proj.weight", I}});
+      L.wo = fp8({{a + "o_proj.weight", h}}, kd::Q_DIM);
+      L.w_down = fp8({{p + "mlp.down_proj.weight", h}}, I);
+    }
+    CUDA_CHECK(cudaStreamSynchronize(stream_));
   }
   final_norm_ = persist({{"norm.weight", {h}}});
   mask_embed_ = persist({{"mask_embed", {h}}});
