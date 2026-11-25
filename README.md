@@ -37,7 +37,7 @@ Chat UI** (`/` or `/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
 ## RTX 5060 Ti 16 GB Benchmarks
 
 Measured on a single **NVIDIA GeForce RTX 5060 Ti 16 GB** (`sm_120a`) running:
-`--max-ctx 131072 --dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70`
+`--max-ctx 98304 --dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70`
 
 | Workload | Settings | Speed |
 |---|---|---:|
@@ -118,7 +118,7 @@ Defaults come from [runtime-manifest.json](runtime-manifest.json) and can be ove
 |---|---|---|
 | `INGINE_MODEL_DIR` | `models/Inkling-2-Mini` | Model folder |
 | `INGINE_ABLATION` | `$INGINE_MODEL_DIR/inkling-2-mini-abliterated.safetensors` | Abliteration tensor (empty serves original `inkling-2-mini`) |
-| `INGINE_CTX` | `262144` (32 GB+) / `131072` (16 GB + spec) | Maximum KV context length |
+| `INGINE_CTX` | `262144` (32 GB+) / `98304` (16 GB + spec) | Maximum KV context length |
 | `HOST`, `PORT` | `127.0.0.1`, `8003` | Bind address and port |
 | `INGINE_EXTRA_ARGS` | empty | Extra flags passed to `ingine-serve` |
 | `INGINE_START_TIMEOUT` | `300` | Seconds `ingine start` waits for readiness |
@@ -128,7 +128,7 @@ Example `~/.config/ingine/env` for a **16 GB GPU (RTX 5060 Ti 16 GB)**:
 ```bash
 HOST=0.0.0.0
 PORT=8090
-INGINE_CTX=131072
+INGINE_CTX=98304
 INGINE_EXTRA_ARGS="--dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70"
 ```
 
@@ -184,7 +184,7 @@ providers:
     models:
       - id: inkling-2-mini-abliterated
         name: Inkling 2 Mini abliterated (ingine)
-        contextWindow: 131072
+        contextWindow: 98304
         maxTokens: 24576
         reasoning: true
         thinking:
