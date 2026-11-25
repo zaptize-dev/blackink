@@ -65,15 +65,6 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
   config:
     provider: blackink
     model: inkling-2-mini-abliterated
-- name: '@deepseek-ai/dsh-compaction-basic'
-  config:
-    thresholdRatio: 0.78
-    retainRatio: 0.16
-    modelPolicies:
-      - provider: blackink
-        model: inkling-2-mini-abliterated
-        thresholdRatio: 0.78
-        headroomTokens: 8192
 EOF
   echo "Configured DeepSeek Harness default model -> http://${LAN_IP}:${API_PORT}/v1 ($PATCH_FILE)."
 elif grep -q "baseURL: http://127.0.0.1:${API_PORT}/v1" "$PATCH_FILE" 2>/dev/null && [[ "$LAN_IP" != "127.0.0.1" ]]; then
@@ -91,20 +82,35 @@ fi
 if grep -qE "contextWindow: (98304|131072)" "$PATCH_FILE" 2>/dev/null; then
   sed -i -E "s/contextWindow: (98304|131072)/contextWindow: ${CTX_LEN}/g" "$PATCH_FILE"
 fi
-if ! grep -q "dsh-compaction-basic" "$PATCH_FILE" 2>/dev/null; then
-  cat >> "$PATCH_FILE" <<EOF
-- name: '@deepseek-ai/dsh-compaction-basic'
-  config:
-    thresholdRatio: 0.78
-    retainRatio: 0.16
-    modelPolicies:
-      - provider: blackink
-        model: inkling-2-mini-abliterated
-        thresholdRatio: 0.78
-        headroomTokens: 8192
-EOF
-  echo "Configured dsh-compaction-basic headroomTokens=8192 for BlackInk."
-fi
+# Remove orphaned top-level compaction-basic entry if present; dsh-web-app mounts compaction-basic inside presets.
+python3 - "$PATCH_FILE" "$DSH_APP/node_modules/@deepseek-ai/dsh-web-app/presets" <<'PY'
+import glob, os, re, sys
+
+patch_file, presets_dir = sys.argv[1], sys.argv[2]
+if os.path.exists(patch_file):
+    txt = open(patch_file).read()
+    new = re.sub(
+        r"\n?- name: '@deepseek-ai/dsh-compaction-basic'\n(?:  .*\n)*",
+        "\n",
+        txt,
+    )
+    if new != txt:
+        open(patch_file, "w").write(new)
+
+target = "                name: '@deepseek-ai/dsh-compaction-basic'\n"
+cfg = (
+    "                name: '@deepseek-ai/dsh-compaction-basic'\n"
+    "                config:\n"
+    "                  thresholdRatio: 0.78\n"
+    "                  retainRatio: 0.16\n"
+    "                  headroomTokens: 8192\n"
+)
+for p in sorted(glob.glob(os.path.join(presets_dir, "*.patch.yml"))):
+    s = open(p).read()
+    if "headroomTokens:" not in s and target in s:
+        open(p, "w").write(s.replace(target, cfg, 1))
+        print(f"Patched compaction-basic headroomTokens=8192 in {os.path.basename(p)}")
+PY
 if grep -q "maxTokens: 32768" "$PATCH_FILE" 2>/dev/null; then
   sed -i "s/maxTokens: 32768/maxTokens: 24576/g" "$PATCH_FILE"
 fi
