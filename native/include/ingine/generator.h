@@ -60,7 +60,7 @@ struct GenerateStats {
 
 struct RuntimeOptions {
   std::filesystem::path model_dir, ablation;  // empty ablation: original model
-  int max_ctx = 114688;
+  int max_ctx = 106496;
   // Tokens per prefill chunk. 256 balances high FP4 Tensor Core prefill throughput with 16 GB VRAM headroom.
   int prefill_chunk = 256;
   bool dense_fp8 = true, kv_fp8 = false, kv_q4 = false, full_nvfp4 = false, spec = false;

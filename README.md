@@ -2,7 +2,7 @@
 
 **BlackInk** is a 16 GB NVIDIA Blackwell-optimized fork of **ingine**, serving an abliterated
 [thinkingmachines/Inkling-2-Mini](https://huggingface.co/thinkingmachines/Inkling-2-Mini) on a single **16 GB+ NVIDIA
-Blackwell GPU (RTX 5060 Ti 16 GB, RTX 5070 Ti, RTX 5080, or RTX 5090)** with **114,688 (112K) tokens of Q4 context**
+Blackwell GPU (RTX 5060 Ti 16 GB, RTX 5070 Ti, RTX 5080, or RTX 5090)** with **106,496 (104K) tokens of Q4 context**
 with speculative decoding enabled (up to **131,072 / 128K** without `--spec`), **Full-NVFP4 routed experts**, **FP4
 Tensor Core MoE prefill**, **adaptive DSpark speculative decoding**, an **OpenAI-compatible API**, an **integrated Web
 Chat UI** (`/` or `/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
@@ -15,11 +15,11 @@ Chat UI** (`/` or `/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
   from 8-bit `MXFP8` to 4-bit `NVFP4` (matching layers 0–19), `embed` is quantized to `FP8 E4M3` with per-row scales,
   and router/gate weights are deduplicated — saving **~2.32 GiB of VRAM** without modifying the checkpoint on disk.
 * **4-bit Full-Attention KV Cache (`--kv-q4`)**: Compresses the 8 long-range full-attention visits to 4-bit symmetric
-  non-linear quantization (`0.5 byte/element`), fitting **114,688 (112K) tokens of context** alongside `--spec` on
+  non-linear quantization (`0.5 byte/element`), fitting **106,496 (104K) tokens of context** alongside `--spec` on
   16 GB GPUs (or **131,072 / 128K tokens in ~1.0 GiB** without `--spec`, while keeping the 40 sliding-window visits in
   exact `BF16`).
 * **FP4 Block-Scaled Tensor Core MoE Prefill (`moe_fp4.cu`)**: Grouped `W4A4` two-term FP4 Tensor Core (`sm_120a`)
-  MoE GEMMs for prefill (`prefill_chunk = 64`), keeping prefill scratch compact for 112K Q4 KV residency.
+  MoE GEMMs for prefill (`prefill_chunk = 256`), delivering >3,100 tok/s prompt reading while fitting 104K Q4 KV in VRAM.
 * **Adaptive DSpark Speculative Decoding (`--spec`)**: Combines the official 3-layer DSpark drafter with EMA acceptance
   cooldown (`ema_acc < 0.85` fallback to pipelined `width=1` steps) and a 4,096-token trigram suffix wake-up, plus
   `markov_w1` offloaded to pinned host RAM to preserve VRAM.
@@ -37,15 +37,15 @@ Chat UI** (`/` or `/chat`), and a **live GPU Monitor dashboard** (`/metrics`).
 ## RTX 5060 Ti 16 GB Benchmarks
 
 Measured on a single **NVIDIA GeForce RTX 5060 Ti 16 GB** (`sm_120a`) running:
-`--max-ctx 114688 --dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70`
+`--max-ctx 106496 --dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70`
 
 | Workload | Settings | Speed |
 |---|---|---:|
-| **PT-BR Conversation** | `T=1.0`, thinking enabled | **128.7 tok/s** |
-| **HTML / CSS Generation** | `T=0.0`, no thinking | **214.6 tok/s** |
-| **Prompt Prefill (~2.4K tokens)** | `prefill_chunk = 64`, FP4 MoE | **~1,700 tok/s** |
+| **PT-BR Conversation** | `T=1.0`, thinking enabled | **120.5 tok/s** |
+| **HTML / CSS Generation** | `T=0.0`, no thinking | **213.5 tok/s** |
+| **Prompt Prefill (~2.4K tokens)** | `prefill_chunk = 256`, FP4 MoE | **3,182.4 tok/s** |
 
-* **VRAM footprint**: `15,788 MiB / 16,311 MiB` (`523 MiB` free) at `114,688` context with `--spec` enabled (zero unified memory).
+* **VRAM footprint**: `15,822 MiB / 16,311 MiB` (`489 MiB` free) at `106,496` context with `--spec` enabled (zero unified memory).
 
 ---
 
@@ -117,7 +117,7 @@ Defaults come from [runtime-manifest.json](runtime-manifest.json) and can be ove
 |---|---|---|
 | `INGINE_MODEL_DIR` | `models/Inkling-2-Mini` | Model folder |
 | `INGINE_ABLATION` | `$INGINE_MODEL_DIR/inkling-2-mini-abliterated.safetensors` | Abliteration tensor (empty serves original `inkling-2-mini`) |
-| `INGINE_CTX` | `262144` (32 GB+) / `114688` (16 GB + spec) | Maximum KV context length |
+| `INGINE_CTX` | `262144` (32 GB+) / `106496` (16 GB + spec) | Maximum KV context length |
 | `HOST`, `PORT` | `127.0.0.1`, `8003` | Bind address and port |
 | `INGINE_EXTRA_ARGS` | empty | Extra flags passed to `ingine-serve` |
 | `INGINE_START_TIMEOUT` | `300` | Seconds `ingine start` waits for readiness |
@@ -127,7 +127,7 @@ Example `~/.config/ingine/env` for a **16 GB GPU (RTX 5060 Ti 16 GB)**:
 ```bash
 HOST=0.0.0.0
 PORT=8090
-INGINE_CTX=114688
+INGINE_CTX=106496
 INGINE_EXTRA_ARGS="--dense-fp8 --full-nvfp4 --kv-q4 --spec --spec-threshold 0.70"
 ```
 
@@ -183,7 +183,7 @@ providers:
     models:
       - id: inkling-2-mini-abliterated
         name: Inkling 2 Mini abliterated (ingine)
-        contextWindow: 114688
+        contextWindow: 106496
         maxTokens: 24576
         reasoning: true
         thinking:

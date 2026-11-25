@@ -27,7 +27,7 @@ if [[ ! -f "$DSH_HOME/.env" ]] || ! grep -q '^BLACKINK_API_KEY=' "$DSH_HOME/.env
 fi
 
 API_PORT="${INGINE_API_PORT:-18090}"
-CTX_LEN="${INGINE_CTX:-114688}"
+CTX_LEN="${INGINE_CTX:-106496}"
 WORKSPACE_DIR="${DSH_WORKSPACE:-$HOME/workspace}"
 LAN_IP="${INGINE_LAN_IP:-$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' || true)}"
 if [[ -z "$LAN_IP" ]]; then
@@ -79,8 +79,8 @@ if grep -qE "input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]" "$PATCH_FILE" 2
   sed -i 's/input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]/input: [text, image]/g' "$PATCH_FILE"
   echo "Enabled image input for BlackInk in DeepSeek Harness."
 fi
-if grep -qE "contextWindow: (98304|131072)" "$PATCH_FILE" 2>/dev/null; then
-  sed -i -E "s/contextWindow: (98304|131072)/contextWindow: ${CTX_LEN}/g" "$PATCH_FILE"
+if grep -qE "contextWindow: (98304|114688|131072)" "$PATCH_FILE" 2>/dev/null; then
+  sed -i -E "s/contextWindow: (98304|114688|131072)/contextWindow: ${CTX_LEN}/g" "$PATCH_FILE"
 fi
 # Remove orphaned top-level compaction-basic entry if present; dsh-web-app mounts compaction-basic inside presets.
 python3 - "$PATCH_FILE" "$DSH_APP/node_modules/@deepseek-ai/dsh-web-app/presets" <<'PY'
