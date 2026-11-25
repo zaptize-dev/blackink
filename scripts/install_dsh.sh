@@ -65,6 +65,15 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
   config:
     provider: blackink
     model: inkling-2-mini-abliterated
+- name: '@deepseek-ai/dsh-compaction-basic'
+  config:
+    thresholdRatio: 0.78
+    retainRatio: 0.16
+    modelPolicies:
+      - provider: blackink
+        model: inkling-2-mini-abliterated
+        thresholdRatio: 0.78
+        headroomTokens: 8192
 EOF
   echo "Configured DeepSeek Harness default model -> http://${LAN_IP}:${API_PORT}/v1 ($PATCH_FILE)."
 elif grep -q "baseURL: http://127.0.0.1:${API_PORT}/v1" "$PATCH_FILE" 2>/dev/null && [[ "$LAN_IP" != "127.0.0.1" ]]; then
@@ -81,6 +90,20 @@ if grep -qE "input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]" "$PATCH_FILE" 2
 fi
 if grep -qE "contextWindow: (98304|131072)" "$PATCH_FILE" 2>/dev/null; then
   sed -i -E "s/contextWindow: (98304|131072)/contextWindow: ${CTX_LEN}/g" "$PATCH_FILE"
+fi
+if ! grep -q "dsh-compaction-basic" "$PATCH_FILE" 2>/dev/null; then
+  cat >> "$PATCH_FILE" <<EOF
+- name: '@deepseek-ai/dsh-compaction-basic'
+  config:
+    thresholdRatio: 0.78
+    retainRatio: 0.16
+    modelPolicies:
+      - provider: blackink
+        model: inkling-2-mini-abliterated
+        thresholdRatio: 0.78
+        headroomTokens: 8192
+EOF
+  echo "Configured dsh-compaction-basic headroomTokens=8192 for BlackInk."
 fi
 if grep -q "maxTokens: 32768" "$PATCH_FILE" 2>/dev/null; then
   sed -i "s/maxTokens: 32768/maxTokens: 24576/g" "$PATCH_FILE"
