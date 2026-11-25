@@ -27,7 +27,7 @@ if [[ ! -f "$DSH_HOME/.env" ]] || ! grep -q '^BLACKINK_API_KEY=' "$DSH_HOME/.env
 fi
 
 API_PORT="${INGINE_API_PORT:-18090}"
-CTX_LEN="${INGINE_CTX:-98304}"
+CTX_LEN="${INGINE_CTX:-131072}"
 WORKSPACE_DIR="${DSH_WORKSPACE:-$HOME/workspace}"
 LAN_IP="${INGINE_LAN_IP:-$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' || true)}"
 if [[ -z "$LAN_IP" ]]; then
@@ -53,7 +53,7 @@ if [[ ! -f "$PATCH_FILE" ]] || ! grep -q 'blackink:' "$PATCH_FILE" 2>/dev/null; 
           - id: inkling-2-mini-abliterated
             name: Inkling 2 Mini Abliterated (BlackInk)
             contextWindow: ${CTX_LEN}
-            maxTokens: 32768
+            maxTokens: 24576
             input: [text, image]
             reasoningEfforts:
               off: none
@@ -78,6 +78,12 @@ fi
 if grep -qE "input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]" "$PATCH_FILE" 2>/dev/null; then
   sed -i 's/input:[[:space:]]*\[[[:space:]]*text[[:space:]]*\]/input: [text, image]/g' "$PATCH_FILE"
   echo "Enabled image input for BlackInk in DeepSeek Harness."
+fi
+if grep -q "contextWindow: 98304" "$PATCH_FILE" 2>/dev/null; then
+  sed -i "s/contextWindow: 98304/contextWindow: ${CTX_LEN}/g" "$PATCH_FILE"
+fi
+if grep -q "maxTokens: 32768" "$PATCH_FILE" 2>/dev/null; then
+  sed -i "s/maxTokens: 32768/maxTokens: 24576/g" "$PATCH_FILE"
 fi
 
 WS_FILE="$DSH_HOME/storages/workspace.json"

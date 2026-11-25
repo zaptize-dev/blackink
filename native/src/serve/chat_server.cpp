@@ -302,7 +302,7 @@ void ChatServer::handle_get(const httplib::Request& req, httplib::Response& res)
                {"speculative", true},
                {"is_processing", st.running},
                {"params",
-                {{"n_predict", 32768},
+                {{"n_predict", 24576},
                  {"seed", 4294967295ULL},
                  {"temperature", sampling_defaults_.temperature},
                  {"dynatemp_range", 0.0},
