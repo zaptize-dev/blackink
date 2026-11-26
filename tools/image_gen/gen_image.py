@@ -107,6 +107,7 @@ def _run_sana_sprint(
 def _run_sd_cli(
     cfg: dict[str, Any],
     prompt: str,
+    negative_prompt: str,
     width: int,
     height: int,
     steps: int,
@@ -133,12 +134,15 @@ def _run_sd_cli(
         "-o",
         str(out_path),
     ]
+    if negative_prompt:
+        cmd.extend(["-n", negative_prompt])
     if seed is not None:
         cmd.extend(["-s", str(seed)])
     for flag, key in [
         ("--diffusion-model", "diffusion_model"),
         ("-m", "model_path"),
         ("--vae", "vae_path"),
+        ("--taesd", "taesd_path"),
         ("--clip_l", "clip_l"),
         ("--clip_g", "clip_g"),
         ("--t5xxl", "t5xxl"),
@@ -196,8 +200,20 @@ def main() -> int:
         raise ValueError("--transparent requires an output format with alpha channel (.png or .webp)")
 
     prompt = args.prompt.strip()
-    if args.transparent and "background" not in prompt.lower():
-        prompt = f"{prompt}, isolated on a flat pure white studio background, no shadows, clean sharp edges"
+    negative_prompt = str(cfg.get("negative_prompt", ""))
+    if args.transparent:
+        prompt = re.sub(
+            r"\b(?:with\s+)?(?:a\s+)?(?:transparent|no|clear|blank|isolated|plain|solid|white)\s+background\b",
+            "",
+            prompt,
+            flags=re.IGNORECASE,
+        ).strip(" ,.")
+        prompt = (
+            f"{prompt}, centered single subject isolated on a plain solid white studio background, "
+            "no scenery, no shadows, clean sharp edges"
+        )
+        extra_neg = "scenery, landscape, trees, floor, ground, room, clutter, busy background, drop shadow"
+        negative_prompt = f"{negative_prompt}, {extra_neg}".strip(" ,")
 
     t0 = time.monotonic()
     LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -207,7 +223,7 @@ def main() -> int:
         if backend in ("sana-sprint-0.6b", "sana-sprint-1.6b", "sana-sprint"):
             _run_sana_sprint(cfg, prompt, width, height, steps, guidance, args.seed, out_path)
         elif backend == "sd-cli":
-            _run_sd_cli(cfg, prompt, width, height, steps, guidance, args.seed, out_path)
+            _run_sd_cli(cfg, prompt, negative_prompt, width, height, steps, guidance, args.seed, out_path)
         else:
             raise RuntimeError("Configured image generation backend is unavailable")
         if args.transparent:
