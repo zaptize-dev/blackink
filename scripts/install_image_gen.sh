@@ -112,12 +112,26 @@ EOF
 fi
 
 WRAPPER_LOCAL="$HOME/.local/bin/gen-image"
+SERVER_LOCAL="$HOME/.local/bin/gen-image-server"
+SERVER_SRC="$ROOT/tools/image_gen/image_server.py"
 mkdir -p "$HOME/.local/bin"
 cat > "$WRAPPER_LOCAL" <<EOF
 #!/usr/bin/env bash
 exec "$VENV_DIR/bin/python" "$CLI_SRC" "\$@"
 EOF
 chmod +x "$WRAPPER_LOCAL"
+
+cat > "$SERVER_LOCAL" <<EOF
+#!/usr/bin/env bash
+exec "$VENV_DIR/bin/python" "$SERVER_SRC" "\$@"
+EOF
+chmod +x "$SERVER_LOCAL"
+
+if ! curl -sf http://127.0.0.1:8091/health >/dev/null 2>&1; then
+  nohup setsid "$SERVER_LOCAL" >/tmp/blackink-image-server.log 2>&1 </dev/null &
+  sleep 1
+  echo "Started gen-image-server on 127.0.0.1:8091"
+fi
 
 if [[ -w /usr/local/bin ]]; then
   ln -sf "$WRAPPER_LOCAL" /usr/local/bin/gen-image

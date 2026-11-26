@@ -12,6 +12,7 @@ import signal
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -244,6 +245,112 @@ def _remove_background(image_path: Path) -> None:
     cutout.save(image_path)
 
 
+def generate_image(
+    *,
+    prompt: str,
+    out: str,
+    size: str | None = None,
+    steps: int | None = None,
+    guidance: float | None = None,
+    seed: int | None = None,
+    transparent: bool = False,
+) -> dict[str, Any]:
+    cfg = load_config()
+    width, height = parse_size(size or str(cfg.get("default_size", "512x512")))
+    eff_steps = steps if steps is not None else int(cfg.get("default_steps", 2))
+    eff_guidance = guidance if guidance is not None else float(cfg.get("default_guidance", 4.5))
+    out_path = Path(out).expanduser().resolve()
+
+    if transparent and out_path.suffix.lower() not in (".png", ".webp"):
+        raise ValueError("--transparent requires an output format with alpha channel (.png or .webp)")
+
+    eff_prompt = prompt.strip()
+    negative_prompt = str(cfg.get("negative_prompt", ""))
+    if transparent:
+        eff_prompt = re.sub(
+            r"\b(?:with\s+)?(?:a\s+)?(?:transparent|no|clear|blank|isolated|plain|solid|white)\s+background\b",
+            "",
+            eff_prompt,
+            flags=re.IGNORECASE,
+        ).strip(" ,.")
+        eff_prompt = (
+            f"{eff_prompt}, centered single subject isolated on a plain solid white studio background, "
+            "no scenery, no shadows, clean sharp edges"
+        )
+        extra_neg = "scenery, landscape, trees, floor, ground, room, clutter, busy background, drop shadow"
+        negative_prompt = f"{negative_prompt}, {extra_neg}".strip(" ,")
+
+    t0 = time.monotonic()
+    LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with LOCK_PATH.open("w") as lock_fh:
+        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
+        backend = str(cfg.get("backend", "sana-sprint-0.6b"))
+        gpu_handoff = bool(cfg.get("gpu_handoff", False))
+        if backend in ("sana-sprint-0.6b", "sana-sprint-1.6b", "sana-sprint"):
+            _run_sana_sprint(cfg, eff_prompt, width, height, eff_steps, eff_guidance, seed, out_path)
+            if transparent:
+                _remove_background(out_path)
+        elif backend == "sd-cli":
+            saved_ingine = _find_ingine_serve() if gpu_handoff else None
+            try:
+                if saved_ingine is not None:
+                    _stop_ingine_serve(saved_ingine[0])
+                _run_sd_cli(
+                    cfg,
+                    eff_prompt,
+                    negative_prompt,
+                    width,
+                    height,
+                    eff_steps,
+                    eff_guidance,
+                    seed,
+                    out_path,
+                    use_cuda=gpu_handoff,
+                )
+            finally:
+                if saved_ingine is not None:
+                    _, argv, port = saved_ingine
+                    _start_ingine_serve(argv, port)
+            if transparent:
+                _remove_background(out_path)
+        else:
+            raise RuntimeError("Configured image generation backend is unavailable")
+
+    elapsed = round(time.monotonic() - t0, 2)
+    return {
+        "ok": True,
+        "path": str(out_path),
+        "width": width,
+        "height": height,
+        "transparent": bool(transparent),
+        "elapsed_sec": elapsed,
+    }
+
+
+def _try_host_daemon(args: argparse.Namespace) -> dict[str, Any] | None:
+    if os.environ.get("INGINE_IMAGE_NO_DAEMON") == "1":
+        return None
+    port = int(os.environ.get("INGINE_IMAGE_PORT", "8091"))
+    url = f"http://127.0.0.1:{port}/generate"
+    payload = json.dumps(
+        {
+            "prompt": args.prompt,
+            "out": str(Path(args.out).expanduser().resolve()),
+            "size": args.size,
+            "steps": args.steps,
+            "guidance": args.guidance,
+            "seed": args.seed,
+            "transparent": bool(args.transparent),
+        }
+    ).encode("utf-8")
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=300.0) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.URLError:
+        return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="gen-image",
@@ -263,81 +370,22 @@ def main() -> int:
     parser.add_argument("--quiet", action="store_true", help="Suppress JSON output")
     args = parser.parse_args()
 
-    cfg = load_config()
-    width, height = parse_size(args.size or str(cfg.get("default_size", "512x512")))
-    steps = args.steps if args.steps is not None else int(cfg.get("default_steps", 2))
-    guidance = args.guidance if args.guidance is not None else float(cfg.get("default_guidance", 4.5))
-    out_path = Path(args.out).expanduser().resolve()
-
-    if args.transparent and out_path.suffix.lower() not in (".png", ".webp"):
-        raise ValueError("--transparent requires an output format with alpha channel (.png or .webp)")
-
-    prompt = args.prompt.strip()
-    negative_prompt = str(cfg.get("negative_prompt", ""))
-    if args.transparent:
-        prompt = re.sub(
-            r"\b(?:with\s+)?(?:a\s+)?(?:transparent|no|clear|blank|isolated|plain|solid|white)\s+background\b",
-            "",
-            prompt,
-            flags=re.IGNORECASE,
-        ).strip(" ,.")
-        prompt = (
-            f"{prompt}, centered single subject isolated on a plain solid white studio background, "
-            "no scenery, no shadows, clean sharp edges"
+    result = _try_host_daemon(args)
+    if result is None:
+        result = generate_image(
+            prompt=args.prompt,
+            out=args.out,
+            size=args.size,
+            steps=args.steps,
+            guidance=args.guidance,
+            seed=args.seed,
+            transparent=bool(args.transparent),
         )
-        extra_neg = "scenery, landscape, trees, floor, ground, room, clutter, busy background, drop shadow"
-        negative_prompt = f"{negative_prompt}, {extra_neg}".strip(" ,")
+    if not result.get("ok"):
+        raise RuntimeError(str(result.get("error", "Image generation failed")))
 
-    t0 = time.monotonic()
-    LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with LOCK_PATH.open("w") as lock_fh:
-        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
-        backend = str(cfg.get("backend", "sana-sprint-0.6b"))
-        gpu_handoff = bool(cfg.get("gpu_handoff", False))
-        if backend in ("sana-sprint-0.6b", "sana-sprint-1.6b", "sana-sprint"):
-            _run_sana_sprint(cfg, prompt, width, height, steps, guidance, args.seed, out_path)
-            if args.transparent:
-                _remove_background(out_path)
-        elif backend == "sd-cli":
-            saved_ingine = _find_ingine_serve() if gpu_handoff else None
-            try:
-                if saved_ingine is not None:
-                    _stop_ingine_serve(saved_ingine[0])
-                _run_sd_cli(
-                    cfg,
-                    prompt,
-                    negative_prompt,
-                    width,
-                    height,
-                    steps,
-                    guidance,
-                    args.seed,
-                    out_path,
-                    use_cuda=gpu_handoff,
-                )
-            finally:
-                if saved_ingine is not None:
-                    _, argv, port = saved_ingine
-                    _start_ingine_serve(argv, port)
-            if args.transparent:
-                _remove_background(out_path)
-        else:
-            raise RuntimeError("Configured image generation backend is unavailable")
-
-    elapsed = round(time.monotonic() - t0, 2)
     if not args.quiet:
-        print(
-            json.dumps(
-                {
-                    "ok": True,
-                    "path": str(out_path),
-                    "width": width,
-                    "height": height,
-                    "transparent": bool(args.transparent),
-                    "elapsed_sec": elapsed,
-                }
-            )
-        )
+        print(json.dumps(result))
     return 0
 
 
