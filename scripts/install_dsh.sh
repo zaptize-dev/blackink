@@ -157,18 +157,29 @@ if [[ ! -f "$AGENTS_FILE" ]]; then
 2. **Strict directory isolation:** Work ONLY inside the active project folder (\`./<project-slug>/\`). Never list, read, modify, or run commands against sibling project folders, parent directories (\`../\`), \`$HOME\`, \`/home/zaptize/blackink\`, or system directories.
 3. **Preview & access link:** To run or test any web app or API, pick an unused TCP port in \`4100-4999\` (check first with \`ss -ltn\`), bind the dev server to \`0.0.0.0\` (e.g. \`--host 0.0.0.0 --port <PORT>\`), detach it so it stays alive after the tool exits (\`nohup setsid <cmd> >/tmp/preview-<PORT>.log 2>&1 </dev/null &\`), verify it is listening, and always reply with the full network link \`http://${LAN_IP}:<PORT>\`.
 4. **Deploy-ready structure:** When the user asks to prepare for Git / Coolify, include a clean \`Dockerfile\` (or \`docker-compose.yml\`) and \`.gitignore\` inside the project folder and stop any temporary dev server on that port if requested.
-5. **Image assets:** For icons, logos, and simple graphics, prefer inline SVG. When a project needs raster photos, illustrations, or hero banners, generate them with \`~/.local/bin/gen-image --prompt "<detailed English prompt>" --out ./<project-slug>/assets/<name>.png --size 512x512\` (supports sizes like \`512x512\`, \`768x512\`, \`512x768\`, and \`--transparent\` for background-free PNG/WebP cutouts) and reference them from HTML/CSS.
+5. **Image assets:** For icons, logos, and simple graphics, prefer inline SVG. When a project needs raster photos, illustrations, or hero banners, use \`~/.local/bin/gen-image\` (supports sizes like \`512x512\`, \`768x512\`, \`512x768\`, and \`transparent: true\` / \`--transparent\` for background-free \`.png\`/\`.webp\` cutouts). **CRITICAL — BATCHING RULE:** If you need **2 or more images**, NEVER call \`gen-image\` one by one; you MUST generate all of them in a single batch call via stdin (\`~/.local/bin/gen-image --batch - <<'EOF' ... EOF\` with a JSON array of \`{"prompt": "...", "out": "./<project-slug>/assets/<name>.png", "size": "512x512", "transparent": false}\`). Only use single mode (\`--prompt "..." --out ...\`) when generating exactly 1 image.
 EOF
   echo "Created default workspace rules -> $AGENTS_FILE."
-elif ! grep -q "gen-image" "$AGENTS_FILE" 2>/dev/null; then
-  cat >> "$AGENTS_FILE" <<EOF
-5. **Image assets:** For icons, logos, and simple graphics, prefer inline SVG. When a project needs raster photos, illustrations, or hero banners, generate them with \`~/.local/bin/gen-image --prompt "<detailed English prompt>" --out ./<project-slug>/assets/<name>.png --size 512x512\` (supports sizes like \`512x512\`, \`768x512\`, \`512x768\`, and \`--transparent\` for background-free PNG/WebP cutouts) and reference them from HTML/CSS.
-EOF
-  echo "Added gen-image rule to $AGENTS_FILE."
-elif ! grep -q -- "--transparent" "$AGENTS_FILE" 2>/dev/null; then
-  sed -i 's|512x768`)|512x768`, and `--transparent` for background-free PNG/WebP cutouts)|g' "$AGENTS_FILE"
-  echo "Updated gen-image rule with --transparent in $AGENTS_FILE."
-fi
-if grep -q '`gen-image --prompt' "$AGENTS_FILE" 2>/dev/null; then
-  sed -i 's|`gen-image --prompt|`~/.local/bin/gen-image --prompt|g' "$AGENTS_FILE"
+elif ! grep -q -- "--batch" "$AGENTS_FILE" 2>/dev/null; then
+  python3 - "$AGENTS_FILE" <<'PY'
+import re, sys
+p = sys.argv[1]
+txt = open(p).read()
+rule5 = (
+    "5. **Image assets:** For icons, logos, and simple graphics, prefer inline SVG. "
+    "When a project needs raster photos, illustrations, or hero banners, use `~/.local/bin/gen-image` "
+    "(supports sizes like `512x512`, `768x512`, `512x768`, and `transparent: true` / `--transparent` for "
+    "background-free `.png`/`.webp` cutouts). **CRITICAL — BATCHING RULE:** If you need **2 or more images**, "
+    "NEVER call `gen-image` one by one; you MUST generate all of them in a single batch call via stdin "
+    "(`~/.local/bin/gen-image --batch - <<'EOF' ... EOF` with a JSON array of "
+    "`{\"prompt\": \"...\", \"out\": \"./<project-slug>/assets/<name>.png\", \"size\": \"512x512\", \"transparent\": false}`). "
+    "Only use single mode (`--prompt \"...\" --out ...`) when generating exactly 1 image.\n"
+)
+if re.search(r"^5\. \*\*Image assets:\*\*.*$", txt, flags=re.M):
+    txt = re.sub(r"^5\. \*\*Image assets:\*\*.*$", rule5.rstrip("\n"), txt, flags=re.M)
+else:
+    txt = txt.rstrip("\n") + "\n" + rule5
+open(p, "w").write(txt)
+PY
+  echo "Updated gen-image batching rule in $AGENTS_FILE."
 fi

@@ -145,7 +145,7 @@ def _stop_ingine_serve(pid: int, timeout_sec: float = 15.0) -> None:
     time.sleep(0.8)
 
 
-def _start_ingine_serve(argv: list[str], port: int, timeout_sec: float = 90.0) -> None:
+def _launch_ingine_serve(argv: list[str]) -> None:
     log_path = Path("/tmp/ingine-serve.log")
     with log_path.open("ab") as log_fh:
         subprocess.Popen(
@@ -156,6 +156,9 @@ def _start_ingine_serve(argv: list[str], port: int, timeout_sec: float = 90.0) -
             start_new_session=True,
             close_fds=True,
         )
+
+
+def _wait_ingine_health(port: int, timeout_sec: float = 90.0) -> None:
     deadline = time.monotonic() + timeout_sec
     health_url = f"http://127.0.0.1:{port}/health"
     while time.monotonic() < deadline:
@@ -245,27 +248,9 @@ def _remove_background(image_path: Path) -> None:
     cutout.save(image_path)
 
 
-def generate_image(
-    *,
-    prompt: str,
-    out: str,
-    size: str | None = None,
-    steps: int | None = None,
-    guidance: float | None = None,
-    seed: int | None = None,
-    transparent: bool = False,
-) -> dict[str, Any]:
-    cfg = load_config()
-    width, height = parse_size(size or str(cfg.get("default_size", "512x512")))
-    eff_steps = steps if steps is not None else int(cfg.get("default_steps", 2))
-    eff_guidance = guidance if guidance is not None else float(cfg.get("default_guidance", 4.5))
-    out_path = Path(out).expanduser().resolve()
-
-    if transparent and out_path.suffix.lower() not in (".png", ".webp"):
-        raise ValueError("--transparent requires an output format with alpha channel (.png or .webp)")
-
+def _prepare_prompts(prompt: str, negative_prompt: str, transparent: bool) -> tuple[str, str]:
     eff_prompt = prompt.strip()
-    negative_prompt = str(cfg.get("negative_prompt", ""))
+    eff_neg = negative_prompt
     if transparent:
         eff_prompt = re.sub(
             r"\b(?:with\s+)?(?:a\s+)?(?:transparent|no|clear|blank|isolated|plain|solid|white)\s+background\b",
@@ -278,74 +263,148 @@ def generate_image(
             "no scenery, no shadows, clean sharp edges"
         )
         extra_neg = "scenery, landscape, trees, floor, ground, room, clutter, busy background, drop shadow"
-        negative_prompt = f"{negative_prompt}, {extra_neg}".strip(" ,")
+        eff_neg = f"{eff_neg}, {extra_neg}".strip(" ,")
+    return eff_prompt, eff_neg
+
+
+def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
+    if not items:
+        raise ValueError("Batch requires at least one image item")
+
+    cfg = load_config()
+    backend = str(cfg.get("backend", "sana-sprint-0.6b"))
+    gpu_handoff = bool(cfg.get("gpu_handoff", False))
+    base_neg = str(cfg.get("negative_prompt", ""))
+
+    prepared: list[dict[str, Any]] = []
+    for idx, item in enumerate(items):
+        if not isinstance(item, dict) or "prompt" not in item or "out" not in item:
+            raise ValueError(f"Batch item {idx} must include 'prompt' and 'out'")
+        transparent = bool(item.get("transparent", False))
+        out_path = Path(str(item["out"])).expanduser().resolve()
+        if transparent and out_path.suffix.lower() not in (".png", ".webp"):
+            raise ValueError("--transparent requires an output format with alpha channel (.png or .webp)")
+        width, height = parse_size(str(item.get("size") or cfg.get("default_size", "512x512")))
+        eff_steps = int(item["steps"]) if item.get("steps") is not None else int(cfg.get("default_steps", 4))
+        eff_guidance = (
+            float(item["guidance"]) if item.get("guidance") is not None else float(cfg.get("default_guidance", 1.0))
+        )
+        seed = int(item["seed"]) if item.get("seed") is not None else None
+        eff_prompt, eff_neg = _prepare_prompts(str(item["prompt"]), base_neg, transparent)
+        prepared.append(
+            {
+                "prompt": eff_prompt,
+                "negative_prompt": eff_neg,
+                "out_path": out_path,
+                "width": width,
+                "height": height,
+                "steps": eff_steps,
+                "guidance": eff_guidance,
+                "seed": seed,
+                "transparent": transparent,
+            }
+        )
 
     t0 = time.monotonic()
     LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
     with LOCK_PATH.open("w") as lock_fh:
         fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
-        backend = str(cfg.get("backend", "sana-sprint-0.6b"))
-        gpu_handoff = bool(cfg.get("gpu_handoff", False))
         if backend in ("sana-sprint-0.6b", "sana-sprint-1.6b", "sana-sprint"):
-            _run_sana_sprint(cfg, eff_prompt, width, height, eff_steps, eff_guidance, seed, out_path)
-            if transparent:
-                _remove_background(out_path)
+            for job in prepared:
+                _run_sana_sprint(
+                    cfg, job["prompt"], job["width"], job["height"], job["steps"], job["guidance"], job["seed"], job["out_path"]
+                )
+                if job["transparent"]:
+                    _remove_background(job["out_path"])
         elif backend == "sd-cli":
             saved_ingine = _find_ingine_serve() if gpu_handoff else None
+            ingine_launched = False
             try:
                 if saved_ingine is not None:
                     _stop_ingine_serve(saved_ingine[0])
-                _run_sd_cli(
-                    cfg,
-                    eff_prompt,
-                    negative_prompt,
-                    width,
-                    height,
-                    eff_steps,
-                    eff_guidance,
-                    seed,
-                    out_path,
-                    use_cuda=gpu_handoff,
-                )
+                for job in prepared:
+                    _run_sd_cli(
+                        cfg,
+                        job["prompt"],
+                        job["negative_prompt"],
+                        job["width"],
+                        job["height"],
+                        job["steps"],
+                        job["guidance"],
+                        job["seed"],
+                        job["out_path"],
+                        use_cuda=gpu_handoff,
+                    )
             finally:
                 if saved_ingine is not None:
                     _, argv, port = saved_ingine
-                    _start_ingine_serve(argv, port)
-            if transparent:
-                _remove_background(out_path)
+                    _launch_ingine_serve(argv)
+                    ingine_launched = True
+            # Overlap CPU background removal with GPU language-service reload.
+            for job in prepared:
+                if job["transparent"] and job["out_path"].is_file():
+                    _remove_background(job["out_path"])
+            if ingine_launched and saved_ingine is not None:
+                _wait_ingine_health(saved_ingine[2])
         else:
             raise RuntimeError("Configured image generation backend is unavailable")
 
     elapsed = round(time.monotonic() - t0, 2)
+    results = [
+        {
+            "ok": True,
+            "path": str(job["out_path"]),
+            "width": job["width"],
+            "height": job["height"],
+            "transparent": job["transparent"],
+        }
+        for job in prepared
+    ]
     return {
         "ok": True,
-        "path": str(out_path),
-        "width": width,
-        "height": height,
-        "transparent": bool(transparent),
+        "count": len(results),
+        "images": results,
         "elapsed_sec": elapsed,
     }
 
 
-def _try_host_daemon(args: argparse.Namespace) -> dict[str, Any] | None:
+def generate_image(
+    *,
+    prompt: str,
+    out: str,
+    size: str | None = None,
+    steps: int | None = None,
+    guidance: float | None = None,
+    seed: int | None = None,
+    transparent: bool = False,
+) -> dict[str, Any]:
+    res = generate_batch(
+        [
+            {
+                "prompt": prompt,
+                "out": out,
+                "size": size,
+                "steps": steps,
+                "guidance": guidance,
+                "seed": seed,
+                "transparent": transparent,
+            }
+        ]
+    )
+    single = dict(res["images"][0])
+    single["elapsed_sec"] = res["elapsed_sec"]
+    return single
+
+
+def _try_host_daemon(payload_dict: dict[str, Any]) -> dict[str, Any] | None:
     if os.environ.get("INGINE_IMAGE_NO_DAEMON") == "1":
         return None
     port = int(os.environ.get("INGINE_IMAGE_PORT", "8091"))
     url = f"http://127.0.0.1:{port}/generate"
-    payload = json.dumps(
-        {
-            "prompt": args.prompt,
-            "out": str(Path(args.out).expanduser().resolve()),
-            "size": args.size,
-            "steps": args.steps,
-            "guidance": args.guidance,
-            "seed": args.seed,
-            "transparent": bool(args.transparent),
-        }
-    ).encode("utf-8")
+    payload = json.dumps(payload_dict).encode("utf-8")
     req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=300.0) as resp:
+        with urllib.request.urlopen(req, timeout=600.0) as resp:
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.URLError:
         return None
@@ -354,10 +413,11 @@ def _try_host_daemon(args: argparse.Namespace) -> dict[str, Any] | None:
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="gen-image",
-        description="Generate an image asset from a text prompt.",
+        description="Generate one image or a batch of image assets from text prompts.",
     )
-    parser.add_argument("--prompt", required=True, help="Detailed English prompt describing the image")
-    parser.add_argument("--out", required=True, help="Output file path (.png, .jpg, .webp)")
+    parser.add_argument("--prompt", help="Detailed English prompt describing the image")
+    parser.add_argument("--out", help="Output file path (.png, .jpg, .webp)")
+    parser.add_argument("--batch", help="Path to JSON array of {prompt, out, ...} items, or '-' for stdin")
     parser.add_argument("--size", default=None, help="Output dimensions WxH (e.g. 512x512, 768x512)")
     parser.add_argument("--steps", type=int, default=None, help="Optional refinement steps")
     parser.add_argument("--guidance", type=float, default=None, help="Optional guidance scale")
@@ -370,17 +430,40 @@ def main() -> int:
     parser.add_argument("--quiet", action="store_true", help="Suppress JSON output")
     args = parser.parse_args()
 
-    result = _try_host_daemon(args)
-    if result is None:
-        result = generate_image(
-            prompt=args.prompt,
-            out=args.out,
-            size=args.size,
-            steps=args.steps,
-            guidance=args.guidance,
-            seed=args.seed,
-            transparent=bool(args.transparent),
-        )
+    if args.batch:
+        raw_batch = sys.stdin.read() if args.batch == "-" else Path(args.batch).read_text(encoding="utf-8")
+        items = json.loads(raw_batch)
+        if not isinstance(items, list):
+            raise ValueError("--batch expects a JSON array of objects")
+        for item in items:
+            if isinstance(item, dict) and "out" in item:
+                item["out"] = str(Path(str(item["out"])).expanduser().resolve())
+        result = _try_host_daemon({"items": items})
+        if result is None:
+            result = generate_batch(items)
+    else:
+        if not args.prompt or not args.out:
+            parser.error("--prompt and --out are required unless --batch is used")
+        payload_dict = {
+            "prompt": args.prompt,
+            "out": str(Path(args.out).expanduser().resolve()),
+            "size": args.size,
+            "steps": args.steps,
+            "guidance": args.guidance,
+            "seed": args.seed,
+            "transparent": bool(args.transparent),
+        }
+        result = _try_host_daemon(payload_dict)
+        if result is None:
+            result = generate_image(
+                prompt=args.prompt,
+                out=args.out,
+                size=args.size,
+                steps=args.steps,
+                guidance=args.guidance,
+                seed=args.seed,
+                transparent=bool(args.transparent),
+            )
     if not result.get("ok"):
         raise RuntimeError(str(result.get("error", "Image generation failed")))
 

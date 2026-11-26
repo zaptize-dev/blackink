@@ -36,15 +36,18 @@ class ImageHandler(BaseHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", "0"))
             raw = self.rfile.read(length) if length > 0 else b"{}"
             req = json.loads(raw.decode("utf-8"))
-            result = gen_image.generate_image(
-                prompt=str(req["prompt"]),
-                out=str(req["out"]),
-                size=req.get("size"),
-                steps=req.get("steps"),
-                guidance=req.get("guidance"),
-                seed=req.get("seed"),
-                transparent=bool(req.get("transparent", False)),
-            )
+            if isinstance(req.get("items"), list):
+                result = gen_image.generate_batch(req["items"])
+            else:
+                result = gen_image.generate_image(
+                    prompt=str(req["prompt"]),
+                    out=str(req["out"]),
+                    size=req.get("size"),
+                    steps=req.get("steps"),
+                    guidance=req.get("guidance"),
+                    seed=req.get("seed"),
+                    transparent=bool(req.get("transparent", False)),
+                )
             self._send_json(200, result)
         except Exception as exc:
             self._send_json(500, {"ok": False, "error": str(exc)})
