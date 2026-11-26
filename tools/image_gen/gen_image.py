@@ -163,7 +163,7 @@ def _remove_background(image_path: Path) -> None:
     with Image.open(image_path) as img:
         rgba = img.convert("RGBA")
     session = new_session("u2net")
-    cutout = remove(rgba, session=session)
+    cutout = remove(rgba, session=session, post_process_mask=True)
     cutout.save(image_path)
 
 
@@ -197,7 +197,7 @@ def main() -> int:
 
     prompt = args.prompt.strip()
     if args.transparent and "background" not in prompt.lower():
-        prompt = f"{prompt}, isolated on a clean solid white background"
+        prompt = f"{prompt}, isolated on a flat pure white studio background, no shadows, clean sharp edges"
 
     t0 = time.monotonic()
     LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -52,7 +52,7 @@ if [[ ! -f "$CFG_FILE" ]]; then
   "sampler": "euler_a",
   "threads": 8,
   "default_size": "512x512",
-  "default_steps": 2,
+  "default_steps": 4,
   "default_guidance": 1.0
 }
 EOF
