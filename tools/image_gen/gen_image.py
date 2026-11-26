@@ -14,6 +14,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+os.environ.setdefault("NUMBA_CACHE_DIR", "/tmp/blackink-numba-cache")
+
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "ingine" / "image-gen.json"
 LOCK_PATH = Path("/tmp/blackink-gen-image.lock")
 
@@ -154,6 +156,7 @@ def _run_sd_cli(
 
 
 def _remove_background(image_path: Path) -> None:
+    Path(os.environ["NUMBA_CACHE_DIR"]).mkdir(parents=True, exist_ok=True)
     from PIL import Image
     from rembg import new_session, remove
 
