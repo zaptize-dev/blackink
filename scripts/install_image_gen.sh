@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV_DIR="${INGINE_IMAGE_VENV:-$ROOT/.tools/image-gen-venv}"
 SD_DIR="${INGINE_SD_CPP_DIR:-$ROOT/.tools/stable-diffusion.cpp}"
 MODEL_DIR="${INGINE_IMAGE_MODEL_DIR:-$ROOT/models/image}"
-MODEL_FILE="$MODEL_DIR/sdxl-turbo-q4_0.gguf"
+MODEL_FILE="$MODEL_DIR/sdxl-lightning-4step-q4_0.gguf"
 CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ingine"
 CFG_FILE="$CFG_DIR/image-gen.json"
 CLI_SRC="$ROOT/tools/image_gen/gen_image.py"
@@ -37,9 +37,9 @@ fi
 mkdir -p "$MODEL_DIR"
 if [[ ! -f "$MODEL_FILE" ]]; then
   echo "Downloading and quantizing default CPU image model..."
-  FP16_PATH="$("$VENV_DIR/bin/python" -c "from huggingface_hub import hf_hub_download; print(hf_hub_download('stabilityai/sdxl-turbo', 'sd_xl_turbo_1.0_fp16.safetensors'))")"
+  FP16_PATH="$("$VENV_DIR/bin/python" -c "from huggingface_hub import hf_hub_download; print(hf_hub_download('ByteDance/SDXL-Lightning', 'sdxl_lightning_4step.safetensors'))")"
   "$SD_DIR/build/bin/sd-cli" -M convert -m "$FP16_PATH" -o "$MODEL_FILE" --type q4_0
-  rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--stabilityai--sdxl-turbo"
+  rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--ByteDance--SDXL-Lightning"
 fi
 
 mkdir -p "$CFG_DIR"
@@ -49,7 +49,7 @@ if [[ ! -f "$CFG_FILE" ]]; then
   "backend": "sd-cli",
   "sd_cli_bin": "$SD_DIR/build/bin/sd-cli",
   "model_path": "$MODEL_FILE",
-  "sampler": "euler_a",
+  "sampler": "euler",
   "threads": 8,
   "default_size": "512x512",
   "default_steps": 4,
