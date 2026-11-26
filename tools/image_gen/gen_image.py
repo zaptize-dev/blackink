@@ -264,6 +264,30 @@ def _remove_background(image_path: Path) -> None:
     cutout.save(image_path)
 
 
+def _compress_image(image_path: Path, quality: int = 85, quantize_png: bool = False) -> None:
+    from PIL import Image
+
+    ext = image_path.suffix.lower()
+    with Image.open(image_path) as img:
+        if ext == ".webp":
+            out_img = img.convert("RGBA") if "A" in img.getbands() else img.convert("RGB")
+            out_img.save(image_path, format="WEBP", quality=quality, method=6)
+        elif ext in (".jpg", ".jpeg"):
+            img.convert("RGB").save(
+                image_path, format="JPEG", quality=quality, optimize=True, progressive=True
+            )
+        elif ext == ".png":
+            if quantize_png:
+                has_alpha = "A" in img.getbands()
+                base = img.convert("RGBA") if has_alpha else img.convert("RGB")
+                method = Image.Quantize.FASTOCTREE if has_alpha else Image.Quantize.MEDIANCUT
+                base.quantize(colors=256, method=method, dither=Image.Dither.FLOYDSTEINBERG).save(
+                    image_path, format="PNG", optimize=True, compress_level=9
+                )
+            else:
+                img.save(image_path, format="PNG", optimize=True, compress_level=9)
+
+
 def _prepare_prompts(prompt: str, negative_prompt: str, transparent: bool) -> tuple[str, str]:
     eff_prompt = prompt.strip()
     eff_neg = negative_prompt
@@ -306,6 +330,8 @@ def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
             float(item["guidance"]) if item.get("guidance") is not None else float(cfg.get("default_guidance", 1.0))
         )
         seed = int(item["seed"]) if item.get("seed") is not None else None
+        quality = int(item.get("quality", 85))
+        compress = bool(item.get("compress", False))
         eff_prompt, eff_neg = _prepare_prompts(str(item["prompt"]), base_neg, transparent)
         prepared.append(
             {
@@ -318,6 +344,8 @@ def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
                 "guidance": eff_guidance,
                 "seed": seed,
                 "transparent": transparent,
+                "quality": quality,
+                "compress": compress,
             }
         )
 
@@ -332,6 +360,8 @@ def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
                 )
                 if job["transparent"]:
                     _remove_background(job["out_path"])
+                if job["out_path"].is_file():
+                    _compress_image(job["out_path"], quality=job["quality"], quantize_png=job["compress"])
         elif backend == "sd-cli":
             saved_ingine = _find_ingine_serve() if gpu_handoff else None
             ingine_launched = False
@@ -356,10 +386,12 @@ def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
                     _, argv, port = saved_ingine
                     _launch_ingine_serve(argv)
                     ingine_launched = True
-            # Overlap CPU background removal with GPU language-service reload.
+            # Overlap CPU background removal & compression with GPU language-service reload.
             for job in prepared:
                 if job["transparent"] and job["out_path"].is_file():
                     _remove_background(job["out_path"])
+                if job["out_path"].is_file():
+                    _compress_image(job["out_path"], quality=job["quality"], quantize_png=job["compress"])
             if ingine_launched and saved_ingine is not None:
                 _wait_ingine_health(saved_ingine[2])
         else:
@@ -373,6 +405,7 @@ def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
             "width": job["width"],
             "height": job["height"],
             "transparent": job["transparent"],
+            "bytes": job["out_path"].stat().st_size if job["out_path"].is_file() else 0,
         }
         for job in prepared
     ]
@@ -393,6 +426,8 @@ def generate_image(
     guidance: float | None = None,
     seed: int | None = None,
     transparent: bool = False,
+    quality: int = 85,
+    compress: bool = False,
 ) -> dict[str, Any]:
     res = generate_batch(
         [
@@ -404,6 +439,8 @@ def generate_image(
                 "guidance": guidance,
                 "seed": seed,
                 "transparent": transparent,
+                "quality": quality,
+                "compress": compress,
             }
         ]
     )
@@ -443,6 +480,12 @@ def main() -> int:
         action="store_true",
         help="Remove background and save with alpha transparency (.png or .webp)",
     )
+    parser.add_argument("--quality", type=int, default=85, help="WebP/JPEG compression quality (1-100, default: 85)")
+    parser.add_argument(
+        "--compress",
+        action="store_true",
+        help="Apply extra 256-color palette quantization when saving .png",
+    )
     parser.add_argument("--quiet", action="store_true", help="Suppress JSON output")
     args = parser.parse_args()
 
@@ -468,6 +511,8 @@ def main() -> int:
             "guidance": args.guidance,
             "seed": args.seed,
             "transparent": bool(args.transparent),
+            "quality": args.quality,
+            "compress": bool(args.compress),
         }
         result = _try_host_daemon(payload_dict)
         if result is None:
@@ -479,6 +524,8 @@ def main() -> int:
                 guidance=args.guidance,
                 seed=args.seed,
                 transparent=bool(args.transparent),
+                quality=args.quality,
+                compress=bool(args.compress),
             )
     if not result.get("ok"):
         raise RuntimeError(str(result.get("error", "Image generation failed")))

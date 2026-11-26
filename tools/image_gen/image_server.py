@@ -47,6 +47,8 @@ class ImageHandler(BaseHTTPRequestHandler):
                     guidance=req.get("guidance"),
                     seed=req.get("seed"),
                     transparent=bool(req.get("transparent", False)),
+                    quality=int(req.get("quality", 85)),
+                    compress=bool(req.get("compress", False)),
                 )
             self._send_json(200, result)
         except Exception as exc:
