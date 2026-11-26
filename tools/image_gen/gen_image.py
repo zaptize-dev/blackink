@@ -133,7 +133,23 @@ def _find_ingine_serve() -> tuple[int, list[str], int] | None:
     return None
 
 
-def _stop_ingine_serve(pid: int, timeout_sec: float = 15.0) -> None:
+def _wait_ingine_idle(port: int, timeout_sec: float = 30.0) -> None:
+    deadline = time.monotonic() + timeout_sec
+    health_url = f"http://127.0.0.1:{port}/health"
+    while time.monotonic() < deadline:
+        try:
+            with urllib.request.urlopen(health_url, timeout=1.5) as resp:
+                if resp.status == 200:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    if not data.get("running", False) and int(data.get("waiting", 0)) == 0:
+                        return
+        except Exception:
+            return
+        time.sleep(0.25)
+
+
+def _stop_ingine_serve(pid: int, port: int, timeout_sec: float = 15.0) -> None:
+    _wait_ingine_idle(port)
     os.kill(pid, signal.SIGTERM)
     deadline = time.monotonic() + timeout_sec
     while time.monotonic() < deadline:
@@ -321,7 +337,7 @@ def generate_batch(items: list[dict[str, Any]]) -> dict[str, Any]:
             ingine_launched = False
             try:
                 if saved_ingine is not None:
-                    _stop_ingine_serve(saved_ingine[0])
+                    _stop_ingine_serve(saved_ingine[0], saved_ingine[2])
                 for job in prepared:
                     _run_sd_cli(
                         cfg,
