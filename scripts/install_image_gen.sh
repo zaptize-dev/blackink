@@ -7,7 +7,8 @@ SD_DIR="${INGINE_SD_CPP_DIR:-$ROOT/.tools/stable-diffusion.cpp}"
 MODEL_DIR="${INGINE_IMAGE_MODEL_DIR:-$ROOT/models/image}/flux2"
 DIFFUSION_FILE="$MODEL_DIR/flux-2-klein-4b-Q4_0.gguf"
 LLM_FILE="$MODEL_DIR/Qwen3-4B-Q4_K_M.gguf"
-TAE_FILE="$MODEL_DIR/taef2.safetensors"
+VAE_FILE="$MODEL_DIR/flux2-vae.safetensors"
+CUDA_ROOT="${CUDAToolkit_ROOT:-$ROOT/.cuda-toolkit/nvidia/cu13}"
 CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ingine"
 CFG_FILE="$CFG_DIR/image-gen.json"
 CLI_SRC="$ROOT/tools/image_gen/gen_image.py"
@@ -36,9 +37,36 @@ if [[ ! -x "$SD_DIR/build/bin/sd-cli" ]]; then
   cmake --build "$SD_DIR/build" -j"$(nproc)" --target sd-cli
 fi
 
+GPU_HANDOFF=false
+CUDA_BIN=""
+CUDA_LIB=""
+if [[ -x "$CUDA_ROOT/bin/nvcc" ]]; then
+  CUDA_LIB="$CUDA_ROOT/lib"
+  if [[ -f "$CUDA_LIB/libcublas.so.13" && ! -e "$CUDA_LIB/libcublas.so" ]]; then
+    ln -sf libcublas.so.13 "$CUDA_LIB/libcublas.so"
+  fi
+  if [[ ! -x "$SD_DIR/build-cuda/bin/sd-cli" ]]; then
+    echo "Building sd-cli (CUDA sm_120a)..."
+    export PATH="$ROOT/.tools/venv/bin:$CUDA_ROOT/bin:$PATH"
+    export CUDAToolkit_ROOT="$CUDA_ROOT"
+    cmake -S "$SD_DIR" -B "$SD_DIR/build-cuda" -G Ninja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DSD_CUDA=ON \
+      -DCMAKE_CUDA_ARCHITECTURES=120 \
+      -DCMAKE_CUDA_COMPILER="$CUDA_ROOT/bin/nvcc" \
+      -DCUDAToolkit_ROOT="$CUDA_ROOT" \
+      -DSD_BUILD_EXAMPLES=ON
+    cmake --build "$SD_DIR/build-cuda" -j"$(nproc)" --target sd-cli
+  fi
+  if [[ -x "$SD_DIR/build-cuda/bin/sd-cli" ]]; then
+    GPU_HANDOFF=true
+    CUDA_BIN="$SD_DIR/build-cuda/bin/sd-cli"
+  fi
+fi
+
 mkdir -p "$MODEL_DIR"
-if [[ ! -f "$DIFFUSION_FILE" || ! -f "$LLM_FILE" || ! -f "$TAE_FILE" ]]; then
-  echo "Downloading default CPU image model..."
+if [[ ! -f "$DIFFUSION_FILE" || ! -f "$LLM_FILE" || ! -f "$VAE_FILE" ]]; then
+  echo "Downloading default image model..."
   "$VENV_DIR/bin/python" - "$MODEL_DIR" <<'PY'
 import os, shutil, sys
 from huggingface_hub import hf_hub_download
@@ -47,7 +75,7 @@ d = sys.argv[1]
 files = [
     ("leejet/FLUX.2-klein-4B-GGUF", "flux-2-klein-4b-Q4_0.gguf", "flux-2-klein-4b-Q4_0.gguf"),
     ("Qwen/Qwen3-4B-GGUF", "Qwen3-4B-Q4_K_M.gguf", "Qwen3-4B-Q4_K_M.gguf"),
-    ("madebyollin/taef2", "taef2.safetensors", "taef2.safetensors"),
+    ("Comfy-Org/flux2-dev", "split_files/vae/flux2-vae.safetensors", "flux2-vae.safetensors"),
 ]
 for repo, src, dst in files:
     out = os.path.join(d, dst)
@@ -57,7 +85,7 @@ for repo, src, dst in files:
 PY
   rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--leejet--FLUX.2-klein-4B-GGUF" \
          "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--Qwen--Qwen3-4B-GGUF" \
-         "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--madebyollin--taef2"
+         "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--Comfy-Org--flux2-dev"
 fi
 
 mkdir -p "$CFG_DIR"
@@ -65,14 +93,17 @@ if [[ ! -f "$CFG_FILE" ]]; then
   cat > "$CFG_FILE" <<EOF
 {
   "backend": "sd-cli",
+  "gpu_handoff": ${GPU_HANDOFF},
   "sd_cli_bin": "$SD_DIR/build/bin/sd-cli",
+  "sd_cli_cuda_bin": "$CUDA_BIN",
+  "ld_library_path": "$CUDA_LIB",
   "diffusion_model": "$DIFFUSION_FILE",
   "llm_path": "$LLM_FILE",
-  "taesd_path": "$TAE_FILE",
+  "vae_path": "$VAE_FILE",
   "sampler": "euler",
   "threads": 8,
   "default_size": "512x512",
-  "default_steps": 3,
+  "default_steps": 4,
   "default_guidance": 1.0,
   "extra_args": ["--flash-attn", "off,diffusion=on"]
 }
