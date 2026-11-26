@@ -8,9 +8,11 @@ import fcntl
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import time
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -104,6 +106,68 @@ def _run_sana_sprint(
     image.save(out_path)
 
 
+def _find_ingine_serve() -> tuple[int, list[str], int] | None:
+    proc_root = Path("/proc")
+    if not proc_root.is_dir():
+        return None
+    for entry in proc_root.iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            raw = (entry / "cmdline").read_bytes()
+        except OSError:
+            continue
+        if not raw:
+            continue
+        argv = [part.decode("utf-8", errors="replace") for part in raw.split(b"\x00") if part]
+        if not argv:
+            continue
+        if Path(argv[0]).name == "ingine-serve":
+            port = 8090
+            for idx, arg in enumerate(argv[:-1]):
+                if arg == "--port" and argv[idx + 1].isdigit():
+                    port = int(argv[idx + 1])
+                    break
+            return int(entry.name), argv, port
+    return None
+
+
+def _stop_ingine_serve(pid: int, timeout_sec: float = 15.0) -> None:
+    os.kill(pid, signal.SIGTERM)
+    deadline = time.monotonic() + timeout_sec
+    while time.monotonic() < deadline:
+        if not Path(f"/proc/{pid}").exists():
+            time.sleep(0.5)
+            return
+        time.sleep(0.2)
+    os.kill(pid, signal.SIGKILL)
+    time.sleep(0.8)
+
+
+def _start_ingine_serve(argv: list[str], port: int, timeout_sec: float = 90.0) -> None:
+    log_path = Path("/tmp/ingine-serve.log")
+    with log_path.open("ab") as log_fh:
+        subprocess.Popen(
+            argv,
+            stdin=subprocess.DEVNULL,
+            stdout=log_fh,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+            close_fds=True,
+        )
+    deadline = time.monotonic() + timeout_sec
+    health_url = f"http://127.0.0.1:{port}/health"
+    while time.monotonic() < deadline:
+        try:
+            with urllib.request.urlopen(health_url, timeout=2.0) as resp:
+                if resp.status == 200:
+                    return
+        except Exception:
+            pass
+        time.sleep(0.5)
+    raise RuntimeError("Timed out waiting for language service to recover after GPU handoff")
+
+
 def _run_sd_cli(
     cfg: dict[str, Any],
     prompt: str,
@@ -114,8 +178,12 @@ def _run_sd_cli(
     guidance: float,
     seed: int | None,
     out_path: Path,
+    use_cuda: bool = False,
 ) -> None:
-    sd_bin = str(cfg.get("sd_cli_bin", "sd-cli"))
+    sd_bin = str(
+        (cfg.get("sd_cli_cuda_bin") if use_cuda else None)
+        or cfg.get("sd_cli_bin", "sd-cli")
+    )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
         sd_bin,
@@ -154,7 +222,12 @@ def _run_sd_cli(
             cmd.extend([flag, str(val)])
     for extra in cfg.get("extra_args", []):
         cmd.append(str(extra))
-    proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    env = os.environ.copy()
+    ld_extra = cfg.get("ld_library_path")
+    if use_cuda and ld_extra:
+        cur_ld = env.get("LD_LIBRARY_PATH", "")
+        env["LD_LIBRARY_PATH"] = f"{ld_extra}:{cur_ld}" if cur_ld else str(ld_extra)
+    proc = subprocess.run(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if proc.returncode != 0 or not out_path.is_file():
         raise RuntimeError(f"Image generation failed with exit code {proc.returncode}")
 
@@ -220,14 +293,36 @@ def main() -> int:
     with LOCK_PATH.open("w") as lock_fh:
         fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
         backend = str(cfg.get("backend", "sana-sprint-0.6b"))
+        gpu_handoff = bool(cfg.get("gpu_handoff", False))
         if backend in ("sana-sprint-0.6b", "sana-sprint-1.6b", "sana-sprint"):
             _run_sana_sprint(cfg, prompt, width, height, steps, guidance, args.seed, out_path)
+            if args.transparent:
+                _remove_background(out_path)
         elif backend == "sd-cli":
-            _run_sd_cli(cfg, prompt, negative_prompt, width, height, steps, guidance, args.seed, out_path)
+            saved_ingine = _find_ingine_serve() if gpu_handoff else None
+            try:
+                if saved_ingine is not None:
+                    _stop_ingine_serve(saved_ingine[0])
+                _run_sd_cli(
+                    cfg,
+                    prompt,
+                    negative_prompt,
+                    width,
+                    height,
+                    steps,
+                    guidance,
+                    args.seed,
+                    out_path,
+                    use_cuda=gpu_handoff,
+                )
+            finally:
+                if saved_ingine is not None:
+                    _, argv, port = saved_ingine
+                    _start_ingine_serve(argv, port)
+            if args.transparent:
+                _remove_background(out_path)
         else:
             raise RuntimeError("Configured image generation backend is unavailable")
-        if args.transparent:
-            _remove_background(out_path)
 
     elapsed = round(time.monotonic() - t0, 2)
     if not args.quiet:
