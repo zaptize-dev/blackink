@@ -158,9 +158,11 @@ if [[ ! -f "$AGENTS_FILE" ]]; then
 3. **Preview & access link:** To run or test any web app or API, pick an unused TCP port in \`4100-4999\` (check first with \`ss -ltn\`), bind the dev server to \`0.0.0.0\` (e.g. \`--host 0.0.0.0 --port <PORT>\`), detach it so it stays alive after the tool exits (\`nohup setsid <cmd> >/tmp/preview-<PORT>.log 2>&1 </dev/null &\`), verify it is listening, and always reply with the full network link \`http://${LAN_IP}:<PORT>\`.
 4. **Deploy-ready structure:** When the user asks to prepare for Git / Coolify, include a clean \`Dockerfile\` (or \`docker-compose.yml\`) and \`.gitignore\` inside the project folder and stop any temporary dev server on that port if requested.
 5. **Image assets:** For icons, logos, and simple graphics, prefer inline SVG. When a project needs raster photos, illustrations, or hero banners, use \`~/.local/bin/gen-image\` in the foreground (never background it with \`&\`; supports sizes like \`512x512\`, \`768x512\`, \`512x768\`, and \`transparent: true\` / \`--transparent\` for background-free \`.png\`/\`.webp\` cutouts). **CRITICAL — BATCHING RULE:** If you need **2 or more images**, NEVER call \`gen-image\` one by one; you MUST generate all of them in a single batch call via stdin (\`~/.local/bin/gen-image --batch - <<'EOF' ... EOF\` with a JSON array of \`{"prompt": "...", "out": "./<project-slug>/assets/<name>.png", "size": "512x512", "transparent": false}\`). Only use single mode (\`--prompt "..." --out ...\`) when generating exactly 1 image.
+6. **Video assets:** When a project needs short cinematic hero videos or animated backgrounds (especially for smooth camera/lighting/atmosphere motion), use \`~/.local/bin/gen-video\` in the foreground (never background it with \`&\`; supports \`--prompt\`, \`--out\` \`.mp4\`/\`.webm\`, \`-i <init_img>\` for sharp FLUX-guided I2V, \`--end-img\` for FLF2V, \`--frames\` default \`81\` / ~5s @ 16fps, \`--size 832x480\`, and \`--loop\` for seamless ping-pong loops). Prefer generating an initial keyframe with \`gen-image\` first and animating it with \`gen-video -i\`.
+7. **3D assets (.glb):** When a project needs interactive 3D models (e.g., Three.js / \`<model-viewer>\` scroll-driven hero sections), use \`~/.local/bin/gen-3d\` in the foreground (never background it with \`&\`; accepts \`--image <path>\` or \`--prompt "..."\`, \`--out ./<project-slug>/assets/<name>.glb\`, \`--max-faces 25000\` for web-ready PBR-textured \`.glb\`, or \`--no-texture\` for fast ~6s geometry-only meshes).
 EOF
   echo "Created default workspace rules -> $AGENTS_FILE."
-elif ! grep -q "never background it" "$AGENTS_FILE" 2>/dev/null; then
+elif ! grep -q "gen-3d" "$AGENTS_FILE" 2>/dev/null; then
   python3 - "$AGENTS_FILE" <<'PY'
 import re, sys
 p = sys.argv[1]
@@ -175,11 +177,25 @@ rule5 = (
     "`{\"prompt\": \"...\", \"out\": \"./<project-slug>/assets/<name>.png\", \"size\": \"512x512\", \"transparent\": false}`). "
     "Only use single mode (`--prompt \"...\" --out ...`) when generating exactly 1 image.\n"
 )
-if re.search(r"^5\. \*\*Image assets:\*\*.*$", txt, flags=re.M):
-    txt = re.sub(r"^5\. \*\*Image assets:\*\*.*$", rule5.rstrip("\n"), txt, flags=re.M)
-else:
-    txt = txt.rstrip("\n") + "\n" + rule5
+rule6 = (
+    "6. **Video assets:** When a project needs short cinematic hero videos or animated backgrounds "
+    "(especially for smooth camera/lighting/atmosphere motion), use `~/.local/bin/gen-video` in the foreground "
+    "(never background it with `&`; supports `--prompt`, `--out` `.mp4`/`.webm`, `-i <init_img>` for sharp FLUX-guided I2V, "
+    "`--end-img` for FLF2V, `--frames` default `81` / ~5s @ 16fps, `--size 832x480`, and `--loop` for seamless ping-pong loops). "
+    "Prefer generating an initial keyframe with `gen-image` first and animating it with `gen-video -i`.\n"
+)
+rule7 = (
+    "7. **3D assets (.glb):** When a project needs interactive 3D models (e.g., Three.js / `<model-viewer>` scroll-driven hero sections), "
+    "use `~/.local/bin/gen-3d` in the foreground (never background it with `&`; accepts `--image <path>` or `--prompt \"...\"`, "
+    "`--out ./<project-slug>/assets/<name>.glb`, `--max-faces 25000` for web-ready PBR-textured `.glb`, or `--no-texture` for fast ~6s geometry-only meshes).\n"
+)
+for prefix, rule in [("5. **Image assets:**", rule5), ("6. **Video assets:**", rule6), ("7. **3D assets (.glb):**", rule7)]:
+    pat = r"^" + re.escape(prefix) + r".*$"
+    if re.search(pat, txt, flags=re.M):
+        txt = re.sub(pat, rule.rstrip("\n"), txt, flags=re.M)
+    else:
+        txt = txt.rstrip("\n") + "\n" + rule
 open(p, "w").write(txt)
 PY
-  echo "Updated gen-image batching rule in $AGENTS_FILE."
+  echo "Updated gen-image, gen-video, and gen-3d rules in $AGENTS_FILE."
 fi
