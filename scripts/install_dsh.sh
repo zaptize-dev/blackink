@@ -166,7 +166,7 @@ elif ! grep -q "gen-image" "$AGENTS_FILE" 2>/dev/null; then
 EOF
   echo "Added gen-image rule to $AGENTS_FILE."
 elif ! grep -q -- "--transparent" "$AGENTS_FILE" 2>/dev/null; then
-  sed -i 's|512x768\`)|512x768\`, and \`--transparent\` for background-free PNG/WebP cutouts)|g' "$AGENTS_FILE"
+  sed -i 's|512x768`)|512x768`, and `--transparent` for background-free PNG/WebP cutouts)|g' "$AGENTS_FILE"
   echo "Updated gen-image rule with --transparent in $AGENTS_FILE."
 fi
 if grep -q '`gen-image --prompt' "$AGENTS_FILE" 2>/dev/null; then
