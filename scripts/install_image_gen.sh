@@ -4,8 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV_DIR="${INGINE_IMAGE_VENV:-$ROOT/.tools/image-gen-venv}"
 SD_DIR="${INGINE_SD_CPP_DIR:-$ROOT/.tools/stable-diffusion.cpp}"
-MODEL_DIR="${INGINE_IMAGE_MODEL_DIR:-$ROOT/models/image}"
-MODEL_FILE="$MODEL_DIR/sdxl-lightning-4step-q4_0.gguf"
+MODEL_DIR="${INGINE_IMAGE_MODEL_DIR:-$ROOT/models/image}/flux2"
+DIFFUSION_FILE="$MODEL_DIR/flux-2-klein-4b-Q4_0.gguf"
+LLM_FILE="$MODEL_DIR/Qwen3-4B-Q4_K_M.gguf"
+TAE_FILE="$MODEL_DIR/taef2.safetensors"
 CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ingine"
 CFG_FILE="$CFG_DIR/image-gen.json"
 CLI_SRC="$ROOT/tools/image_gen/gen_image.py"
@@ -35,11 +37,27 @@ if [[ ! -x "$SD_DIR/build/bin/sd-cli" ]]; then
 fi
 
 mkdir -p "$MODEL_DIR"
-if [[ ! -f "$MODEL_FILE" ]]; then
-  echo "Downloading and quantizing default CPU image model..."
-  FP16_PATH="$("$VENV_DIR/bin/python" -c "from huggingface_hub import hf_hub_download; print(hf_hub_download('ByteDance/SDXL-Lightning', 'sdxl_lightning_4step.safetensors'))")"
-  "$SD_DIR/build/bin/sd-cli" -M convert -m "$FP16_PATH" -o "$MODEL_FILE" --type q4_0
-  rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--ByteDance--SDXL-Lightning"
+if [[ ! -f "$DIFFUSION_FILE" || ! -f "$LLM_FILE" || ! -f "$TAE_FILE" ]]; then
+  echo "Downloading default CPU image model..."
+  "$VENV_DIR/bin/python" - "$MODEL_DIR" <<'PY'
+import os, shutil, sys
+from huggingface_hub import hf_hub_download
+
+d = sys.argv[1]
+files = [
+    ("leejet/FLUX.2-klein-4B-GGUF", "flux-2-klein-4b-Q4_0.gguf", "flux-2-klein-4b-Q4_0.gguf"),
+    ("Qwen/Qwen3-4B-GGUF", "Qwen3-4B-Q4_K_M.gguf", "Qwen3-4B-Q4_K_M.gguf"),
+    ("madebyollin/taef2", "taef2.safetensors", "taef2.safetensors"),
+]
+for repo, src, dst in files:
+    out = os.path.join(d, dst)
+    if not os.path.exists(out):
+        p = hf_hub_download(repo, src)
+        shutil.copy2(p, out)
+PY
+  rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--leejet--FLUX.2-klein-4B-GGUF" \
+         "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--Qwen--Qwen3-4B-GGUF" \
+         "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--madebyollin--taef2"
 fi
 
 mkdir -p "$CFG_DIR"
@@ -48,12 +66,15 @@ if [[ ! -f "$CFG_FILE" ]]; then
 {
   "backend": "sd-cli",
   "sd_cli_bin": "$SD_DIR/build/bin/sd-cli",
-  "model_path": "$MODEL_FILE",
+  "diffusion_model": "$DIFFUSION_FILE",
+  "llm_path": "$LLM_FILE",
+  "taesd_path": "$TAE_FILE",
   "sampler": "euler",
   "threads": 8,
   "default_size": "512x512",
-  "default_steps": 4,
-  "default_guidance": 1.0
+  "default_steps": 3,
+  "default_guidance": 1.0,
+  "extra_args": ["--flash-attn", "off,diffusion=on"]
 }
 EOF
   echo "Wrote default config -> $CFG_FILE"
